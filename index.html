@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#086bdc">
+  <meta name="description" content="Makmal Cilik — permainan Sains sekolah rendah Malaysia. Eksperimen. Fikir. Temui.">
+  <title>Makmal Cilik</title>
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/screens.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script defer src="js/progress.js"></script>
+  <script defer src="js/router.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <div class="game-shell">
+    <header class="topbar">
+      <button class="brand" data-route="title" aria-label="Makmal Cilik — skrin tajuk"><span aria-hidden="true">⚗️</span> Makmal<span>Cilik</span></button>
+      <div class="utilities">
+        <button id="sound" class="utility" aria-label="Bunyi" aria-pressed="true">Bunyi: Hidup</button>
+        <button id="fullscreen" class="utility" aria-label="Masuk skrin penuh" aria-pressed="false"><span aria-hidden="true">⛶</span><span class="fullscreen-label"> Skrin penuh</span></button>
+      </div>
+    </header>
+    <main id="screen" tabindex="-1"></main>
+    <footer><span id="version"></span><span>Sains Sekolah Rendah Malaysia</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden></div>
+</body>
+</html>

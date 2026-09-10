@@ -1,0 +1,18 @@
+@media(min-width:1600px){.game-shell{max-width:1540px}.title-screen{gap:90px}.lab-card{padding:40px}.title-screen .pico{min-height:320px}}
+@media(max-width:1000px){.game-shell{padding:0 28px}.title-screen{padding:25px 0;gap:28px}.title-copy h1{font-size:4.5rem}.units-grid{grid-template-columns:repeat(2,1fr)}.main-layout{gap:22px}.menu-card{padding:18px}}
+@media(max-width:640px){.game-shell{padding:0 18px}.topbar{min-height:80px;gap:8px}.brand{font-size:18px;gap:3px}.brand>span:first-child{font-size:24px;margin-right:2px}.utilities{gap:6px}.utility{padding:10px;font-size:.8125rem;border-radius:12px}.fullscreen-label{display:none}.title-screen{grid-template-columns:1fr;text-align:center;gap:24px;padding:18px 0}.title-copy h1{font-size:3.8rem;margin-bottom:14px}.title-copy h1 span{display:inline}.eyebrow{margin-bottom:15px;font-size:.75rem}.tagline{margin-bottom:22px}.primary{padding:17px 24px}.curriculum{margin-top:18px}.lab-card{border-width:5px;border-radius:27px;padding:17px;max-width:350px;width:100%;justify-self:center}.title-screen .pico{min-height:125px}.pico-emoji{font-size:90px}.pico-name{font-size:.75rem;padding:4px 14px}.pico-note{margin-top:14px;padding:12px;font-size:.875rem}.lab-symbols{display:none}footer{font-size:.75rem;padding:18px 0;flex-wrap:wrap;justify-content:center}.navigation{margin:3px 0 22px}.screen-heading{margin-bottom:22px}.main-layout{grid-template-columns:1fr}.welcome{display:flex;align-items:center;gap:18px;text-align:left;padding:20px}.welcome .pico-emoji{font-size:65px}.welcome p{margin:0;font-size:.9375rem}.year-grid{grid-template-columns:repeat(2,1fr);gap:12px}.year-card{padding:20px;gap:12px}.units-grid{grid-template-columns:1fr;gap:12px}.unit-card{min-height:100px;padding:18px}.placeholder-panel{padding:30px 20px}.menu-card{gap:12px}.menu-start{min-height:80px}}
+@media(max-height:550px) and (min-width:641px){.topbar{min-height:65px}.game-shell{padding:0 24px}.title-screen{padding:8px 3%;gap:35px}.title-copy h1{font-size:3.5rem;margin-bottom:12px}.eyebrow{margin-bottom:12px}.tagline{font-size:1.15rem;margin-bottom:20px}.primary{padding:15px 22px}.curriculum{margin-top:17px}.lab-card{padding:15px;border-width:5px;border-radius:25px}.title-screen .pico{min-height:130px}.pico-emoji{font-size:85px}.pico-note{margin-top:12px;padding:12px}.lab-symbols{display:none}footer{padding:12px 0}.navigation{margin:0 0 18px}.screen-heading{margin-bottom:20px}.welcome .pico-emoji{font-size:75px}}
+
+/* Preserve room for navigation when the framed heading is compact. */
+@media(max-width:640px){.screen-heading{padding:18px;border-radius:22px}.welcome p{padding:12px;min-width:0}.welcome{gap:12px}.title-copy h1{font-size:clamp(2.8rem,15vw,3.8rem)}.brand>span:last-child{padding:3px}.lab-card{border-width:5px}.year-card.active{padding:19px}.menu-grid,.year-grid{min-width:0}.menu-card{overflow-wrap:anywhere}}
+@media(max-height:550px) and (min-width:641px){.screen-heading{padding:14px 20px;border-radius:20px}.screen-heading h1{font-size:2rem}.welcome p{padding:12px}.lab-card{padding:15px}.pico-note{padding:10px}}
+
+/* QA: keep the placeholder and its return button inside short landscape views. */
+@media(max-height:550px) and (min-width:641px){
+  .placeholder-panel{padding:16px 24px;border-radius:22px}
+  .placeholder-panel .card-icon{width:48px;height:48px;font-size:26px;margin-bottom:8px}
+  .placeholder-panel .section-kicker{margin-bottom:6px}
+  .placeholder-panel h1{font-size:2rem;margin-bottom:8px}
+  .placeholder-panel .subtext{line-height:1.4;margin-bottom:10px}
+  .placeholder-panel .primary{margin-top:0;padding:12px 20px}
+}

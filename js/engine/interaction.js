@@ -1,6 +1,6 @@
 'use strict';
 window.MakmalInteraction = (() => {
-  function attach(root, { select, match }) {
+  function attach(root, { select, match, terminal }) {
     const controller = new AbortController();
     const options = { signal: controller.signal };
     let drag = null, ghost = null, hovered = null, suppressClick = false, suppressionTimer;
@@ -53,6 +53,8 @@ window.MakmalInteraction = (() => {
         suppressClick = false;
         if (event.detail !== 0) { event.preventDefault(); event.stopImmediatePropagation(); return; }
       }
+      const point = event.target.closest('[data-terminal]');
+      if (point && !point.disabled) { terminal?.(point.dataset.terminal); return; }
       const label = event.target.closest('[data-label]');
       const target = event.target.closest('[data-target]');
       if (label && !label.disabled) select(label.dataset.label);

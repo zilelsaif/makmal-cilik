@@ -11,7 +11,7 @@ function context(raw, blocked = false) {
 }
 for (const raw of [null, '{bad', '[]', JSON.stringify({ version: '0.2.0', settings: { sound: false, extra: 2 }, profile: { name: 'Aina' }, progress: { year2: { plants: { saved: true }, electricity: { extra: 7 } }, year1: { x: 9 } }, extra: 123 })]) {
   const api = context(raw); const p = api.MakmalProgress; const data = p.loadData();
-  assert.equal(data.version, '0.3.0'); p.startMissionAttempt(); assert.equal(p.isMissionComplete(), false);
+  assert.equal(data.version, '0.4.0'); p.startMissionAttempt(); assert.equal(p.isMissionComplete(), false);
   p.completeMission(); const firstDate = p.getData().progress.year2.electricity.mission1.completedAt;
   p.startMissionAttempt(); assert.equal(p.isMissionComplete(), true); p.completeMission(); p.loadData();
   assert.equal(p.getData().progress.year2.electricity.mission1.attempts, 2);

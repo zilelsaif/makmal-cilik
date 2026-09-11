@@ -13,8 +13,8 @@
   const menu = [['BUKU MAKMAL', '📒'], ['PENCAPAIAN', '🏅'], ['PROFIL', '🧑‍🔬'], ['TETAPAN', '⚙️']];
   const pico = window.MakmalPico.portrait;
   let disposeExperiment = null;
-  const completedCount = unit => unit.id === 'electricity' && progress.isMissionComplete() ? 1 : 0;
-  const missionStatus = mission => mission.id === 'electricity-1' && progress.isMissionComplete() ? 'Selesai' : mission.status;
+  const completedCount = unit => unit.id === 'electricity' ? ['mission1', 'mission2'].filter(key => progress.isMissionComplete(key)).length : 0;
+  const missionStatus = mission => ['electricity-1', 'electricity-2'].includes(mission.id) ? (progress.isMissionComplete('mission' + mission.number) ? 'Selesai' : 'Seterusnya') : mission.status;
   const nav = () => '<nav class="navigation" aria-label="Navigasi makmal"><button class="nav-button" data-action="back">← Kembali</button><button class="nav-button" data-action="home">⌂ Menu Utama</button></nav>';
   const heading = (title, subtitle, kicker = '') => `<div class="screen-heading">${kicker ? `<p class="section-kicker">${kicker}</p>` : ''}<h1>${title}</h1>${subtitle ? `<p class="subtext">${subtitle}</p>` : ''}</div>`;
   function showToast(message) {
@@ -28,7 +28,7 @@
     clearTimeout(toastTimer); toast.hidden = true;
     if (name === 'experiment') {
       screen.innerHTML = `<div class="content-screen experiment-screen">${nav()}<div id="experiment-root"></div></div>`;
-      disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { onExit: () => router.navigate('unitDetail', { unitId: 'electricity' }) });
+      disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate('unitDetail', { unitId: 'electricity' }) });
       return;
     }
     if (name === 'title') {
@@ -58,7 +58,7 @@
     if (!button) return;
     window.MakmalRewards.play('click');
     if (button.dataset.unit) router.navigate('unitDetail', { unitId: button.dataset.unit });
-    if (button.dataset.mission) router.navigate(button.dataset.mission === 'electricity-1' && button.dataset.unitId === 'electricity' ? 'experiment' : 'missionPlaceholder', { unitId: button.dataset.unitId, missionId: button.dataset.mission });
+    if (button.dataset.mission) router.navigate(['electricity-1', 'electricity-2'].includes(button.dataset.mission) && button.dataset.unitId === 'electricity' ? 'experiment' : 'missionPlaceholder', { unitId: button.dataset.unitId, missionId: button.dataset.mission });
     if (button.dataset.route) router.navigate(button.dataset.route);
     if (button.dataset.action === 'back') router.back();
     if (button.dataset.action === 'home') router.home();

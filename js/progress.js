@@ -1,6 +1,6 @@
 'use strict';
 window.MakmalProgress = (() => {
-  const APP_VERSION = '0.3.0';
+  const APP_VERSION = '0.4.0';
   const KEY = 'makmalCilikData';
   const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
   const defaults = () => ({ version: APP_VERSION, settings: { sound: true }, profile: { name: 'Saintis' }, progress: { year2: {} } });
@@ -10,7 +10,7 @@ window.MakmalProgress = (() => {
     const settings = isObject(value.settings) ? value.settings : {};
     const profile = isObject(value.profile) ? value.profile : {};
     // Preserve unknown fields and future versions while migrating supported saves.
-    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0'].includes(value.version) ? value.version : APP_VERSION,
+    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0'].includes(value.version) ? value.version : APP_VERSION,
       settings: { ...settings, sound: typeof settings.sound === 'boolean' ? settings.sound : true },
       profile: { ...profile, name: typeof profile.name === 'string' && profile.name.trim() ? profile.name : 'Saintis' },
       progress: { ...(isObject(value.progress) ? value.progress : {}), year2: isObject(value.progress?.year2) ? value.progress.year2 : {} } };
@@ -29,22 +29,22 @@ window.MakmalProgress = (() => {
     return saveData();
   }
   const getData = () => current;
-  const missionRecord = () => current.progress.year2.electricity?.mission1;
-  const isMissionComplete = () => missionRecord()?.completed === true;
-  function writeMission(record) {
+  const missionRecord = (key = 'mission1') => current.progress.year2.electricity?.[key];
+  const isMissionComplete = (key = 'mission1') => missionRecord(key)?.completed === true;
+  function writeMission(record, key) {
     const electricity = isObject(current.progress.year2.electricity) ? current.progress.year2.electricity : {};
-    current.progress.year2.electricity = { ...electricity, mission1: record };
+    current.progress.year2.electricity = { ...electricity, [key]: record };
     return saveData();
   }
-  function startMissionAttempt() {
-    const old = isObject(missionRecord()) ? missionRecord() : {};
+  function startMissionAttempt(key = 'mission1') {
+    const old = isObject(missionRecord(key)) ? missionRecord(key) : {};
     const attempts = Number.isSafeInteger(old.attempts) && old.attempts >= 0 ? old.attempts : 0;
-    return writeMission({ ...old, attempts: attempts + 1 });
+    return writeMission({ ...old, attempts: attempts + 1 }, key);
   }
-  function completeMission() {
-    const old = isObject(missionRecord()) ? missionRecord() : {};
+  function completeMission(key = 'mission1') {
+    const old = isObject(missionRecord(key)) ? missionRecord(key) : {};
     const now = new Date().toISOString();
-    return writeMission({ ...old, completed: true, attempts: Number.isSafeInteger(old.attempts) && old.attempts > 0 ? old.attempts : 1, completedAt: typeof old.completedAt === 'string' ? old.completedAt : now, lastCompletedAt: now });
+    return writeMission({ ...old, completed: true, attempts: Number.isSafeInteger(old.attempts) && old.attempts > 0 ? old.attempts : 1, completedAt: typeof old.completedAt === 'string' ? old.completedAt : now, lastCompletedAt: now }, key);
   }
   return { APP_VERSION, loadData, saveData, updateSetting, getData, isMissionComplete, startMissionAttempt, completeMission };
 })();

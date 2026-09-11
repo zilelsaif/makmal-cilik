@@ -14,7 +14,7 @@ window.MakmalRouter = (() => {
       if (screen === 'missionPlaceholder' && !unit.missions.some(m => m.id === context.missionId)) return { screen: 'unitDetail', context: { unitId: unit.id } };
     }
     if (screen === 'experiment') {
-      if (context.unitId !== 'electricity' || context.missionId !== 'electricity-1') return { screen: 'year2', context: {} };
+      if (context.unitId !== 'electricity' || !['electricity-1', 'electricity-2'].includes(context.missionId)) return { screen: 'year2', context: {} };
     }
     return { screen, context };
   }

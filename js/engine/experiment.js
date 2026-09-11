@@ -48,14 +48,17 @@ window.MakmalExperiment = (() => {
     return { get state() { return state; }, canAdvance, act, reset: () => { state = createState(); return state; } };
   }
   function mount(root, { onExit, missionId = 'electricity-1' }) {
-    const circuit = missionId !== 'electricity-1';
-    const definition = circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
+    const mixture = missionId.startsWith('mixtures-');
+    const light = missionId.startsWith('light-dark-');
+    const circuit = !mixture && !light && missionId !== 'electricity-1';
+    const definition = mixture ? window.MakmalMixtureContent.missions[missionId] : light ? window.MakmalLightContent.missions[missionId] : circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
     const progressKey = definition.progressKey || 'mission1';
-    const session = circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
+    const storageUnit = definition.storageUnit || 'electricity';
+    const session = mixture ? window.MakmalMixture.createSession(definition) : light ? window.MakmalLight.createSession(definition) : circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
     const progress = window.MakmalProgress;
     const controller = new AbortController();
     let hintTimer, disposed = false;
-    let replayIntro = progress.isMissionComplete(progressKey);
+    let replayIntro = progress.isMissionComplete(progressKey, storageUnit);
     const image = (component, named = true) => `<img src="${component.image}" alt="${named ? component.name : component.visual}" data-fallback="${named ? component.name : component.visual}" width="160" height="160" draggable="false">`;
     const dialogues = [
       'Hari ini kita akan kenali alat asas dalam litar elektrik. Kamu rasa yang mana satu digunakan untuk membekalkan tenaga?',
@@ -64,7 +67,7 @@ window.MakmalExperiment = (() => {
       'Jika wayar tidak disambungkan, adakah litar boleh lengkap?',
       'Hebat! Sekarang kamu sudah kenal alat asas dalam litar elektrik.'
     ];
-    function start() { clearTimeout(hintTimer); window.MakmalRewards.stop(); replayIntro = false; session.reset(); progress.startMissionAttempt(progressKey); draw(); }
+    function start() { clearTimeout(hintTimer); window.MakmalRewards.stop(); replayIntro = false; session.reset(); progress.startMissionAttempt(progressKey, storageUnit); draw(); }
     function draw(focusSelector) {
       if (disposed) return;
       const s = session.state;
@@ -72,18 +75,20 @@ window.MakmalExperiment = (() => {
         root.innerHTML = `<section class="experiment-replay"><span class="badge">✓ Selesai</span><h1>${definition.title}</h1>${window.MakmalPico.dialogue('Misi ini sudah selesai. Mahu teroka alat-alat ini sekali lagi?', 'happy')}<button class="primary" data-exp="start">MAIN SEMULA <span aria-hidden="true">↻</span></button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></section>`;
         return;
       }
-      const current = definition.components[s.observed];
+      const current = definition.components?.[s.observed];
       const rail = `<ol class="learning-steps" aria-label="Lima langkah pembelajaran">${definition.steps.map((step, index) => `<li ${index === s.step ? 'aria-current="step"' : ''} class="${index < s.step ? 'step-done' : ''}"><span aria-hidden="true">${index < s.step ? '✓' : index + 1}</span><strong>${step}</strong></li>`).join('')}</ol>`;
       let activity = '';
-      if (!circuit) {
+      if (!circuit && !light && !mixture) {
       if (s.step === 0) activity = `<h2 id="activity-heading" tabindex="-1">Alat manakah membekalkan tenaga?</h2><p class="activity-instruction">Sentuh satu alat untuk membuat ramalan.</p><div class="component-grid">${definition.components.map(c => `<button class="component-card ${s.prediction && c.id === 'battery' ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-exp="predict" data-value="${c.id}">${image(c)}<strong>${c.name}</strong>${s.prediction && c.id === 'battery' ? '<span>✓ Ramalan tepat</span>' : ''}</button>`).join('')}</div>`;
       if (s.step === 1) activity = `<h2 id="activity-heading" tabindex="-1">Padankan nama dengan alat</h2><p class="activity-instruction">Pilih label → sentuh alat, atau seret label ke alat. <strong>${Object.keys(s.matched).length} / 4 sepadan</strong></p><div class="label-tray" role="group" aria-label="Label peralatan">${['wire', 'battery', 'switch', 'bulb'].map(id => { const c = definition.components.find(c => c.id === id); return `<button class="label-chip" data-label="${c.id}" aria-pressed="${s.selected === c.id}" ${s.matched[c.id] ? 'disabled' : ''}>${c.name}${s.matched[c.id] ? ' ✓' : ''}</button>`; }).join('')}</div><div class="component-grid">${definition.components.map((c, i) => `<button class="component-card ${s.matched[c.id] ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-target="${c.id}" aria-label="${s.matched[c.id] ? c.name + ', sudah sepadan' : 'Padankan pada alat ' + (i + 1) + ': ' + c.visual}" ${s.matched[c.id] ? 'disabled' : ''}>${image(c, !!s.matched[c.id])}<strong>${s.matched[c.id] ? '✓ ' + c.name : 'Alat ' + (i + 1)}</strong><span>${s.matched[c.id] ? 'Sepadan' : 'Letakkan label di sini'}</span></button>`).join('')}</div>`;
       if (s.step === 2) activity = `<h2 id="activity-heading" tabindex="-1">Perhatikan: ${current.name}</h2><div class="observation"><div class="component-card observed">${image(current)}<strong>${current.name}</strong></div><div><p class="observation-count">Alat ${s.observed + 1} daripada 4</p><p class="explanation">${current.explanation}</p>${s.observed < 3 ? '<button class="primary" data-exp="observe">ALAT SETERUSNYA →</button>' : '<p class="observed-all">✓ Kamu sudah perhatikan keempat-empat alat.</p>'}</div></div>`;
       if (s.step === 3) activity = `<h2 id="activity-heading" tabindex="-1">Fikirkan sambungannya</h2><div class="think-panel">${image(definition.components[2])}<p>Jika wayar tidak disambungkan,<br>adakah litar boleh lengkap?</p></div><div class="answer-buttons"><button class="nav-button" data-exp="think" data-value="yes">Ya, boleh lengkap</button><button class="nav-button ${s.thought ? 'answer-correct' : ''}" data-exp="think" data-value="no">Tidak, belum lengkap</button></div>`;
       if (s.step === 4) activity = `<div class="completion"><span class="completion-check" aria-hidden="true">✓</span><h2 id="activity-heading" tabindex="-1">Misi Selesai</h2><p>Empat alat asas, empat kegunaan!</p><ul class="component-summary">${definition.components.map(c => `<li>${image(c)}<div><strong>${c.name}</strong><span>${c.explanation}</span></div></li>`).join('')}</ul><div class="completion-actions"><button class="primary" data-exp="restart">CUBA LAGI ↻</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></div></div>`;
       }
+      if (mixture) activity = window.MakmalMixture.render(s, definition);
+      if (light) activity = window.MakmalLight.render(s, definition);
       if (circuit) activity = window.MakmalCircuit.render(s, definition);
-      root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN 2 · ELEKTRIK · MISI ${definition.number || 1}</p><h1>${definition.title}</h1></div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${window.MakmalPico.dialogue(s.message || (definition.dialogues || dialogues)[s.step], s.pose)}<section class="workbench" aria-labelledby="activity-heading">${activity}</section>${s.step < 4 ? `<div class="experiment-actions"><button class="hint-button" data-exp="hint">💡 Hint</button><button class="primary" data-exp="next" ${session.canAdvance() ? '' : 'disabled'}>${s.step === 3 ? 'TEMUI' : 'SETERUSNYA'} →</button></div>` : ''}</div></div>`;
+      root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN 2 · ${definition.unitTitle || 'ELEKTRIK'} · MISI ${definition.number || 1}</p><h1>${definition.title}</h1></div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${window.MakmalPico.dialogue(s.message || (definition.dialogues || dialogues)[s.step], s.pose)}<section class="workbench" aria-labelledby="activity-heading">${activity}</section>${s.step < 4 ? `<div class="experiment-actions"><button class="hint-button" data-exp="hint">💡 Hint</button><button class="primary" data-exp="next" ${session.canAdvance() ? '' : 'disabled'}>${s.step === 3 ? 'TEMUI' : 'SETERUSNYA'} →</button></div>` : ''}</div></div>`;
       if (focusSelector) root.querySelector(focusSelector)?.focus({ preventScroll: true });
     }
     function dispatch(action, value, target) {
@@ -92,18 +97,20 @@ window.MakmalExperiment = (() => {
       const before = session.state.step;
       const matched = Object.keys(session.state.matched).length;
       const wasLit = circuit && session.lit();
-      const wasUnitComplete = progress.isUnitComplete();
+      const wasUnitComplete = progress.isUnitComplete(storageUnit);
       session.act(action, value, target);
       const s = session.state;
+      if ((light || mixture) && s.effect) window.MakmalRewards.play(s.effect);
       if (action === 'match') window.MakmalRewards.play(Object.keys(s.matched).length > matched ? 'correct' : 'wrong');
-      if (action === 'predict') window.MakmalRewards.play(s.prediction ? 'correct' : 'wrong');
-      if (action === 'think') window.MakmalRewards.play(s.thought ? 'correct' : 'wrong');
-      if (s.step === 4 && !s.saved) { progress.completeMission(progressKey); s.saved = true; window.MakmalRewards.play('complete'); if (!wasUnitComplete && progress.isUnitComplete()) window.MakmalRewards.play('unitComplete'); }
+      if (!light && !mixture && action === 'predict') window.MakmalRewards.play(s.prediction ? 'correct' : 'wrong');
+      if (!light && !mixture && action === 'think') window.MakmalRewards.play(s.thought ? 'correct' : 'wrong');
+      if (s.step === 4 && !s.saved) { progress.completeMission(progressKey, storageUnit); s.saved = true; window.MakmalRewards.play('complete'); if (!wasUnitComplete && progress.isUnitComplete(storageUnit)) window.MakmalRewards.play('unitComplete'); }
       if (circuit && action === 'terminal') window.MakmalRewards.play(s.pose === 'happy' ? 'connection' : s.pose === 'thinking' ? 'wrong' : 'click');
       if (action === 'toggle') window.MakmalRewards.play('switch');
       if (circuit && !wasLit && session.lit()) window.MakmalRewards.play(definition.mode === 'repair' ? 'repair' : 'bulb');
-      const focus = s.step !== before || action === 'observe' ? '#activity-heading' : action === 'select' ? `[data-label="${s.selected}"]` : action === 'match' ? (session.canAdvance() ? '[data-exp="next"]' : '[data-label]:not(:disabled)') : action === 'hint' ? '[data-exp="hint"]' : `[data-exp="${action}"][data-value="${value}"]`;
+      const focus = s.step !== before || action === 'observe' ? '#activity-heading' : action === 'select' ? `[data-label="${s.selected}"]` : action === 'match' ? (session.canAdvance() ? '[data-exp="next"]' : '[data-label]:not(:disabled)') : action === 'hint' ? '[data-exp="hint"]' : `[data-exp="${action}"]${value === undefined ? '' : `[data-value="${value}"]`}`;
       draw(action === 'terminal' ? `[data-terminal="${value}"]:not(:disabled)` : action === 'toggle' ? '[data-exp="toggle"]' : focus);
+      if ((light || mixture) && !root.contains(document.activeElement)) root.querySelector('[data-exp="pick"]:not(:disabled),[data-exp="next"]:not(:disabled),#activity-heading')?.focus({ preventScroll: true });
       if (action === 'terminal' && !root.contains(document.activeElement)) root.querySelector('[data-terminal]:not(:disabled),[data-exp="toggle"],[data-exp="next"]')?.focus({ preventScroll: true });
       if (s.step !== before || action === 'observe') root.querySelector('#activity-heading')?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
       if (s.hintTarget) hintTimer = setTimeout(() => { s.hintTarget = null; root.querySelectorAll('.hint-target').forEach(el => el.classList.remove('hint-target')); }, 3000);
@@ -117,7 +124,7 @@ window.MakmalExperiment = (() => {
       dispatch(action, button.dataset.value);
     }, { signal: controller.signal });
     const detach = window.MakmalInteraction.attach(root, { select: id => dispatch('select', id), match: (id, target) => dispatch('match', id, target), terminal: id => dispatch('terminal', id) });
-    if (!replayIntro) progress.startMissionAttempt(progressKey);
+    if (!replayIntro) progress.startMissionAttempt(progressKey, storageUnit);
     draw();
     return () => { disposed = true; clearTimeout(hintTimer); controller.abort(); detach(); window.MakmalRewards.stop(); };
   }

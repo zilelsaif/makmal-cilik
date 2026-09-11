@@ -14,9 +14,9 @@ window.MakmalRouter = (() => {
       if (screen === 'missionPlaceholder' && !unit.missions.some(m => m.id === context.missionId)) return { screen: 'unitDetail', context: { unitId: unit.id } };
     }
     if (screen === 'experiment') {
-      if (context.unitId !== 'electricity' || !/^electricity-[1-5]$/.test(context.missionId)) return { screen: 'year2', context: {} };
+      if (!['electricity', 'light-dark', 'mixtures'].includes(context.unitId) || !new RegExp('^' + context.unitId + '-[1-5]$').test(context.missionId)) return { screen: 'year2', context: {} };
     }
-    if (screen === 'experiment' && !window.MakmalProgress.isAvailable(Number(context.missionId.split('-').pop()))) return { screen: 'unitDetail', context: { unitId: 'electricity' } };
+    if (screen === 'experiment' && !window.MakmalProgress.isAvailable(Number(context.missionId.split('-').pop()), context.unitId === 'light-dark' ? 'lightDark' : context.unitId)) return { screen: 'unitDetail', context: { unitId: context.unitId } };
     return { screen, context };
   }
   function display(state) {

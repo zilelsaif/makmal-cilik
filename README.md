@@ -2,85 +2,87 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v0.5.0 by Zil-el-Saif** — educational Science game for Malaysian primary-school students, with KSSR / DSKP curriculum direction.
+**v0.7.0 by Zil-el-Saif** — educational Science game for Malaysian primary-school students, with KSSR / DSKP curriculum direction.
 
-## This milestone
+## Playable content
 
-**All five Sains Tahun 2 — Elektrik missions are playable**, with sequential progression and replay:
+**15 playable missions across three complete Year 2 units.**
 
-1. **Kenali Peralatan** — identify and match battery, bulb, wire and switch.
-2. **Nyalakan Mentol** — build three fixed connections and close the switch.
-3. **Mentol Tidak Menyala** — repair one deterministic broken connection between Suis A and Mentol A; the other two wires and closed switch are already set.
-4. **Suis Misteri** — actively try closed and open switch states before advancing, then compare their effects on the bulb.
-5. **Cabaran Juruteknik** — repair the final missing wire and close the switch to restore the lab lamp; finish with an Electricity unit checklist.
+| Elektrik | Terang & Gelap | Campuran |
+| --- | --- | --- |
+| Kenali Peralatan | Mana Sumber Cahaya? | Apa Dalam Campuran? |
+| Nyalakan Mentol | Nyalakan Bilik | Gunakan Magnet |
+| Mentol Tidak Menyala | Bayang-Bayang | Ayak Campuran |
+| Suis Misteri | Halang Cahaya | Larut atau Tidak? |
+| Cabaran Juruteknik | Misteri Dalam Gelap | Cabaran Asingkan Campuran |
 
-Every mission follows **Ramal → Cuba → Perhati → Fikir → Temui**. Predictions in Missions 2–5 do not block completion. Circuit work uses large fixed terminals, immediate gentle feedback and progressive hints. There is no freehand wiring or generic circuit simulator.
+Every mission follows **Ramal → Cuba → Perhati → Fikir → Temui**. Other Year 2 units remain placeholders.
 
-The seven Year 2 hubs remain. Other Year 2 units contain placeholders only. No XP, stars, achievements system, backend or packaging is included.
+Terang & Gelap introduces its own interactions: classify five light/non-light sources, illuminate three room regions, place a ball in a light beam to form a shadow, compare cardboard with clear plastic, and find PICO's flask behind an obstruction. The finale requires a real light source, at least two illuminated regions, moving the obstruction and selecting the revealed flask. Hidden or obstructed items are not interactive. Predictions do not block completion.
+
+Campuran introduces material discovery, magnet pickup, sieving, dissolving tests and a two-step separation finale. Players predict sugar, salt and sand separately, then select a material, add it to fresh water and stir. Sugar/salt dissolve; sand stays visible. The finale removes iron clips with a magnet before sieving sand and pebbles. Wrong tools give gentle feedback and allow retry. No individual grains are interaction targets.
+
+Electricity retains its matching, fixed circuit construction, deterministic repair, switch comparison and technician finale. No generic simulator, advanced electrical theory or generic quiz engine is introduced.
 
 ## Run
 
-Serve this repository with any static HTTP server and open index.html. No npm dependencies or build step are needed. Development preview: http://127.0.0.1:4174/. GitHub and Cloudflare Pages remain configured externally; this task does not commit, push or deploy.
+Serve this repository with a static HTTP server and open index.html. No npm dependencies, build, CDN, framework or backend is needed. Development preview: http://127.0.0.1:4174/. GitHub and Cloudflare Pages remain configured externally; this task does not commit, push or deploy.
 
 ## Architecture
 
-The existing non-module JavaScript and central router are retained.
+The existing non-module JavaScript architecture remains. CSS and JavaScript URLs carry the release version to refresh stale browser caches after upgrades.
 
-- js/app.js: screens, global controls, experiment mounting and cleanup.
-- js/router.js: title, mainMenu, yearSelect, year2, unitDetail, missionPlaceholder and experiment routes. Back returns to the logical parent; Home returns to Main Menu.
-- js/progress.js: version, safe defaults, storage migration and independent Mission 1–5 progress and derived unlock/unit status.
-- js/content/year2.js: seven units and five mission records per unit.
-- js/content/experiments/electricity-mission1.js: component content and learning-step definitions.
-- js/engine/experiment.js: guarded learning state and experiment rendering.
-- js/engine/interaction.js: pointer dragging, tap/keyboard matching, terminal selection and cleanup.
-- js/content/experiments/electricity-mission2.js: fixed terminal pairs, paths and PICO dialogue.
-- js/engine/circuit.js: shared circuit rules, mission-specific initial states/observations and workbench rendering, mounted by the shared experiment engine.
-- js/content/experiments/electricity-missions3-5.js: repair, switch comparison and finale content; reuses the Mission 2 workbench definition.
-- css/circuit.css: responsive circuit, SVG wire paths, switch lever and bulb glow.
-- js/engine/pico.js: reusable mascot portrait and dialogue states.
-- js/engine/rewards.js: optional sound hooks; no sound assets are registered or requested.
-- css/experiment.css: workbench, learning rail, hints, PICO and responsive experiment layouts.
+- js/content/year2.js: seven units and mission titles.
+- js/content/experiments/: mission-specific content. Each unit defines its five missions and learning text in its own content file.
+- js/engine/experiment.js: shared five-step layout, PICO, hints, lifecycle, replay, focus, progress and cleanup.
+- js/engine/mixture.js: separate material/separation/dissolving rules and rendering. Mission content lives in js/content/experiments/mixtures.js.
+- js/engine/light.js: independent light/shadow state rules and rendering; does not use circuit logic.
+- js/engine/circuit.js: shared Electricity workbench and mission-specific starting states.
+- js/engine/interaction.js: matching drag/tap support and circuit terminal input.
+- js/engine/pico.js: production mascot and dialogue states.
+- js/engine/rewards.js: silent-safe hooks including itemSelected, magnetPickup, sieveAction, stirring, separation, lightOn, itemFound, shadowFormed, correct/wrong, mission and unit completion. No audio files are required.
+- js/progress.js: migration, per-unit mission records, derived counts and availability.
+- js/router.js / js/app.js: routing, unit hubs and global controls.
+- css/mixture.css: trays, tools, water tests, separation animations and responsive layout.
+- css/light.css: dark room, illumination, source cards, shadow stage and responsive controls.
 
-## Progress
+## Progress and replay
 
-The key remains makmalCilikData. v0.1.0 through v0.4.0 saves migrate safely, retaining settings, profile, unknown fields and existing progress. Future schema versions remain intact. Missing/malformed storage uses defaults; unavailable storage uses memory only.
+The key remains makmalCilikData. v0.1.0–v0.6.0 data migrates safely. Unknown fields, profile, settings, Electricity records, timestamps and unrelated Year 2 progress remain intact. Future version values are preserved. Missing/malformed data uses safe defaults; unavailable storage falls back to memory.
 
-progress.year2.electricity.mission1 through mission5 each store completed, attempts, completedAt and lastCompletedAt. Attempts count started runs, not mistakes. Completion updates the corresponding mission to Selesai; Electricity counts all five completed records. Unit completion is derived from those records, avoiding a conflicting stored flag. Replay preserves completion and the first completion timestamp. An unfinished learning step is not resumed after reload.
+Records are separate under progress.year2.electricity, progress.year2.lightDark and progress.year2.mixtures. Each holds mission1–mission5 with completed, attempts, completedAt and lastCompletedAt. Attempts count meaningful starts/restarts, not mistakes. Replay retains completion and the original completedAt. Partial activity state is intentionally not persisted.
 
-Mission 1 is always available. A mission becomes available after its predecessor is completed, and already completed missions remain replayable even if an earlier record is missing. v0.4.0 users with Missions 1–2 completed immediately unlock Mission 3. Locked cards show Akan Datang and explain the prerequisite; the router also enforces availability. Malformed data cannot lock Mission 1. The finale displays UNIT ELEKTRIK SELESAI! only when all five records are completed.
+Each unit's Mission 1 is always available. Completing a mission opens the next; completed missions remain replayable, including when earlier records are missing. Both the hub and router enforce progression. Counts and unit completion are derived from mission records, avoiding inconsistent flags. Hubs show actual progress; other units remain 0 / 5. Back returns to the current unit, Home to Main Menu.
 
-## Visual assets
+## Visual assets and interaction
 
-No new raster assets in v0.5.0: **0 bytes**. Battery, bulb and production PICO (with the science-flask chest emblem) are reused. Wire paths, connector indicators, the moving switch lever and bulb illumination are rendered with SVG/CSS.
+Official reference: assets/reference/makmal-cilik-visual-target.png. It guides visual style and is never embedded as production artwork. Follow ASSET-GUIDELINES.md.
 
-The official reference in assets/reference guides the visual language and is never production artwork. Follow ASSET-GUIDELINES.md.
+New v0.7 asset: **assets/experiments/mixtures/objects.svg — 3,557 bytes**, eleven used material/tool symbols. Reused v0.6 asset: **assets/experiments/light-dark/objects.svg — 3,305 bytes**, a shared SVG sprite with ten simple science/object symbols. No new raster assets. Production PICO, Electricity images and unit icons are reused. Darkness and light use lightweight CSS gradients; shadow geometry uses CSS shapes. No Canvas, WebGL, physics libraries or external assets.
 
-Generated and integrated for v0.3.0:
-
-| Asset | Dimensions | Bytes |
-| --- | --- | ---: |
-| assets/experiments/electricity/mission1/battery.webp | 320 × 320 | 6600 |
-| assets/experiments/electricity/mission1/bulb.webp | 320 × 320 | 5702 |
-| assets/experiments/electricity/mission1/wire.webp | 320 × 320 | 4372 |
-| assets/experiments/electricity/mission1/switch.webp | 320 × 320 | 7894 |
-| assets/mascot/pico.webp | 384 × 384 | 17468 |
-
-Total: 42,036 bytes. Existing seven Year 2 icons are retained. PICO now uses an actual generated portrait; neutral, thinking, happy, hint and success dialogue treatments share that portrait. No unused expression assets were generated. Missing images fall back to readable labels/mascot fallback.
+All new missions use semantic buttons: mouse clicks, touch-style taps and Enter/Space. No dragging is required. Light controls remain outside dark visual layers. Hidden items have no action button until illumination and obstruction rules allow them. Focus stays visible; targets are at least 44px. Reduced-motion disables pickup, sieving, stirring, dissolving and existing movement/celebration animations.
 
 ## QA
 
-Run:
+Node tests:
 
-- `node tests/experiment.test.cjs` — Mission 1 rules, 20 repeated runs, migration and blocked storage.
-- `node tests/circuit.test.cjs` — Mission 2 rules, 20 repeated runs and independent save records.
-- `node tests/electricity-unit.test.cjs` — 90 runs of Missions 3–5, deterministic resets, switch-state gates, migration, recovery, replay timestamps and derived completion.
-- `tests/electricity-unit-browser.html` — 30 isolated browser scenarios: six save states across five sizes, each completing every mission twice (300 completions). Also checks prerequisite routing, touch-style taps after pointer movement, reset with active hints, Back/Home from every pre-completion phase of Missions 3–5, repeated listeners/attempts, completion firing once, unrelated saves and layout.
-- `tests/browser.html` and `tests/circuit-browser.html` — retained Mission 1/2 regression suites, including wrong inputs, hint, replay, cancellation and image fallback. Mission 2 fixtures explicitly satisfy the Mission 1 prerequisite.
+- node tests/experiment.test.cjs — 20 Mission 1 rule/reset runs and storage cases.
+- node tests/circuit.test.cjs — 20 Mission 2 circuit runs and independent saves.
+- node tests/electricity-unit.test.cjs — 90 Electricity Missions 3–5 runs, progression/replay and migration.
+- node tests/mixture.test.cjs — 150 runs including wrong tools, sequence, per-material predictions, stale/duplicate guards and v0.6 migration.
+- node tests/light.test.cjs — 125 light activity runs, hidden-item guards, wrong actions, observation gates, resets and independent unit storage.
 
-Browser fixtures use disposable in-memory saves and do not modify normal game saves. Required sizes: **1366×768, 1920×1080, 390×844, 360×640, 800×450**. No horizontal overflow or clipped text/controls was detected in the full-unit matrix. All missions completed at each size. Terminals remain at least 44px; vertical scrolling is intentional on small/low-height screens.
+Browser fixtures (open via the static server):
 
-Mouse and keyboard interactions are exercised in the preview. Mission 3/5 repair uses tap/click or Enter without dragging; Mission 4 uses Enter/Space. Visible focus is preserved when terminal buttons become disabled. PICO and component assets are reused. Celebration and switch transitions respect reduced-motion CSS. Audio hooks for connection, switch, bulb, repair, mission and unit completion remain silent-safe without audio files.
+- tests/mixture-browser.html — 30 scenarios: fresh, v0.6, partial/full Campuran, malformed and blocked storage across five viewports; 300 mission completions. Includes title/menu/year selection, current mission titles, input hit tests, replay, state guards and preservation of both existing units.
+- tests/light-browser.html — 30 scenarios: six storage conditions × five viewports, every light mission completed twice (300 completions). Covers fresh data, v0.5.0 Electricity completion, partial/full light progress, malformed data, blocked storage, replay, timestamps, unrelated state, reset, Back/Home, hit-testing and hidden objects.
+- tests/electricity-unit-browser.html — 30 full Electricity regression scenarios (300 completions), including matching, circuit construction, repair, both switch states, finale, progression, replay and persistence.
+- tests/browser.html and tests/circuit-browser.html retain focused earlier regression coverage.
+
+Browser fixtures use disposable in-memory saves and do not modify normal game saves. Actual preview interactions also verify keyboard controls and visual states.
+
+Target sizes: **1366×768, 1920×1080, 390×844, 360×640 and 800×450**. All three unit matrices pass without horizontal overflow or clipped controls. Layer hit tests verify that visual overlays do not intercept taps. Vertical scrolling is intentional on compact screens.
 
 ## Limitations
 
-Only Electricity experiments are playable. Other Year 2 units remain placeholders. No final audio effects, physical-device Android testing or OS-level reduced-motion emulation is included. With blocked storage, progress remains in memory only. Partial experiment state is not resumed after reload. No v0.6.0 work, commit, push or deployment is included.
+Only Elektrik, Terang & Gelap and Campuran are playable. Other units, Buku Makmal and achievements remain placeholders. No XP/stars, backend, login, ads, analytics, audio files or Android packaging. Touch-style input is simulated; no physical Android test or OS-level reduced-motion emulation was performed. Blocked storage cannot survive reload. No v0.8.0 work is included.

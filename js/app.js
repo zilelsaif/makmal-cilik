@@ -13,8 +13,10 @@
   const menu = [['BUKU MAKMAL', '📒'], ['PENCAPAIAN', '🏅'], ['PROFIL', '🧑‍🔬'], ['TETAPAN', '⚙️']];
   const pico = window.MakmalPico.portrait;
   let disposeExperiment = null;
-  const completedCount = unit => unit.id === 'electricity' ? progress.completedCount() : 0;
-  const missionStatus = mission => /^electricity-[1-5]$/.test(mission.id) ? (progress.isMissionComplete('mission' + mission.number) ? 'Selesai' : progress.isAvailable(mission.number) ? 'Seterusnya' : 'Akan Datang') : mission.status;
+  const playableUnit = id => ['electricity', 'light-dark', 'mixtures'].includes(id);
+  const storageUnit = id => id === 'light-dark' ? 'lightDark' : id === 'mixtures' ? 'mixtures' : 'electricity';
+  const completedCount = unit => playableUnit(unit.id) ? progress.completedCount(storageUnit(unit.id)) : 0;
+  const missionStatus = mission => /^(electricity|light-dark|mixtures)-[1-5]$/.test(mission.id) ? (progress.isMissionComplete('mission' + mission.number, storageUnit(mission.id.replace(/-[1-5]$/, ''))) ? 'Selesai' : progress.isAvailable(mission.number, storageUnit(mission.id.replace(/-[1-5]$/, ''))) ? 'Seterusnya' : 'Akan Datang') : mission.status;
   const nav = () => '<nav class="navigation" aria-label="Navigasi makmal"><button class="nav-button" data-action="back">← Kembali</button><button class="nav-button" data-action="home">⌂ Menu Utama</button></nav>';
   const heading = (title, subtitle, kicker = '') => `<div class="screen-heading">${kicker ? `<p class="section-kicker">${kicker}</p>` : ''}<h1>${title}</h1>${subtitle ? `<p class="subtext">${subtitle}</p>` : ''}</div>`;
   function showToast(message) {
@@ -28,7 +30,7 @@
     clearTimeout(toastTimer); toast.hidden = true;
     if (name === 'experiment') {
       screen.innerHTML = `<div class="content-screen experiment-screen">${nav()}<div id="experiment-root"></div></div>`;
-      disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate('unitDetail', { unitId: 'electricity' }) });
+      disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate('unitDetail', { unitId: context.unitId }) });
       return;
     }
     if (name === 'title') {
@@ -41,7 +43,7 @@
     if (name === 'year2') content = `${heading('Sains Tahun 2', 'Pilih unit untuk meneroka lima eksperimen.', 'MAKMAL PEMBELAJARAN')}<div class="units-grid hub-grid">${units.map((unit, index) => `<button class="unit-card hub-card unit-${unit.id}" data-unit="${unit.id}"><img class="unit-art" src="${unit.icon}" alt="" width="88" height="88"><span class="unit-copy"><small>UNIT ${String(index + 1).padStart(2, '0')}</small><strong>${unit.title}</strong><span class="unit-description">${unit.description}</span></span><span class="unit-summary"><span>${completedCount(unit)} / ${unit.totalMissions} eksperimen</span><span class="badge">${completedCount(unit) === 5 ? 'Selesai' : completedCount(unit) ? 'Sedang Diterokai' : 'Belum Dimainkan'}</span></span></button>`).join('')}</div>`;
     if (name === 'unitDetail' || name === 'missionPlaceholder') {
       const unit = window.MakmalContent.getUnit(context.unitId);
-      if (name === 'unitDetail') content = `${heading(unit.title, '5 eksperimen untuk diterokai', 'SAINS TAHUN 2')}<div class="unit-intro"><img class="unit-art" src="${unit.icon}" alt="" width="88" height="88"><div><p>${unit.description}</p><span class="badge">${completedCount(unit)} / 5 eksperimen</span></div></div><div class="mission-list">${unit.missions.map(mission => `<button class="mission-card ${['Seterusnya', 'Selesai'].includes(missionStatus(mission)) ? 'mission-next' : ''}" aria-disabled="${unit.id === 'electricity' && !progress.isAvailable(mission.number)}" data-unit-id="${unit.id}" data-mission="${mission.id}"><span class="mission-number" aria-hidden="true">${mission.number}</span><span class="mission-copy"><small>MISI ${mission.number}</small><strong>${mission.title}</strong><span>${mission.description}</span></span><span class="badge">${missionStatus(mission)}</span></button>`).join('')}</div>`;
+      if (name === 'unitDetail') content = `${heading(unit.title, '5 eksperimen untuk diterokai', 'SAINS TAHUN 2')}<div class="unit-intro"><img class="unit-art" src="${unit.icon}" alt="" width="88" height="88"><div><p>${unit.description}</p><span class="badge">${completedCount(unit)} / 5 eksperimen</span></div></div><div class="mission-list">${unit.missions.map(mission => `<button class="mission-card ${['Seterusnya', 'Selesai'].includes(missionStatus(mission)) ? 'mission-next' : ''}" aria-disabled="${playableUnit(unit.id) && !progress.isAvailable(mission.number, storageUnit(mission.id.replace(/-[1-5]$/, '')))}" data-unit-id="${unit.id}" data-mission="${mission.id}"><span class="mission-number" aria-hidden="true">${mission.number}</span><span class="mission-copy"><small>MISI ${mission.number}</small><strong>${mission.title}</strong><span>${mission.description}</span></span><span class="badge">${missionStatus(mission)}</span></button>`).join('')}</div>`;
       else {
         const mission = unit.missions.find(item => item.id === context.missionId);
         content = `<section class="placeholder-panel mission-placeholder"><p class="section-kicker">${unit.title} · MISI ${mission.number}</p><h1>${mission.title}</h1><span class="badge">Akan Datang</span><p class="subtext">Eksperimen ini akan dibina dalam milestone seterusnya.</p><button class="primary" data-action="back">KEMBALI KE UNIT <span aria-hidden="true">←</span></button></section>`;
@@ -59,10 +61,10 @@
     window.MakmalRewards.play('click');
     if (button.dataset.unit) router.navigate('unitDetail', { unitId: button.dataset.unit });
     if (button.dataset.mission) {
-      const electricity = button.dataset.unitId === 'electricity';
+      const playable = playableUnit(button.dataset.unitId);
       const number = Number(button.dataset.mission.split('-').pop());
-      if (electricity && !progress.isAvailable(number)) { showToast('Selesaikan misi sebelumnya dahulu. Misi yang selesai boleh dimainkan semula.'); return; }
-      router.navigate(electricity ? 'experiment' : 'missionPlaceholder', { unitId: button.dataset.unitId, missionId: button.dataset.mission });
+      if (playable && !progress.isAvailable(number, storageUnit(button.dataset.unitId))) { showToast('Selesaikan misi sebelumnya dahulu. Misi yang selesai boleh dimainkan semula.'); return; }
+      router.navigate(playable ? 'experiment' : 'missionPlaceholder', { unitId: button.dataset.unitId, missionId: button.dataset.mission });
     }
     if (button.dataset.route) router.navigate(button.dataset.route);
     if (button.dataset.action === 'back') router.back();

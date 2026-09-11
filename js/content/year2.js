@@ -16,12 +16,14 @@ window.MakmalContent = (() => {
     ['Suis Misteri', 'Terokai fungsi suis dalam litar.'],
     ['Cabaran Juruteknik', 'Bersedia untuk cabaran litar mudah.']
   ];
+  const light = ['Mana Sumber Cahaya?', 'Nyalakan Bilik', 'Bayang-Bayang', 'Halang Cahaya', 'Misteri Dalam Gelap'];
+  const mixtures = ['Apa Dalam Campuran?', 'Gunakan Magnet', 'Ayak Campuran', 'Larut atau Tidak?', 'Cabaran Asingkan Campuran'];
   const year2Units = definitions.map(([id, title, description, emoji]) => ({
     id, title, description, emoji, icon: `assets/modules/year2/${id}.webp`, totalMissions: 5,
     missions: Array.from({ length: 5 }, (_, index) => ({
       id: `${id}-${index + 1}`, number: index + 1,
-      title: id === 'electricity' ? electricity[index][0] : `Eksperimen ${index + 1}`,
-      description: id === 'electricity' ? electricity[index][1] : 'Aktiviti unit ini sedang disediakan.',
+      title: id === 'electricity' ? electricity[index][0] : id === 'light-dark' ? light[index] : id === 'mixtures' ? mixtures[index] : `Eksperimen ${index + 1}`,
+      description: id === 'electricity' ? electricity[index][1] : id === 'light-dark' ? 'Terokai cahaya dan bayang bersama PICO.' : id === 'mixtures' ? 'Terokai bahan dan cara mengasingkannya.' : 'Aktiviti unit ini sedang disediakan.',
       status: id === 'electricity' && index === 0 ? 'Seterusnya' : 'Akan Datang'
     }))
   }));

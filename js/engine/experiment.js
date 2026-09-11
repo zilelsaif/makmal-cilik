@@ -1,0 +1,114 @@
+'use strict';
+window.MakmalExperiment = (() => {
+  function createState() {
+    return { step: 0, prediction: false, selected: null, matched: {}, observed: 0, thought: false, hints: 0, hintTarget: null, message: '', pose: 'neutral', saved: false };
+  }
+  // Mission-specific rules stay small; mounting, steps, reset and input hooks are shared.
+  function createSession(definition) {
+    let state = createState();
+    const has = id => definition.components.some(component => component.id === id);
+    const canAdvance = () => state.step === 0 ? state.prediction : state.step === 1 ? Object.keys(state.matched).length === 4 : state.step === 2 ? state.observed === 3 : state.step === 3 ? state.thought : false;
+    function act(action, value, target) {
+      state.hintTarget = null;
+      if (action === 'predict' && state.step === 0 && has(value)) {
+        state.prediction = value === 'battery';
+        state.message = state.prediction ? 'Ya! Bateri membekalkan tenaga elektrik. Jom kenali alat yang lain.' : 'Hmm... cuba perhatikan semula. Cari alat yang membekalkan tenaga elektrik.';
+        state.pose = state.prediction ? 'happy' : 'thinking';
+      }
+      if (action === 'select' && state.step === 1 && has(value) && !state.matched[value]) {
+        state.selected = value; state.pose = 'neutral';
+        state.message = `Label ${definition.components.find(c => c.id === value).name} dipilih. Sentuh alat yang sepadan.`;
+      }
+      if (action === 'match' && state.step === 1 && has(target) && !state.matched[target]) {
+        const label = value || state.selected;
+        if (!has(label) || state.matched[label]) { state.message = 'Pilih satu label dahulu, kemudian sentuh alatnya.'; return state; }
+        if (label === target) {
+          state.matched[target] = true; state.selected = null; state.pose = 'happy';
+          state.message = Object.keys(state.matched).length === 4 ? 'Hebat! Keempat-empat label sudah dipadankan.' : 'Padanan tepat! Cuba alat yang seterusnya.';
+        } else { state.selected = label; state.pose = 'thinking'; state.message = 'Belum sepadan. Lihat bentuk alat dan cuba lagi.'; }
+      }
+      if (action === 'observe' && state.step === 2 && state.observed < 3) { state.observed++; state.message = ''; state.pose = 'neutral'; }
+      if (action === 'think' && state.step === 3) {
+        state.thought = value === 'no'; state.pose = state.thought ? 'happy' : 'thinking';
+        state.message = state.thought ? 'Betul! Wayar perlu disambungkan supaya litar boleh lengkap.' : 'Cuba fikir semula. Jika sambungan terputus, laluan elektrik tidak lengkap.';
+      }
+      if (action === 'hint' && state.step < 4) {
+        state.hints++; state.pose = 'hint';
+        state.message = 'Lihat bentuk setiap alat dan padankan dengan namanya.';
+        if (state.hints > 1) {
+          const id = state.step === 1 ? state.selected || definition.components.find(c => !state.matched[c.id])?.id : state.step === 0 ? 'battery' : null;
+          state.hintTarget = id;
+          if (id) state.message = `Perhatikan alat yang diserlahkan: ${definition.components.find(c => c.id === id).name}.`;
+          else state.message = state.step === 3 ? 'Wayar menjadi penyambung. Sambungan yang terputus tidak membentuk litar lengkap.' : 'Perhatikan alat yang sedang diserlahkan dan baca kegunaannya.';
+        }
+      }
+      if (action === 'next' && canAdvance()) { state.step++; state.message = ''; state.pose = state.step === 4 ? 'success' : 'neutral'; state.selected = null; state.hints = 0; }
+      return state;
+    }
+    return { get state() { return state; }, canAdvance, act, reset: () => { state = createState(); return state; } };
+  }
+  function mount(root, { onExit }) {
+    const definition = window.MakmalMission1;
+    const session = createSession(definition);
+    const progress = window.MakmalProgress;
+    const controller = new AbortController();
+    let hintTimer, disposed = false;
+    let replayIntro = progress.isMissionComplete();
+    const image = (component, named = true) => `<img src="${component.image}" alt="${named ? component.name : component.visual}" data-fallback="${named ? component.name : component.visual}" width="160" height="160" draggable="false">`;
+    const dialogues = [
+      'Hari ini kita akan kenali alat asas dalam litar elektrik. Kamu rasa yang mana satu digunakan untuk membekalkan tenaga?',
+      'Pilih satu label, kemudian sentuh alatnya. Kamu juga boleh seret label ke alat yang sepadan.',
+      'Mari perhatikan kegunaan setiap alat, satu demi satu.',
+      'Jika wayar tidak disambungkan, adakah litar boleh lengkap?',
+      'Hebat! Sekarang kamu sudah kenal alat asas dalam litar elektrik.'
+    ];
+    function start() { replayIntro = false; session.reset(); progress.startMissionAttempt(); draw(); }
+    function draw(focusSelector) {
+      if (disposed) return;
+      const s = session.state;
+      if (replayIntro) {
+        root.innerHTML = `<section class="experiment-replay"><span class="badge">✓ Selesai</span><h1>Kenali Peralatan</h1>${window.MakmalPico.dialogue('Misi ini sudah selesai. Mahu teroka alat-alat ini sekali lagi?', 'happy')}<button class="primary" data-exp="start">MAIN SEMULA <span aria-hidden="true">↻</span></button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></section>`;
+        return;
+      }
+      const current = definition.components[s.observed];
+      const rail = `<ol class="learning-steps" aria-label="Lima langkah pembelajaran">${definition.steps.map((step, index) => `<li ${index === s.step ? 'aria-current="step"' : ''} class="${index < s.step ? 'step-done' : ''}"><span aria-hidden="true">${index < s.step ? '✓' : index + 1}</span><strong>${step}</strong></li>`).join('')}</ol>`;
+      let activity = '';
+      if (s.step === 0) activity = `<h2 id="activity-heading" tabindex="-1">Alat manakah membekalkan tenaga?</h2><p class="activity-instruction">Sentuh satu alat untuk membuat ramalan.</p><div class="component-grid">${definition.components.map(c => `<button class="component-card ${s.prediction && c.id === 'battery' ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-exp="predict" data-value="${c.id}">${image(c)}<strong>${c.name}</strong>${s.prediction && c.id === 'battery' ? '<span>✓ Ramalan tepat</span>' : ''}</button>`).join('')}</div>`;
+      if (s.step === 1) activity = `<h2 id="activity-heading" tabindex="-1">Padankan nama dengan alat</h2><p class="activity-instruction">Pilih label → sentuh alat, atau seret label ke alat. <strong>${Object.keys(s.matched).length} / 4 sepadan</strong></p><div class="label-tray" role="group" aria-label="Label peralatan">${['wire', 'battery', 'switch', 'bulb'].map(id => { const c = definition.components.find(c => c.id === id); return `<button class="label-chip" data-label="${c.id}" aria-pressed="${s.selected === c.id}" ${s.matched[c.id] ? 'disabled' : ''}>${c.name}${s.matched[c.id] ? ' ✓' : ''}</button>`; }).join('')}</div><div class="component-grid">${definition.components.map((c, i) => `<button class="component-card ${s.matched[c.id] ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-target="${c.id}" aria-label="${s.matched[c.id] ? c.name + ', sudah sepadan' : 'Padankan pada alat ' + (i + 1) + ': ' + c.visual}" ${s.matched[c.id] ? 'disabled' : ''}>${image(c, !!s.matched[c.id])}<strong>${s.matched[c.id] ? '✓ ' + c.name : 'Alat ' + (i + 1)}</strong><span>${s.matched[c.id] ? 'Sepadan' : 'Letakkan label di sini'}</span></button>`).join('')}</div>`;
+      if (s.step === 2) activity = `<h2 id="activity-heading" tabindex="-1">Perhatikan: ${current.name}</h2><div class="observation"><div class="component-card observed">${image(current)}<strong>${current.name}</strong></div><div><p class="observation-count">Alat ${s.observed + 1} daripada 4</p><p class="explanation">${current.explanation}</p>${s.observed < 3 ? '<button class="primary" data-exp="observe">ALAT SETERUSNYA →</button>' : '<p class="observed-all">✓ Kamu sudah perhatikan keempat-empat alat.</p>'}</div></div>`;
+      if (s.step === 3) activity = `<h2 id="activity-heading" tabindex="-1">Fikirkan sambungannya</h2><div class="think-panel">${image(definition.components[2])}<p>Jika wayar tidak disambungkan,<br>adakah litar boleh lengkap?</p></div><div class="answer-buttons"><button class="nav-button" data-exp="think" data-value="yes">Ya, boleh lengkap</button><button class="nav-button ${s.thought ? 'answer-correct' : ''}" data-exp="think" data-value="no">Tidak, belum lengkap</button></div>`;
+      if (s.step === 4) activity = `<div class="completion"><span class="completion-check" aria-hidden="true">✓</span><h2 id="activity-heading" tabindex="-1">Misi Selesai</h2><p>Empat alat asas, empat kegunaan!</p><ul class="component-summary">${definition.components.map(c => `<li>${image(c)}<div><strong>${c.name}</strong><span>${c.explanation}</span></div></li>`).join('')}</ul><div class="completion-actions"><button class="primary" data-exp="restart">CUBA LAGI ↻</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></div></div>`;
+      root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN 2 · ELEKTRIK · MISI 1</p><h1>Kenali Peralatan</h1></div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${window.MakmalPico.dialogue(s.message || dialogues[s.step], s.pose)}<section class="workbench" aria-labelledby="activity-heading">${activity}</section>${s.step < 4 ? `<div class="experiment-actions"><button class="hint-button" data-exp="hint">💡 Hint</button><button class="primary" data-exp="next" ${session.canAdvance() ? '' : 'disabled'}>${s.step === 3 ? 'TEMUI' : 'SETERUSNYA'} →</button></div>` : ''}</div></div>`;
+      if (focusSelector) root.querySelector(focusSelector)?.focus({ preventScroll: true });
+    }
+    function dispatch(action, value, target) {
+      if (replayIntro || disposed) return;
+      clearTimeout(hintTimer);
+      const before = session.state.step;
+      const matched = Object.keys(session.state.matched).length;
+      session.act(action, value, target);
+      const s = session.state;
+      if (action === 'match') window.MakmalRewards.play(Object.keys(s.matched).length > matched ? 'correct' : 'wrong');
+      if (action === 'predict') window.MakmalRewards.play(s.prediction ? 'correct' : 'wrong');
+      if (action === 'think') window.MakmalRewards.play(s.thought ? 'correct' : 'wrong');
+      if (s.step === 4 && !s.saved) { progress.completeMission(); s.saved = true; window.MakmalRewards.play('complete'); }
+      const focus = s.step !== before || action === 'observe' ? '#activity-heading' : action === 'select' ? `[data-label="${s.selected}"]` : action === 'match' ? (session.canAdvance() ? '[data-exp="next"]' : '[data-label]:not(:disabled)') : action === 'hint' ? '[data-exp="hint"]' : `[data-exp="${action}"][data-value="${value}"]`;
+      draw(focus);
+      if (s.step !== before || action === 'observe') root.querySelector('#activity-heading')?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+      if (s.hintTarget) hintTimer = setTimeout(() => { s.hintTarget = null; root.querySelectorAll('.hint-target').forEach(el => el.classList.remove('hint-target')); }, 3000);
+    }
+    root.addEventListener('click', event => {
+      const button = event.target.closest('[data-exp]');
+      if (!button || button.disabled) return;
+      const action = button.dataset.exp;
+      if (action === 'exit') { onExit(); return; }
+      if (action === 'start' || action === 'restart') { start(); root.querySelector('#activity-heading')?.focus(); return; }
+      dispatch(action, button.dataset.value);
+    }, { signal: controller.signal });
+    const detach = window.MakmalInteraction.attach(root, { select: id => dispatch('select', id), match: (id, target) => dispatch('match', id, target) });
+    if (!replayIntro) progress.startMissionAttempt();
+    draw();
+    return () => { disposed = true; clearTimeout(hintTimer); controller.abort(); detach(); window.MakmalRewards.stop(); };
+  }
+  return { createSession, mount };
+})();

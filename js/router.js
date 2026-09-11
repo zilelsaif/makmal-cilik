@@ -1,27 +1,39 @@
 'use strict';
 window.MakmalRouter = (() => {
-  const valid = new Set(['title', 'mainMenu', 'yearSelect', 'year2', 'placeholder']);
-  const parents = { mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', placeholder: 'mainMenu' };
+  const valid = new Set(['title', 'mainMenu', 'yearSelect', 'year2', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
+  const parents = { mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
   let current = 'title';
+  let currentContext = {};
   let render;
-  function navigate(screen, context = {}, replace = false) {
-    if (!valid.has(screen)) screen = 'title';
-    current = screen;
-    history[replace ? 'replaceState' : 'pushState']({ screen, context }, '');
-    render(screen, context);
+  function resolve(screen, context) {
+    if (!valid.has(screen)) return { screen: 'title', context: {} };
+    context = context && typeof context === 'object' ? context : {};
+    if (screen === 'unitDetail' || screen === 'missionPlaceholder') {
+      const unit = window.MakmalContent.getUnit(context.unitId);
+      if (!unit) return { screen: 'year2', context: {} };
+      if (screen === 'missionPlaceholder' && !unit.missions.some(m => m.id === context.missionId)) return { screen: 'unitDetail', context: { unitId: unit.id } };
+    }
+    if (screen === 'experiment') {
+      if (context.unitId !== 'electricity' || context.missionId !== 'electricity-1') return { screen: 'year2', context: {} };
+    }
+    return { screen, context };
+  }
+  function display(state) {
+    current = state.screen; currentContext = state.context;
+    render(current, currentContext);
     document.getElementById('screen').focus({ preventScroll: true });
     window.scrollTo(0, 0);
+  }
+  function navigate(screen, context = {}, replace = false) {
+    const state = resolve(screen, context);
+    history[replace ? 'replaceState' : 'pushState'](state, '');
+    display(state);
   }
   function init(renderer) {
     render = renderer;
     navigate('title', {}, true);
-    window.addEventListener('popstate', event => {
-      current = valid.has(event.state?.screen) ? event.state.screen : 'title';
-      render(current, event.state?.context || {});
-      document.getElementById('screen').focus({ preventScroll: true });
-      window.scrollTo(0, 0);
-    });
+    window.addEventListener('popstate', event => display(resolve(event.state?.screen, event.state?.context)));
   }
-  // Future experiment routes can extend this registry with Ramal → Cuba → Perhati → Fikir → Temui.
-  return { init, navigate, back: () => navigate(parents[current] || 'title'), home: () => navigate('mainMenu') };
+  // Future gameplay can extend these routes without changing content records.
+  return { init, navigate, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
 })();

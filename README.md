@@ -2,104 +2,63 @@
 
 **Eksperimen. Fikir. Temui.**
 
-An educational Science game for Malaysian primary-school students, by **Zil-el-Saif**. This v0.1.0 milestone provides the UI and navigation foundation only.
+**v0.3.0 by Zil-el-Saif** — educational Science game for Malaysian primary-school students, with KSSR / DSKP curriculum direction.
 
-Curriculum direction: **KSSR / DSKP**. **Sains Tahun 2** is the first planned playable curriculum, with intended expansion to **Tahun 1–6**.
+## This milestone
+
+Electricity Mission 1, **Kenali Peralatan**, is the first playable experiment. Children identify Bateri, Mentol, Wayar and Suis through **Ramal → Cuba → Perhati → Fikir → Temui**. Prediction and reflection give gentle feedback; matching supports dragging, selecting a label then tapping an object, and keyboard controls. Observation introduces each component in sequence. Hints and PICO guide the activity.
+
+The seven Year 2 units and their five-mission structures remain. Only Electricity Mission 1 is playable. All other missions retain the in-game future-milestone message. There is no circuit simulation, XP, stars, achievements, generic quiz engine, backend or Android packaging.
 
 ## Run
 
-Open `index.html` in a modern browser. No installation, build, npm packages, CDN or network connection is required. For consistent browser storage behavior during development, serve this folder using any local static HTTP server. The preview in this development session uses http://127.0.0.1:4173.
+Serve this repository with any static HTTP server and open index.html. No npm dependencies or build step are needed. Development preview: http://127.0.0.1:4174/. GitHub and Cloudflare Pages remain configured externally; this task does not commit, push or deploy.
 
-## Structure
+## Architecture
 
-```text
-index.html
-css/
-  base.css          Shared theme and accessible controls
-  screens.css       Screen layouts
-  responsive.css    Portrait and low-height landscape layouts
-js/
-  app.js            Rendering and interaction wiring
-  router.js         Central SPA navigation
-  progress.js       Version and resilient local storage
-assets/
-  branding/
-  mascot/
-  modules/
-  ui/
-  audio/
-README.md
-.gitignore
-```
+The existing non-module JavaScript and central router are retained.
 
-## Design
+- js/app.js: screens, global controls, experiment mounting and cleanup.
+- js/router.js: title, mainMenu, yearSelect, year2, unitDetail, missionPlaceholder and experiment routes. Back returns to the logical parent; Home returns to Main Menu.
+- js/progress.js: version, safe defaults, storage migration and Mission 1 progress.
+- js/content/year2.js: seven units and five mission records per unit.
+- js/content/experiments/electricity-mission1.js: component content and learning-step definitions.
+- js/engine/experiment.js: guarded learning state and experiment rendering.
+- js/engine/interaction.js: pointer dragging, tap/keyboard matching and cleanup.
+- js/engine/pico.js: reusable mascot portrait and dialogue states.
+- js/engine/rewards.js: optional sound hooks; no sound assets are registered or requested.
+- css/experiment.css: workbench, learning rail, hints, PICO and responsive experiment layouts.
 
-**Ramal → Cuba → Perhati → Fikir → Temui**
+## Progress
 
-Future learning should emphasize observation, prediction and hands-on discovery, rather than a conventional multiple-choice quiz. The approved concept image is the project's visual target. The official reference is stored at `assets/reference/makmal-cilik-visual-target.png`. Its bright blue frames, yellow branding, white panels, green primary menu action and soft dimensional controls guide all four screens. The image is a design reference only and is never loaded by the game UI. The reference must never be embedded as the game interface.
+The key remains makmalCilikData. v0.1.0 and v0.2.0 saves migrate safely, retaining settings, profile, unknown fields and existing progress. Future schema versions remain intact. Missing/malformed storage uses defaults; unavailable storage uses memory only.
 
-PICO is an emoji placeholder on the title screen and main menu. The comment beside `pico()` in `js/app.js` shows how to replace it with `assets/mascot/pico.webp`.
+progress.year2.electricity.mission1 stores completed, attempts, completedAt and lastCompletedAt. Attempts count started runs, not mistakes. Completion updates Mission 1 to Selesai and Electricity to 1 / 5 eksperimen. Replay preserves completion and the first completion timestamp. An unfinished learning step is not resumed after reload.
 
-## Current behavior
+## Visual assets
 
-- Title → Main Menu → Pilih Tahun → Sains Tahun 2, without page reloads.
-- Six year cards; only Tahun 2 opens the seven specified units.
-- Other years and units display accessible in-game messages.
-- Buku Makmal, Pencapaian, Profil and Tetapan open an Akan Datang panel.
-- Kembali navigates to the parent screen; Menu Utama returns to the menu. The brand returns to the title. Browser Back/Forward restores visited screen state. Reload starts at the title.
-- Sound preference persists under `makmalCilikData`. No audio is played in this milestone.
-- Fullscreen enters/exits where supported, with a friendly fallback on failure.
-- Semantic buttons, keyboard focus, large touch targets and reduced-motion CSS.
+The official reference in assets/reference guides the visual language and is never production artwork. Follow ASSET-GUIDELINES.md.
 
-## Storage and version
+Generated and integrated for v0.3.0:
 
-`js/progress.js` owns the single application version constant, `APP_VERSION`. Its `loadData()`, `saveData()` and `updateSetting()` helpers handle missing or malformed data and unavailable storage. Unknown schema fields are preserved for future expansion. Storage is device/browser-local; in-memory fallback cannot persist after a reload.
+| Asset | Dimensions | Bytes |
+| --- | --- | ---: |
+| assets/experiments/electricity/mission1/battery.webp | 320 × 320 | 6600 |
+| assets/experiments/electricity/mission1/bulb.webp | 320 × 320 | 5702 |
+| assets/experiments/electricity/mission1/wire.webp | 320 × 320 | 4372 |
+| assets/experiments/electricity/mission1/switch.webp | 320 × 320 | 7894 |
+| assets/mascot/pico.webp | 384 × 384 | 17468 |
 
-Initial schema:
+Total: 42,036 bytes. Existing seven Year 2 icons are retained. PICO now uses an actual generated portrait; neutral, thinking, happy, hint and success dialogue treatments share that portrait. No unused expression assets were generated. Missing images fall back to readable labels/mascot fallback.
 
-```js
-{
-  version: "0.1.0",
-  settings: { sound: true },
-  profile: { name: "Saintis" },
-  progress: {}
-}
-```
+## QA
 
-## Planned delivery
+Run node tests/experiment.test.cjs for state rules, 20 repeated runs, progression gates, hints, reset, migration, replay retention and blocked storage.
 
-This is a static Vanilla HTML5/CSS3/JavaScript application. GitHub → Cloudflare Pages hosting is planned; Capacitor Android packaging, Android Studio integration and a Google Play release are planned for later milestones. None is configured or published in v0.1.0. Cloudflare Pages can later serve this directory directly without an application build step.
+Open tests/browser.html through the local server and select Run storage and replay scenarios. The disposable iframe storage does not alter normal game saves. Fresh, v0.2.0, malformed, blocked and completed saves each pass three full completions/replays, including attempt counts, navigation, cancellation and image fallback checks. Cancellation is synthetic, not physical-device touch testing.
 
-No science experiments, quiz engine, progression, XP, star calculations, achievement logic, notebook content, backend, login, database, cloud sync, analytics, advertisements or monetization are implemented.
+All five learning phases were exercised at measured CSS viewports 1366×768, 1920×1080, 390×844, 360×640 and 800×450. No horizontal overflow or clipped text/control boxes was detected; vertical scrolling keeps activity controls reachable. Desktop and portrait layouts were visually inspected. Dragging, tap matching and keyboard matching were exercised. Sound settings survive reload and fullscreen enters/exits. The rapid-tap suppression issue found during QA was fixed so a new pointer action is not discarded as a previous drag click.
 
-## QA — v0.1.0
+## Limitations
 
-Verified with the in-app browser:
-
-- Title branding, exact tagline/version credit and PICO on both required screens.
-- Main journey, all five unavailable-year messages, all seven unit messages and all four placeholder panels.
-- Parent Back, Home, browser Back/Forward and keyboard Enter navigation.
-- Sound off persists through reload; fullscreen enters and exits with updated state.
-- Visible keyboard focus; no error-level browser console logs during the checks.
-- All four screens checked under viewport settings 1366×768, 1920×1080, 390×844, 360×640 and 800×450. No horizontal overflow; all buttons measured at least 44 CSS pixels high. Portrait and landscape screenshots inspected.
-
-Viewport caveat: the in-app browser applied display scaling during part of testing (for example, the 800×450 setting reported a 654 CSS-pixel content width). These are representative responsive checks, not exact physical-device certification. No real Android device was available. Some short/portrait screens scroll vertically so all content remains reachable.
-
-JavaScript syntax checks passed. Separate isolated storage tests passed for missing data, malformed JSON, invalid top-level values, future fields/version preservation, preference reload and denied storage. Reduced-motion behavior was verified in the stylesheet (all transitions/animations disabled by its media query); OS-level preference switching was not exercised.
-
-Known limits: PICO appearance varies with the platform emoji font; PICO remains a replaceable emoji placeholder rather than a reproduction of the reference robot. Fullscreen support depends on the browser. Storage fallback is temporary when localStorage is blocked. Actual experiments and Android packaging remain future work by design.
-
-
-## Official visual target refinement — version unchanged
-
-The supplied reference was inspected and copied from Downloads to `assets/reference/makmal-cilik-visual-target.png`. The game does not embed or fetch it. Shared CSS now uses vivid blue framed panels, blue/yellow title lettering, softly raised gradient buttons, a green main-menu learning action, pale laboratory backgrounds and bordered PICO dialogue panels. The four screen layouts retain their responsive grids, with compact framed headings on portrait and low-height screens. PICO remains an emoji placeholder. No experiment, XP, reward or other future system was added; version remains 0.1.0.
-
-Panduan aset untuk kerja seterusnya: [ASSET-GUIDELINES.md](ASSET-GUIDELINES.md).
-
-## Final QA after visual refinement — 2026-09-11
-
-Exact DOM viewport dimensions were verified at 1366×768, 1920×1080, 390×844, 360×640 and 800×450. Title, main menu, year selection, Year 2 and placeholder layouts were measured at each size. No horizontal document overflow, clipped text/control boxes, off-screen horizontal controls or Back/Home overlap was found. All seven unit buttons were clicked successfully at every size; each displayed its expected message. Portrait title/menu and landscape title/placeholder were also visually inspected. Tall lists remain vertically scrollable.
-
-One issue was found: the placeholder panel extended below the initial 800×450 viewport (bottom approximately 555px). A narrowly scoped low-height landscape rule in css/responsive.css reduces panel padding, icon size and spacing. All four placeholder panels were retested after reload and now end at approximately 405px within the 450px viewport, with no clipping or navigation overlap.
-
-Sound-on and sound-off both survived reload. Fullscreen entered and exited with the expected control state. Back and Home navigation passed. Browser error-level console logs were empty. Version remains **Makmal Cilik v0.1.0**; no features or future milestone systems were added. These are browser viewport checks, not physical Android-device tests.
+Only Mission 1 is playable. There are no actual sound effects yet. PICO expression treatments share one image. No physical Android device was tested. Reduced-motion CSS is included; OS-level reduced-motion emulation was not exercised. With blocked storage, progress cannot survive a reload. No v0.4.0 work is included.

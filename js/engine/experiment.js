@@ -48,8 +48,8 @@ window.MakmalExperiment = (() => {
     return { get state() { return state; }, canAdvance, act, reset: () => { state = createState(); return state; } };
   }
   function mount(root, { onExit, missionId = 'electricity-1' }) {
-    const circuit = missionId === 'electricity-2';
-    const definition = circuit ? window.MakmalMission2 : window.MakmalMission1;
+    const circuit = missionId !== 'electricity-1';
+    const definition = circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
     const progressKey = definition.progressKey || 'mission1';
     const session = circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
     const progress = window.MakmalProgress;
@@ -64,7 +64,7 @@ window.MakmalExperiment = (() => {
       'Jika wayar tidak disambungkan, adakah litar boleh lengkap?',
       'Hebat! Sekarang kamu sudah kenal alat asas dalam litar elektrik.'
     ];
-    function start() { replayIntro = false; session.reset(); progress.startMissionAttempt(progressKey); draw(); }
+    function start() { clearTimeout(hintTimer); window.MakmalRewards.stop(); replayIntro = false; session.reset(); progress.startMissionAttempt(progressKey); draw(); }
     function draw(focusSelector) {
       if (disposed) return;
       const s = session.state;
@@ -91,17 +91,20 @@ window.MakmalExperiment = (() => {
       clearTimeout(hintTimer);
       const before = session.state.step;
       const matched = Object.keys(session.state.matched).length;
+      const wasLit = circuit && session.lit();
+      const wasUnitComplete = progress.isUnitComplete();
       session.act(action, value, target);
       const s = session.state;
       if (action === 'match') window.MakmalRewards.play(Object.keys(s.matched).length > matched ? 'correct' : 'wrong');
       if (action === 'predict') window.MakmalRewards.play(s.prediction ? 'correct' : 'wrong');
       if (action === 'think') window.MakmalRewards.play(s.thought ? 'correct' : 'wrong');
-      if (s.step === 4 && !s.saved) { progress.completeMission(progressKey); s.saved = true; window.MakmalRewards.play('complete'); }
-      if (circuit && action === 'terminal') window.MakmalRewards.play(s.pose === 'happy' ? 'correct' : s.pose === 'thinking' ? 'wrong' : 'click');
-      if (action === 'toggle') window.MakmalRewards.play('click');
+      if (s.step === 4 && !s.saved) { progress.completeMission(progressKey); s.saved = true; window.MakmalRewards.play('complete'); if (!wasUnitComplete && progress.isUnitComplete()) window.MakmalRewards.play('unitComplete'); }
+      if (circuit && action === 'terminal') window.MakmalRewards.play(s.pose === 'happy' ? 'connection' : s.pose === 'thinking' ? 'wrong' : 'click');
+      if (action === 'toggle') window.MakmalRewards.play('switch');
+      if (circuit && !wasLit && session.lit()) window.MakmalRewards.play(definition.mode === 'repair' ? 'repair' : 'bulb');
       const focus = s.step !== before || action === 'observe' ? '#activity-heading' : action === 'select' ? `[data-label="${s.selected}"]` : action === 'match' ? (session.canAdvance() ? '[data-exp="next"]' : '[data-label]:not(:disabled)') : action === 'hint' ? '[data-exp="hint"]' : `[data-exp="${action}"][data-value="${value}"]`;
       draw(action === 'terminal' ? `[data-terminal="${value}"]:not(:disabled)` : action === 'toggle' ? '[data-exp="toggle"]' : focus);
-      if (action === 'terminal' && !root.contains(document.activeElement)) root.querySelector('[data-terminal]:not(:disabled),[data-exp="toggle"]')?.focus({ preventScroll: true });
+      if (action === 'terminal' && !root.contains(document.activeElement)) root.querySelector('[data-terminal]:not(:disabled),[data-exp="toggle"],[data-exp="next"]')?.focus({ preventScroll: true });
       if (s.step !== before || action === 'observe') root.querySelector('#activity-heading')?.scrollIntoView({ block: 'nearest', behavior: 'instant' });
       if (s.hintTarget) hintTimer = setTimeout(() => { s.hintTarget = null; root.querySelectorAll('.hint-target').forEach(el => el.classList.remove('hint-target')); }, 3000);
     }

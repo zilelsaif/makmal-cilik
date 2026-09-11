@@ -2,7 +2,7 @@
 window.MakmalRewards = (() => {
   // Audio is optional. Register a source only after the corresponding asset exists.
   const sources = new Map();
-  const allowed = new Set(['click', 'correct', 'wrong', 'complete']);
+  const allowed = new Set(['click', 'correct', 'wrong', 'complete', 'connection', 'switch', 'bulb', 'repair', 'unitComplete']);
   const playing = new Set();
   function play(event) {
     if (!allowed.has(event) || !window.MakmalProgress.getData().settings.sound || !sources.has(event)) return;

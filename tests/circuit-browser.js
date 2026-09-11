@@ -13,6 +13,8 @@ document.getElementById('run').onclick=async()=>{
       const boot=`<base href="../"><script>window.qaErrors=[];addEventListener('error',e=>{if(e.message)qaErrors.push(e.message)});addEventListener('unhandledrejection',e=>qaErrors.push(String(e.reason)));let raw=${JSON.stringify(raw)};Object.defineProperty(window,'localStorage',{value:{getItem:()=>raw,setItem:(k,v)=>raw=v}});<\/script>`;
       frame.srcdoc=html.replace('<head>','<head>'+boot);document.getElementById('frame').replaceChildren(frame);await new Promise(r=>frame.onload=r);
       const w=frame.contentWindow,d=frame.contentDocument;
+      // Mission 2 regression starts after its prerequisite; full-unit QA covers fresh progression.
+      if(!w.MakmalProgress.isMissionComplete())w.MakmalProgress.completeMission();
       const click=selector=>{const el=d.querySelector(selector);assert(el&&!el.disabled,'Missing/disabled '+selector);el.scrollIntoView({block:'nearest'});el.click();};
       const check=label=>{assert(w.innerWidth===width&&w.innerHeight===height,'Viewport mismatch');assert(d.documentElement.scrollWidth<=width,'Overflow '+label);for(const el of d.querySelectorAll('button,h1,h2,p,.learning-steps'))assert(el.scrollWidth<=el.clientWidth+2&&el.scrollHeight<=el.clientHeight+2,'Clipped '+label+': '+el.textContent);for(const el of d.querySelectorAll('button'))assert(el.getBoundingClientRect().height>=44,'Small control '+label);};
       check('title');click('[data-route="mainMenu"]');check('menu');click('[data-route="yearSelect"]');check('years');click('[data-route="year2"]');check('hub');click('[data-unit="electricity"]');check('list');click('[data-mission="electricity-2"]');
@@ -34,7 +36,7 @@ document.getElementById('run').onclick=async()=>{
         if(!repeat)click('[data-exp="restart"]');
       }
       click('[data-exp="restart"]');click('[data-exp="predict"][data-value="no"]');click('[data-exp="next"]');click('[data-exp="toggle"]');click('[data-exp="restart"]');click('[data-exp="predict"][data-value="no"]');click('[data-exp="next"]');assert(!d.querySelector('.circuit-lit')&&d.querySelectorAll('.circuit-wires .connected').length===0,'Reset dirty');assert(d.querySelector('[data-exp="toggle"]').getAttribute('aria-pressed')==='false','Reset switch');
-      click('[data-action="back"]');assert(d.querySelector('[data-mission="electricity-2"]').textContent.includes('Selesai'),'List stale');click('[data-mission="electricity-3"]');assert(d.querySelector('.placeholder-panel')||d.body.textContent.includes('milestone seterusnya'),'Mission3 playable');click('[data-action="back"]');click('[data-mission="electricity-2"]');click('[data-exp="start"]');click('[data-action="home"]');assert(d.querySelector('[data-route="yearSelect"]'),'Home failed');
+      click('[data-action="back"]');assert(d.querySelector('[data-mission="electricity-2"]').textContent.includes('Selesai'),'List stale');assert(d.querySelector('[data-mission="electricity-3"]').textContent.includes('Seterusnya'),'Mission3 not unlocked');click('[data-mission="electricity-2"]');click('[data-exp="start"]');click('[data-action="home"]');assert(d.querySelector('[data-route="yearSelect"]'),'Home failed');
       w.MakmalProgress.loadData();assert(w.MakmalProgress.isMissionComplete('mission2'),'Reload loses save');assert(w.qaErrors.length===0,w.qaErrors.join(';'));
       out.textContent+=`PASS ${width}×${height} ${name}: five steps, touch-style input, replay/reset, saves, navigation, no overflow/clipping/errors.\n`;
     }

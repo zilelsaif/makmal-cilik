@@ -15,8 +15,8 @@ window.MakmalLight = (() => {
         if(action==='pick'&&def.mode==='sort'&&objects.some(o=>o.id===value)&&!state.sorted[value]){state.selected=value;state.message='Objek dipilih. Pilih kumpulan yang sesuai.';state.pose='neutral';}
         if(action==='sort'&&def.mode==='sort'&&state.selected&&['source','other'].includes(value)){
           const object=objects.find(o=>o.id===state.selected);
-          if(object.source===(value==='source')){state.sorted[object.id]=true;state.selected=null;state.message='Tepat! Cuba objek yang lain.';state.pose='happy';state.effect='correct';}
-          else{state.message='Cuba lagi. Adakah objek ini menghasilkan cahaya sendiri?';state.pose='thinking';state.effect='wrong';}
+          if(object.source===(value==='source')){state.sorted[object.id]=true;state.selected=null;state.message='Tepat. Perhatikan objek yang lain pula.';state.pose='happy';state.effect='correct';}
+          else{state.message='Adakah objek ini menghasilkan cahaya sendiri? Periksa semula.';state.pose='thinking';state.effect='wrong';}
         }
         if(action==='power'&&['room','shadow'].includes(def.mode)){state.power=!state.power;state.effect=state.power?'lightOn':'click';state.message=state.power?'Lampu dihidupkan. Perhatikan perubahan.':'Lampu dipadamkan.';}
         if(action==='tool'&&def.mode==='search'){

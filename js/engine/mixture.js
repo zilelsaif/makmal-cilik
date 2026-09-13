@@ -18,7 +18,7 @@ window.MakmalMixture = (() => {
     }else if(def.choices[Number(value)]!==undefined){s.prediction=true;feedback('Terima kasih atas ramalan kamu. Mari kita uji!','thinking','itemSelected');}
    }
    if(s.step===1){
-    if(action==='identify'&&def.mode==='identify'&&['beans','sand','clips'].includes(value)&&!s.found.includes(value)){s.found.push(value);feedback('Jumpa '+names[value]+'! Perhatikan bahan lain juga.','happy','itemSelected');}
+    if(action==='identify'&&def.mode==='identify'&&['beans','sand','clips'].includes(value)&&!s.found.includes(value)){s.found.push(value);feedback('Dikenal pasti: '+names[value]+'. Cari bahan yang berbeza pula.','happy','itemSelected');}
     if(action==='tool'&&['magnet','sieve','finale'].includes(def.mode)&&toolsFor(def.mode).includes(value)&&!solved()){s.tool=value;feedback('Alat dipilih. Gunakan pada campuran.','neutral','itemSelected');}
     if(action==='apply'&&['magnet','sieve','finale'].includes(def.mode)&&s.tool&&!solved()){
      const expected=def.mode==='sieve'||(def.mode==='finale'&&s.stage===1)?'sieve':'magnet';

@@ -57,7 +57,7 @@
   }
   document.addEventListener('click', event => {
     const button = event.target.closest('button');
-    if (!button) return;
+    if (!button || event.composedPath().some(node => node.id === 'experiment-root')) return;
     window.MakmalRewards.play('click');
     if (button.dataset.unit) router.navigate('unitDetail', { unitId: button.dataset.unit });
     if (button.dataset.mission) {

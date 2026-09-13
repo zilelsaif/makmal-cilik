@@ -24,7 +24,7 @@ document.getElementById('run').addEventListener('click', async () => {
       if (name==='completed') { assert(w.MakmalProgress.isMissionComplete(),'Replay erased completed');click('[data-exp="start"]'); }
       for(let replay=0;replay<3;replay++){
         assert(d.querySelector('[data-exp="next"]').disabled,'Step skipped');
-        click('[data-exp="predict"][data-value="wire"]');assert(d.querySelector('[data-exp="next"]').disabled,'Wrong prediction accepted');
+        click('[data-exp="predict"][data-value="wire"]');assert(!d.querySelector('[data-exp="next"]').disabled,'Prediction blocked exploration');
         click('[data-exp="predict"][data-value="battery"]');click('[data-exp="next"]');
         click('[data-label="battery"]');click('[data-target="wire"]');assert(!d.querySelector('[data-target="wire"]').disabled,'Wrong match accepted');
         click('[data-exp="hint"]');click('[data-exp="hint"]');assert(d.querySelector('.hint-target'),'Second hint missing');

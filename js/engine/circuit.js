@@ -24,7 +24,7 @@ window.MakmalCircuit = (() => {
           } else { state.hintTarget = value; state.pose = 'thinking'; state.message = 'Sambungan ini belum sesuai. Ikut laluan bertitik dan cuba terminal lain.'; }
         }
       }
-      if (action === 'toggle' && state.step === 1) { state.closed = !state.closed; state[state.closed ? 'seenClosed' : 'seenOpen'] = true; state.pose = lit() ? 'happy' : 'neutral'; state.message = lit() ? 'Hebat! Mentol menyala apabila litar lengkap dan suis ditutup.' : state.closed ? 'Suis sudah ditutup. Sambungkan semua wayar supaya litar lengkap.' : 'Suis terbuka. Laluan terputus dan mentol tidak menyala.'; }
+      if (action === 'toggle' && state.step === 1) { state.closed = !state.closed; state[state.closed ? 'seenClosed' : 'seenOpen'] = true; state.pose = lit() ? 'happy' : 'neutral'; state.message = lit() ? 'Mentol menyala. Litar lengkap dan suis ditutup.' : state.closed ? 'Suis sudah ditutup. Sambungkan semua wayar supaya litar lengkap.' : 'Suis terbuka. Laluan terputus dan mentol tidak menyala.'; }
       if (action === 'observe' && state.step === 2 && state.observed < (def.observations?.length || 4) - 1) state.observed++;
       if (action === 'think' && state.step === 3) { state.thought = value === (def.mode ? 'correct' : 'open'); state.pose = state.thought ? 'happy' : 'thinking'; state.message = state.thought ? (def.discovery || 'Betul! Suis terbuka memutuskan laluan dalam litar.') : 'Cuba perhatikan sambungan dan suis sekali lagi.'; }
       if (action === 'hint' && state.step < 4) {

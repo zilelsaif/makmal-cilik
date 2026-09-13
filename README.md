@@ -2,7 +2,15 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v0.7.0 by Zil-el-Saif** — educational Science game for Malaysian primary-school students, with KSSR / DSKP curriculum direction.
+**v0.8.0 by Zil-el-Saif** — educational Science game for Malaysian primary-school students, with KSSR / DSKP curriculum direction.
+
+## v0.8.0 polish pass
+
+The existing 15 missions retain Ramal → Cuba → Perhati → Fikir → Temui. Shared objectives, concise PICO dialogue, contextual three-level hints, button labels and completion screens make the units consistent. Finales include a mission count and a Year 2 hub route. No curriculum unit or production asset was added.
+
+The compact step rail, portrait action controls, focus fallback and scroll margins improve navigation. Feedback uses text plus colour and respects reduced-motion. Same-step actions retain PICO and the rail; hints retain the workbench. Audio hooks remain optional and silent-safe.
+
+Audit: tests/UX-AUDIT-v0.8.0.md. Final strengthened browser regression passed **100 scenarios / 1,000 completions**: Electricity 40, light 30 and mixture 30 scenarios. All 15 missions also passed real keyboard completion. Sound persistence, fullscreen entry/exit and final application console checks passed. Native reduced-motion emulation and physical Android testing were unavailable.
 
 ## Playable content
 
@@ -34,6 +42,9 @@ The existing non-module JavaScript architecture remains. CSS and JavaScript URLs
 
 - js/content/year2.js: seven units and mission titles.
 - js/content/experiments/: mission-specific content. Each unit defines its five missions and learning text in its own content file.
+- js/content/experience.js: concise objectives and five PICO lines for each of 15 missions.
+- js/engine/experience.js: shared contextual hints and completion presentation.
+- css/polish.css: compact layout, focus/scroll treatment and feedback.
 - js/engine/experiment.js: shared five-step layout, PICO, hints, lifecycle, replay, focus, progress and cleanup.
 - js/engine/mixture.js: separate material/separation/dissolving rules and rendering. Mission content lives in js/content/experiments/mixtures.js.
 - js/engine/light.js: independent light/shadow state rules and rendering; does not use circuit logic.
@@ -48,7 +59,7 @@ The existing non-module JavaScript architecture remains. CSS and JavaScript URLs
 
 ## Progress and replay
 
-The key remains makmalCilikData. v0.1.0–v0.6.0 data migrates safely. Unknown fields, profile, settings, Electricity records, timestamps and unrelated Year 2 progress remain intact. Future version values are preserved. Missing/malformed data uses safe defaults; unavailable storage falls back to memory.
+The key remains makmalCilikData. v0.1.0–v0.7.0 data migrates safely. Unknown fields, profile, settings, Electricity records, timestamps and unrelated Year 2 progress remain intact. Future version values are preserved. Missing/malformed data uses safe defaults; unavailable storage falls back to memory.
 
 Records are separate under progress.year2.electricity, progress.year2.lightDark and progress.year2.mixtures. Each holds mission1–mission5 with completed, attempts, completedAt and lastCompletedAt. Attempts count meaningful starts/restarts, not mistakes. Replay retains completion and the original completedAt. Partial activity state is intentionally not persisted.
 
@@ -66,6 +77,7 @@ All new missions use semantic buttons: mouse clicks, touch-style taps and Enter/
 
 Node tests:
 
+- node tests/experience.test.cjs — shared hints, presentation, completion and v0.7 save retention.
 - node tests/experiment.test.cjs — 20 Mission 1 rule/reset runs and storage cases.
 - node tests/circuit.test.cjs — 20 Mission 2 circuit runs and independent saves.
 - node tests/electricity-unit.test.cjs — 90 Electricity Missions 3–5 runs, progression/replay and migration.
@@ -74,15 +86,15 @@ Node tests:
 
 Browser fixtures (open via the static server):
 
-- tests/mixture-browser.html — 30 scenarios: fresh, v0.6, partial/full Campuran, malformed and blocked storage across five viewports; 300 mission completions. Includes title/menu/year selection, current mission titles, input hit tests, replay, state guards and preservation of both existing units.
+- tests/mixture-browser.html — 30 scenarios: fresh, v0.7, partial/full Campuran, malformed and blocked storage across five viewports; 300 mission completions. Includes title/menu/year selection, current mission titles, input hit tests, replay, state guards and preservation of both existing units.
 - tests/light-browser.html — 30 scenarios: six storage conditions × five viewports, every light mission completed twice (300 completions). Covers fresh data, v0.5.0 Electricity completion, partial/full light progress, malformed data, blocked storage, replay, timestamps, unrelated state, reset, Back/Home, hit-testing and hidden objects.
-- tests/electricity-unit-browser.html — 30 full Electricity regression scenarios (300 completions), including matching, circuit construction, repair, both switch states, finale, progression, replay and persistence.
+- tests/electricity-unit-browser.html — expanded to 40 Electricity regression scenarios (400 completions), including blocked storage and v0.7 saves, including matching, circuit construction, repair, both switch states, finale, progression, replay and persistence.
 - tests/browser.html and tests/circuit-browser.html retain focused earlier regression coverage.
 
 Browser fixtures use disposable in-memory saves and do not modify normal game saves. Actual preview interactions also verify keyboard controls and visual states.
 
-Target sizes: **1366×768, 1920×1080, 390×844, 360×640 and 800×450**. All three unit matrices pass without horizontal overflow or clipped controls. Layer hit tests verify that visual overlays do not intercept taps. Vertical scrolling is intentional on compact screens.
+Target sizes: **1366×768, 1920×1080, 390×844, 360×640 and 800×450**. All three final strengthened matrices passed without horizontal overflow or clipped controls. Layer hit tests verify that visual overlays do not intercept taps. Vertical scrolling is intentional on compact screens.
 
 ## Limitations
 
-Only Elektrik, Terang & Gelap and Campuran are playable. Other units, Buku Makmal and achievements remain placeholders. No XP/stars, backend, login, ads, analytics, audio files or Android packaging. Touch-style input is simulated; no physical Android test or OS-level reduced-motion emulation was performed. Blocked storage cannot survive reload. No v0.8.0 work is included.
+Only Elektrik, Terang & Gelap and Campuran are playable. Other units, Buku Makmal and achievements remain placeholders. No XP/stars, backend, login, ads, analytics, audio files or Android packaging. Touch-style input is simulated; no physical Android test or OS-level reduced-motion emulation was performed. Blocked storage cannot survive reload. No v0.9.0 work is included.

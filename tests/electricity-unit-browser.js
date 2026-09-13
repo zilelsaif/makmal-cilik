@@ -5,17 +5,17 @@ document.getElementById('run').onclick=async()=>{
   const run=document.getElementById('run');run.disabled=true;output.textContent='';
   const record={completed:true,attempts:2,completedAt:'2026-01-01T00:00:00.000Z'};
   const seed=(version,electricity)=>JSON.stringify({version,settings:{sound:false},profile:{name:'Aina'},custom:7,progress:{year2:{plants:{keep:8},electricity}}});
-  const scenarios=[['fresh',null],['v0.3',seed('0.3.0',{mission1:record})],['v0.4',seed('0.4.0',{mission1:record,mission2:record})],['partial',seed('0.4.0',{mission4:record})],['complete',seed('0.4.0',Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,record])))],['malformed','{bad']];
+  const scenarios=[['fresh',null],['v0.3',seed('0.3.0',{mission1:record})],['v0.4',seed('0.4.0',{mission1:record,mission2:record})],['partial',seed('0.4.0',{mission4:record})],['complete',seed('0.4.0',Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,record])))],['malformed','{bad'],['blocked',null],['v0.7',seed('0.7.0',Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,record]))) ]];
   try{
     const html=await(await fetch('../index.html')).text();
     for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const [name,raw] of scenarios){
       const frame=document.createElement('iframe');frame.style.width=width+'px';frame.style.height=height+'px';
-      const boot=`<base href="../"><script>window.qaErrors=[];addEventListener('error',e=>{if(e.message)qaErrors.push(e.message)});addEventListener('unhandledrejection',e=>qaErrors.push(String(e.reason)));let raw=${JSON.stringify(raw)};Object.defineProperty(window,'localStorage',{value:{getItem:()=>raw,setItem:(k,v)=>raw=v}});<\/script>`;
+      const boot=`<base href="../"><script>window.qaErrors=[];addEventListener('error',e=>{if(e.message)qaErrors.push(e.message)});addEventListener('unhandledrejection',e=>qaErrors.push(String(e.reason)));let raw=${JSON.stringify(raw)};Object.defineProperty(window,'localStorage',{value:{getItem:()=>{${name==='blocked'?"throw Error('blocked')":'return raw'}},setItem:(k,v)=>{${name==='blocked'?"throw Error('blocked')":'raw=v'}}}});<\/script>`;
       frame.srcdoc=html.replace('<head>','<head>'+boot);document.getElementById('frame').replaceChildren(frame);await new Promise(r=>frame.onload=r);
-      const w=frame.contentWindow,d=frame.contentDocument,p=w.MakmalProgress;
+      const w=frame.contentWindow,d=frame.contentDocument,p=w.MakmalProgress;const polish=window.installPolishChecks(w,d);
       let completions=0;const complete=p.completeMission;p.completeMission=(...args)=>{completions++;return complete(...args);};
-      const click=sel=>{const e=d.querySelector(sel);assert(e&&!e.disabled,'Unavailable '+sel);e.scrollIntoView({block:'nearest'});e.click();};
-      const check=phase=>{assert(w.innerWidth===width&&w.innerHeight===height,'Size mismatch');assert(d.documentElement.scrollWidth<=width,'Overflow '+phase);for(const e of d.querySelectorAll('button,h1,h2,h3,p,.learning-steps'))assert(e.scrollWidth<=e.clientWidth+2&&e.scrollHeight<=e.clientHeight+2,'Clipped '+phase+': '+e.textContent);for(const e of d.querySelectorAll('button'))assert(e.getBoundingClientRect().height>=44,'Small button '+phase);};
+      const click=sel=>{const e=d.querySelector(sel);assert(e&&!e.disabled,'Unavailable '+sel);e.scrollIntoView({block:'nearest'});polish.click(sel,()=>e.click());};
+      const check=phase=>{polish.check();assert(w.innerWidth===width&&w.innerHeight===height,'Size mismatch');assert(d.documentElement.scrollWidth<=width,'Overflow '+phase);for(const e of d.querySelectorAll('button,h1,h2,h3,p,.learning-steps'))assert(e.scrollWidth<=e.clientWidth+2&&e.scrollHeight<=e.clientHeight+2,'Clipped '+phase+': '+e.textContent);for(const e of d.querySelectorAll('button'))assert(e.getBoundingClientRect().height>=44,'Small button '+phase);};
       const tap=id=>{const e=d.querySelector(`[data-terminal="${id}"]`);assert(e&&!e.disabled,'Terminal unavailable');e.scrollIntoView({block:'nearest'});const r=e.getBoundingClientRect();for(const type of ['pointerdown','pointermove','pointerup'])e.dispatchEvent(new w.PointerEvent(type,{bubbles:true,pointerId:5,pointerType:'touch',button:0,clientX:r.x+20,clientY:r.y+20}));e.click();};
       const list=()=>{click('[data-route="mainMenu"]');click('[data-route="yearSelect"]');click('[data-route="year2"]');click('[data-unit="electricity"]');};
       check('title');list();assert(p.isAvailable(1),'Mission1 trapped');
@@ -49,9 +49,9 @@ document.getElementById('run').onclick=async()=>{
         if(phase>2){while(d.querySelector('[data-exp="observe"]'))click('[data-exp="observe"]');click('[data-exp="next"]');}
         click('[data-exp="hint"]');click('[data-action="'+(phase%2?'home':'back')+'"]');if(phase%2){click('[data-route="yearSelect"]');click('[data-route="year2"]');click('[data-unit="electricity"]');}assert(p.isUnitComplete(),'Leaving erased completion');
       }
-      p.loadData();assert(p.isUnitComplete(),'Reload lost unit');if(name!=='fresh'&&name!=='malformed'){assert(p.getData().profile.name==='Aina'&&!p.getData().settings.sound,'Settings/profile changed');assert(p.getData().custom===7&&p.getData().progress.year2.plants.keep===8,'Unrelated data changed');}assert(w.qaErrors.length===0,w.qaErrors.join(';'));
+      if(name!=='blocked'){p.loadData();assert(p.isUnitComplete(),'Reload lost unit');}if(!['fresh','malformed','blocked'].includes(name)){assert(p.getData().profile.name==='Aina'&&!p.getData().settings.sound,'Settings/profile changed');assert(p.getData().custom===7&&p.getData().progress.year2.plants.keep===8,'Unrelated data changed');}assert(w.qaErrors.length===0,w.qaErrors.join(';'));
       output.textContent+=`PASS ${width}×${height} ${name}: 5 missions × 2 completions; unlock, replay, phase navigation, touch-style input, storage, no clipping/overflow/errors.\n`;
     }
-    output.textContent+='ALL 30 SCENARIOS PASSED';
+    output.textContent+='ALL 40 SCENARIOS PASSED';
   }catch(e){output.textContent+='FAIL '+e.message;}finally{run.disabled=false;}
 };

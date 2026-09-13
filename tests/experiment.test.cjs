@@ -11,7 +11,7 @@ function context(raw, blocked = false) {
 }
 for (const raw of [null, '{bad', '[]', JSON.stringify({ version: '0.2.0', settings: { sound: false, extra: 2 }, profile: { name: 'Aina' }, progress: { year2: { plants: { saved: true }, electricity: { extra: 7 } }, year1: { x: 9 } }, extra: 123 })]) {
   const api = context(raw); const p = api.MakmalProgress; const data = p.loadData();
-  assert.equal(data.version, '0.7.0'); p.startMissionAttempt(); assert.equal(p.isMissionComplete(), false);
+  assert.equal(data.version, '0.8.0'); p.startMissionAttempt(); assert.equal(p.isMissionComplete(), false);
   p.completeMission(); const firstDate = p.getData().progress.year2.electricity.mission1.completedAt;
   p.startMissionAttempt(); assert.equal(p.isMissionComplete(), true); p.completeMission(); p.loadData();
   assert.equal(p.getData().progress.year2.electricity.mission1.attempts, 2);
@@ -23,7 +23,7 @@ const api = context(null); const def = api.MakmalMission1;
 for (let run = 0; run < 20; run++) {
   const game = api.MakmalExperiment.createSession(def);
   game.act('next'); assert.equal(game.state.step, 0);
-  game.act('predict', 'wire'); assert(!game.canAdvance()); game.act('predict', 'battery'); assert(game.canAdvance()); game.act('next');
+  game.act('predict', 'wire'); assert(game.canAdvance()); game.act('predict', 'battery'); assert(game.canAdvance()); game.act('next');
   game.act('match', null, 'wire'); assert.equal(Object.keys(game.state.matched).length, 0);
   game.act('select', 'battery'); game.act('match', null, 'wire'); assert.equal(Object.keys(game.state.matched).length, 0);
   game.act('hint'); assert.equal(game.state.hintTarget, null); game.act('hint'); assert.equal(game.state.hintTarget, 'battery');

@@ -1,0 +1,28 @@
+'use strict';
+window.MakmalPlantContent = (() => {
+ const parts={root:'Akar',stem:'Batang',leaf:'Daun',flower:'Bunga'};
+ const needs={water:'Air',sun:'Cahaya matahari',air:'Udara',candy:'Gula-gula',stone:'Batu'};
+ const definitions=[
+ {title:'Apa Tumbuhan Perlukan?',mode:'needs',objective:'Berikan tiga keperluan asas kepada anak pokok.',prediction:'Yang manakah tumbuhan perlukan?',choices:Object.values(needs),
+ instruction:'Cuba berikan keperluan kepada anak pokok. Perhatikan tanah, cahaya dan udara.',
+ observations:['Tanah menjadi lembap apabila diberikan air.','Cahaya dan udara juga diperlukan oleh tumbuhan.'],question:'Apakah keperluan asas tumbuhan?',answers:['Air, cahaya dan udara.','Gula-gula dan batu.'],discovery:'Tumbuhan memerlukan air, cahaya dan udara untuk hidup.',
+ dialogues:['Tumbuhan juga perlukan beberapa perkara untuk hidup. Yang mana satu penting?','Cuba satu demi satu. Lihat apa yang berubah.','Tiga keperluan sudah tersedia.','Apakah yang membantu anak pokok ini?','Kini kamu mengenali keperluan tumbuhan.'],hints:['Lihat tanah dan persekitaran pokok.','Perhatikan keperluan yang belum diberikan.','Berikan air, cahaya matahari dan udara.']},
+ {title:'Tumbuhan Dahaga',mode:'water',objective:'Bandingkan dua pokok apabila hanya satu mendapat air.',prediction:'Pokok manakah akan kekal lebih sihat?',choices:['Pokok yang mendapat air.','Pokok yang tidak mendapat air.'],
+ instruction:'Pilih satu pokok untuk disiram. Kedua-duanya mendapat cahaya dan udara yang sama. Kemudian lihat perubahan selepas beberapa hari.',
+ observations:['Satu pokok mendapat air. Pokok yang satu lagi tidak disiram.','Selepas beberapa hari, pokok tanpa air layu. Pokok yang disiram kekal segar.'],question:'Mengapa satu pokok layu?',answers:['Pokok itu tidak mendapat air.','Pokok itu mendapat air.'],discovery:'Tumbuhan memerlukan air untuk terus hidup dan sihat.',
+ dialogues:['Dua pokok serupa. Apa jadi jika hanya satu disiram?','Siram satu pokok, kemudian lihat perubahan masa.','Bandingkan daun dan tanah kedua-dua pokok.','Apakah perbezaan penjagaan tadi?','Air membantu pokok kekal segar.'],hints:['Bandingkan dua pokok dengan penjagaan yang berbeza.','Pilih satu pokok untuk disiram.','Siram Pokok A atau B, kemudian tekan Lihat selepas beberapa hari.']},
+ {title:'Bahagian Tumbuhan',mode:'parts',objective:'Padankan akar, batang, daun dan bunga pada rajah.',prediction:'Bahagian manakah berada di dalam tanah?',choices:['Akar','Daun','Bunga'],
+ instruction:'Pilih label, kemudian sentuh bulatan nombor pada rajah. Tidak perlu menyeret.',
+ observations:['Akar berada di dalam tanah.','Batang menyokong tumbuhan.','Daun tumbuh pada batang.','Bunga ialah satu lagi bahagian tumbuhan ini.'],question:'Bahagian manakah berada di dalam tanah?',answers:['Akar','Bunga'],discovery:'Tumbuhan ini mempunyai akar, batang, daun dan bunga.',
+ dialogues:['Bolehkah kamu teka nama bahagian tumbuhan ini?','Lihat tempat setiap bulatan pada rajah.','Mari perhatikan empat bahagian satu demi satu.','Lihat bahagian di bawah permukaan tanah.','Akar, batang, daun dan bunga sudah kamu kenali.'],hints:['Lihat kedudukan bahagian pada rajah.','Perhatikan label atau sasaran yang diserlahkan.','Pilih satu label, kemudian padankan pada bahagian tumbuhan.']},
+ {title:'Arah Cahaya',mode:'direction',objective:'Uji arah pertumbuhan apabila cahaya datang dari dua sisi.',prediction:'Ke arah mana tumbuhan akan tumbuh?',choices:['Ke arah cahaya.','Menjauhi cahaya.'],
+ instruction:'Letakkan cahaya di kiri atau kanan, kemudian lihat pertumbuhan selepas beberapa hari. Uji kedua-dua sisi dengan pokok baharu yang serupa.',
+ observations:['Sebelum ujian, batang anak pokok tegak.','Selepas beberapa hari, tumbuhan tumbuh ke arah cahaya.'],question:'Mengapa tumbuhan berubah arah?',answers:['Tumbuhan tumbuh ke arah cahaya.','Tumbuhan mencari gula-gula.'],discovery:'Tumbuhan cenderung tumbuh ke arah cahaya.',
+ dialogues:['Ke arah mana anak pokok ini akan tumbuh?','Ubah sisi cahaya. Setiap ujian menggunakan pokok baharu.','Bandingkan sebelum dan selepas masa berlalu.','Apakah yang menentukan arah pertumbuhan?','Menarik! Arah cahaya mempengaruhi pertumbuhan.'],hints:['Perhatikan sisi yang menerima cahaya.','Lihat sisi atau butang pertumbuhan yang belum diuji.','Pilih kiri, lihat pertumbuhan, kemudian uji kanan dengan cara yang sama.']},
+ {title:'Selamatkan Pokok Layu',mode:'rescue',objective:'Periksa tanah, siram dan pindahkan pokok ke tempat bercahaya.',prediction:'Apakah yang mungkin kurang pada pokok ini?',choices:['Air dan cahaya.','Gula-gula.'],
+ instruction:'Pokok berada di tempat redup dan tanahnya kering. Periksa tanah, beri air dan pindahkan ke cahaya. Udara sudah tersedia.',
+ observations:['Pada mulanya, tanah kering dan tempat pokok kurang cahaya.','Selepas dijaga selama beberapa hari, pokok kembali segar.'],question:'Tindakan manakah membantu pokok?',answers:['Memberikan air dan cahaya.','Membiarkan tanah kering.'],discovery:'Memberikan air dan cahaya yang diperlukan membantu tumbuhan kembali sihat.',
+ dialogues:['Pokok makmal nampak layu. Boleh kamu cari apa yang kurang?','Periksa tanah dahulu, kemudian bantu pokok ini.','Lihat perubahan selepas penjagaan dan masa berlalu.','Apakah yang membantu pokok kembali segar?','Hebat! Kamu berjaya membantu tumbuhan dengan memberikan apa yang diperlukannya.'],hints:['Perhatikan keadaan tanah dan cahaya.','Lihat tindakan penjagaan yang belum selesai.','Periksa tanah, siram pokok dan pindahkan ke cahaya.']}
+ ];
+ return {parts,needs,missions:Object.fromEntries(definitions.map((d,i)=>['plants-'+(i+1),{...d,id:'plants-'+(i+1),number:i+1,progressKey:'mission'+(i+1),unitId:'plants',storageUnit:'plants',unitTitle:'TUMBUHAN',steps:['Ramal','Cuba','Perhati','Fikir','Temui']}]))};
+})();

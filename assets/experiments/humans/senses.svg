@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<symbol id="eye" viewBox="0 0 120 100"><path d="M10 50Q60 0 110 50Q60 100 10 50" fill="white" stroke="#204e72" stroke-width="5"/><circle cx="60" cy="50" r="22" fill="#59b9da"/><circle cx="60" cy="50" r="10" fill="#17374e"/><circle cx="65" cy="43" r="4" fill="white"/></symbol>
+<symbol id="ear" viewBox="0 0 120 100"><path d="M39 63C5 15 94-6 88 39c-3 22-22 16-24 38-2 22-34 19-30 1" fill="#f4c59e" stroke="#945d46" stroke-width="5"/><path d="M43 41q14-28 31-7 9 13-13 20l-9 18" fill="none" stroke="#b47a57" stroke-width="5"/></symbol>
+<symbol id="nose" viewBox="0 0 120 100"><path d="M57 12L34 63q-10 15 9 18l15-7 14 7q26 1 13-18L70 13" fill="#f4c59e" stroke="#945d46" stroke-width="5"/><path d="M39 70q8-11 15 0m15 0q8-11 13 0" fill="none" stroke="#945d46" stroke-width="4"/></symbol>
+<symbol id="tongue" viewBox="0 0 120 100"><ellipse cx="60" cy="43" rx="40" ry="26" fill="#873f49" stroke="#56394b" stroke-width="4"/><path d="M34 44q26-11 52 0v20q-26 43-52 0z" fill="#f29aa8" stroke="#b25d76" stroke-width="3"/><path d="M60 43v30" stroke="#bc6f89" stroke-width="3"/></symbol>
+<symbol id="skin" viewBox="0 0 120 100"><path d="M29 87L15 54q-4-14 9-10l13 17V20q0-15 11-7l3 34V9q10-13 13 1v39l5-34q10-7 12 5l-3 31 7-22q13-5 12 8l-9 44q-3 12-23 13z" fill="#f4c59e" stroke="#945d46" stroke-width="3"/></symbol>
+</svg>

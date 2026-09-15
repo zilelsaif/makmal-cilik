@@ -2,99 +2,87 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v0.8.0 by Zil-el-Saif** — educational Science game for Malaysian primary-school students, with KSSR / DSKP curriculum direction.
-
-## v0.8.0 polish pass
-
-The existing 15 missions retain Ramal → Cuba → Perhati → Fikir → Temui. Shared objectives, concise PICO dialogue, contextual three-level hints, button labels and completion screens make the units consistent. Finales include a mission count and a Year 2 hub route. No curriculum unit or production asset was added.
-
-The compact step rail, portrait action controls, focus fallback and scroll margins improve navigation. Feedback uses text plus colour and respects reduced-motion. Same-step actions retain PICO and the rail; hints retain the workbench. Audio hooks remain optional and silent-safe.
-
-Audit: tests/UX-AUDIT-v0.8.0.md. Final strengthened browser regression passed **100 scenarios / 1,000 completions**: Electricity 40, light 30 and mixture 30 scenarios. All 15 missions also passed real keyboard completion. Sound persistence, fullscreen entry/exit and final application console checks passed. Native reduced-motion emulation and physical Android testing were unavailable.
+**v1.0.0 by Zil-el-Saif** — first complete Sains Tahun 2 release: **7 units and 35 playable missions**.
 
 ## Playable content
 
-**15 playable missions across three complete Year 2 units.**
+| Unit | Five missions, in order |
+| --- | --- |
+| Kemahiran Saintifik | Mata Saintis; Kumpul dan Kelas; Ukur Dengan Betul; Apa Akan Berlaku?; Cabaran Saintis Cilik |
+| Manusia | Kenali Deria; Apa Yang Kita Rasa?; Tubuh Kita Bergerak; Pilihan Sihat; Misi Jaga Diri |
+| Haiwan | Haiwan Perlukan Apa?; Tempat Tinggal Haiwan; Cara Haiwan Bergerak; Anak dan Induk; Selamatkan Haiwan |
+| Tumbuhan | Apa Tumbuhan Perlukan?; Tumbuhan Dahaga; Bahagian Tumbuhan; Arah Cahaya; Selamatkan Pokok Layu |
+| Terang & Gelap | Mana Sumber Cahaya?; Nyalakan Bilik; Bayang-Bayang; Halang Cahaya; Misteri Dalam Gelap |
+| Elektrik | Kenali Peralatan; Nyalakan Mentol; Mentol Tidak Menyala; Suis Misteri; Cabaran Juruteknik |
+| Campuran | Apa Dalam Campuran?; Gunakan Magnet; Ayak Campuran; Larut atau Tidak?; Cabaran Asingkan Campuran |
 
-| Elektrik | Terang & Gelap | Campuran |
-| --- | --- | --- |
-| Kenali Peralatan | Mana Sumber Cahaya? | Apa Dalam Campuran? |
-| Nyalakan Mentol | Nyalakan Bilik | Gunakan Magnet |
-| Mentol Tidak Menyala | Bayang-Bayang | Ayak Campuran |
-| Suis Misteri | Halang Cahaya | Larut atau Tidak? |
-| Cabaran Juruteknik | Misteri Dalam Gelap | Cabaran Asingkan Campuran |
+Every mission follows **Ramal → Cuba → Perhati → Fikir → Temui**. Children provide resources, inspect evidence, match, classify, align and read a ruler, test predictions, build/repair circuits and compare observations. Predictions are not scored or penalized. Reflection follows an activity; this is not a bank of multiple-choice questions.
 
-Every mission follows **Ramal → Cuba → Perhati → Fikir → Temui**. Other Year 2 units remain placeholders.
+The curriculum direction is Malaysian primary-school Science / KSSR / DSKP. This release follows the project's agreed Year 2 content plan; it does not claim official curriculum certification. Human content is basic senses, movement and general daily care, without medical or advanced anatomy advice. Movements are demonstrated by a screen model; children need not perform them physically. Plant growth takes days in reality and is explicitly a simulation. Ball/ramp tests are simplified demonstrations; the ruler measures the labelled diagram scale, not physical screen centimetres.
 
-Terang & Gelap introduces its own interactions: classify five light/non-light sources, illuminate three room regions, place a ball in a light beam to form a shadow, compare cardboard with clear plastic, and find PICO's flask behind an obstruction. The finale requires a real light source, at least two illuminated regions, moving the obstruction and selecting the revealed flask. Hidden or obstructed items are not interactive. Predictions do not block completion.
+## Progress, replay and Year 2 completion
 
-Campuran introduces material discovery, magnet pickup, sieving, dissolving tests and a two-step separation finale. Players predict sugar, salt and sand separately, then select a material, add it to fresh water and stir. Sugar/salt dissolve; sand stays visible. The finale removes iron clips with a magnet before sieving sand and pebbles. Wrong tools give gentle feedback and allow retry. No individual grains are interaction targets.
+Each unit is independently selectable. Mission 1 is always available; completing a mission unlocks the next. Completed missions remain replayable, even with missing earlier records. Both routing and hub buttons enforce availability.
 
-Electricity retains its matching, fixed circuit construction, deterministic repair, switch comparison and technician finale. No generic simulator, advanced electrical theory or generic quiz engine is introduced.
+The existing `makmalCilikData` localStorage key is retained. v0.1.0–v0.9.0 saves migrate with settings, profile, unknown fields and unrelated progress preserved. Future version values remain intact. Invalid records recover safely; blocked storage falls back to memory.
 
-## Run
+Records live under `progress.year2.{electricity,lightDark,mixtures,plants,animals,humans,scienceSkills}`. Each contains mission1–mission5 with `completed`, `attempts`, `completedAt` and `lastCompletedAt`. Attempts count meaningful starts/restarts, not mistakes. Replay preserves completion and the original completion timestamp. Partial experiment state is not persisted.
 
-Serve this repository with a static HTTP server and open index.html. No npm dependencies, build, CDN, framework or backend is needed. Development preview: http://127.0.0.1:4174/. GitHub and Cloudflare Pages remain configured externally; this task does not commit, push or deploy.
+Unit and Year 2 totals are derived from the 35 records, without duplicate completion flags. When all records are complete, the mission completion and Year 2 hub offer the **SAINS TAHUN 2 SELESAI!** screen with 7/7 units, 35/35 experiments, return to Year 2, replay any unit and Main Menu. Back/Home preserve saved progress.
 
-## Architecture
+## Run and architecture
 
-The existing non-module JavaScript architecture remains. CSS and JavaScript URLs carry the release version to refresh stale browser caches after upgrades.
+Serve this repository with a static HTTP server and open `index.html`. Development preview: http://127.0.0.1:4174/. No framework, npm dependency, build, CDN or backend is needed. The existing GitHub / Cloudflare Pages static architecture is preserved. This task does not commit, push or deploy.
 
-- js/content/year2.js: seven units and mission titles.
-- js/content/experiments/: mission-specific content. Each unit defines its five missions and learning text in its own content file.
-- js/content/experience.js: concise objectives and five PICO lines for each of 15 missions.
-- js/engine/experience.js: shared contextual hints and completion presentation.
-- css/polish.css: compact layout, focus/scroll treatment and feedback.
-- js/engine/experiment.js: shared five-step layout, PICO, hints, lifecycle, replay, focus, progress and cleanup.
-- js/engine/mixture.js: separate material/separation/dissolving rules and rendering. Mission content lives in js/content/experiments/mixtures.js.
-- js/engine/light.js: independent light/shadow state rules and rendering; does not use circuit logic.
-- js/engine/circuit.js: shared Electricity workbench and mission-specific starting states.
-- js/engine/interaction.js: matching drag/tap support and circuit terminal input.
-- js/engine/pico.js: production mascot and dialogue states.
-- js/engine/rewards.js: silent-safe hooks including itemSelected, magnetPickup, sieveAction, stirring, separation, lightOn, itemFound, shadowFormed, correct/wrong, mission and unit completion. No audio files are required.
-- js/progress.js: migration, per-unit mission records, derived counts and availability.
-- js/router.js / js/app.js: routing, unit hubs and global controls.
-- css/mixture.css: trays, tools, water tests, separation animations and responsive layout.
-- css/light.css: dark room, illumination, source cards, shadow stage and responsive controls.
+The non-module `window.Makmal...` architecture remains. Versioned stylesheet/script URLs refresh release caches.
 
-## Progress and replay
+- `js/content/year2.js`: hub units and mission summaries.
+- `js/content/experiments/new-units.js`: all 15 Haiwan, Manusia and Kemahiran Saintifik mission definitions, dialogue, observations and reflection.
+- `js/engine/discovery.js`: small care, matching, inspection, movement, classification, measurement and prediction/test primitives for the new units only.
+- `css/discovery.css`: responsive activity diagrams, cards and Year 2 finale.
+- `js/engine/year-completion.js`: derived Year 2 completion screen.
+- `js/engine/experiment.js`: shared phases, mounting, focus, replay, audio dispatch and cleanup.
+- `js/engine/experience.js`: standardized three-stage hints and shared completion presentation.
+- `js/engine/{circuit,light,mixture,plants}.js`: existing independent activity engines; new biological/scientific logic is not added to them.
+- `js/engine/interaction.js`: existing drag/tap alternatives and circuit terminals.
+- `js/engine/pico.js`: existing production mascot.
+- `js/engine/rewards.js`: silent-safe hooks, including movement, measurement, classification, observation and Year 2 completion. Audio files are optional.
+- `js/progress.js`: migration, records, availability and derived totals.
+- `js/router.js` / `js/app.js`: routing, all seven unit hubs and global controls.
 
-The key remains makmalCilikData. v0.1.0–v0.7.0 data migrates safely. Unknown fields, profile, settings, Electricity records, timestamps and unrelated Year 2 progress remain intact. Future version values are preserved. Missing/malformed data uses safe defaults; unavailable storage falls back to memory.
+## Assets and accessibility
 
-Records are separate under progress.year2.electricity, progress.year2.lightDark and progress.year2.mixtures. Each holds mission1–mission5 with completed, attempts, completedAt and lastCompletedAt. Attempts count meaningful starts/restarts, not mistakes. Replay retains completion and the original completedAt. Partial activity state is intentionally not persisted.
+Follow `ASSET-GUIDELINES.md`. The official visual target in `assets/reference/` guides blue framing, rounded white cards and green/yellow accents; it is never production artwork.
 
-Each unit's Mission 1 is always available. Completing a mission opens the next; completed missions remain replayable, including when earlier records are missing. Both the hub and router enforce progression. Counts and unit completion are derived from mission records, avoiding inconsistent flags. Hubs show actual progress; other units remain 0 / 5. Back returns to the current unit, Home to Main Menu.
+New production assets:
 
-## Visual assets and interaction
+| File | Bytes |
+| --- | ---: |
+| assets/experiments/animals/rabbit.webp | 8,434 |
+| assets/experiments/animals/animals.svg | 2,549 |
+| assets/experiments/humans/senses.svg | 1,355 |
+| **New total** | **12,338** |
 
-Official reference: assets/reference/makmal-cilik-visual-target.png. It guides visual style and is never embedded as production artwork. Follow ASSET-GUIDELINES.md.
+Rabbit artwork was generated in the Codex workflow and optimized to WebP. Animal/sense sprites are simple native SVG. Body poses, ruler, shape groups and ramp diagrams use SVG/CSS. See `assets/experiments/animals/ASSET-PROVENANCE.md`. PICO (17,468 bytes), all seven unit icons and existing experiment assets are reused. All production imagery totals 105,593 bytes; the unused-in-UI reference image is separate (2,027,103 bytes). No duplicate production imagery or oversized SVG was found.
 
-New v0.7 asset: **assets/experiments/mixtures/objects.svg — 3,557 bytes**, eleven used material/tool symbols. Reused v0.6 asset: **assets/experiments/light-dark/objects.svg — 3,305 bytes**, a shared SVG sprite with ten simple science/object symbols. No new raster assets. Production PICO, Electricity images and unit icons are reused. Darkness and light use lightweight CSS gradients; shadow geometry uses CSS shapes. No Canvas, WebGL, physics libraries or external assets.
-
-All new missions use semantic buttons: mouse clicks, touch-style taps and Enter/Space. No dragging is required. Light controls remain outside dark visual layers. Hidden items have no action button until illumination and obstruction rules allow them. Focus stays visible; targets are at least 44px. Reduced-motion disables pickup, sieving, stirring, dissolving and existing movement/celebration animations.
+All new missions support click, tap and keyboard Enter/Space with semantic controls, visible focus, text/checkmark state and targets at least 44px. No mission requires dragging. Reduced-motion rules disable optional movement and transitions; static results remain visible. Compact screens intentionally scroll vertically, with Back/Home and experiment controls available.
 
 ## QA
 
-Node tests:
+See **`tests/QA-v1.0.0.md`** and **`tests/UX-AUDIT-v1.0.0.md`**. The earlier `tests/UX-AUDIT-v0.8.0.md` is retained.
 
-- node tests/experience.test.cjs — shared hints, presentation, completion and v0.7 save retention.
-- node tests/experiment.test.cjs — 20 Mission 1 rule/reset runs and storage cases.
-- node tests/circuit.test.cjs — 20 Mission 2 circuit runs and independent saves.
-- node tests/electricity-unit.test.cjs — 90 Electricity Missions 3–5 runs, progression/replay and migration.
-- node tests/mixture.test.cjs — 150 runs including wrong tools, sequence, per-material predictions, stale/duplicate guards and v0.6 migration.
-- node tests/light.test.cjs — 125 light activity runs, hidden-item guards, wrong actions, observation gates, resets and independent unit storage.
+Final browser matrices passed **250 scenarios / 2,500 mission completions** at 1366×768, 1920×1080, 390×844, 360×640 and 800×450. All 35 missions were covered at every size with replay, storage, navigation, hit targets, counters and error/overflow checks. All 15 new missions were additionally completed with actual Enter/Space input. Fullscreen and sound persistence were checked through the normal UI.
 
-Browser fixtures (open via the static server):
+Run Node tests with `node tests/<name>.test.cjs`: discovery, plants, mixture, light, electricity-unit, circuit, experiment and experience. Discovery covers 450 mission runs, invalid-action guards, wrong predictions, ruler alignment, resets, migration and totals.
 
-- tests/mixture-browser.html — 30 scenarios: fresh, v0.7, partial/full Campuran, malformed and blocked storage across five viewports; 300 mission completions. Includes title/menu/year selection, current mission titles, input hit tests, replay, state guards and preservation of both existing units.
-- tests/light-browser.html — 30 scenarios: six storage conditions × five viewports, every light mission completed twice (300 completions). Covers fresh data, v0.5.0 Electricity completion, partial/full light progress, malformed data, blocked storage, replay, timestamps, unrelated state, reset, Back/Home, hit-testing and hidden objects.
-- tests/electricity-unit-browser.html — expanded to 40 Electricity regression scenarios (400 completions), including blocked storage and v0.7 saves, including matching, circuit construction, repair, both switch states, finale, progression, replay and persistence.
-- tests/browser.html and tests/circuit-browser.html retain focused earlier regression coverage.
+Browser fixtures, opened through the static server, use isolated disposable in-memory saves:
 
-Browser fixtures use disposable in-memory saves and do not modify normal game saves. Actual preview interactions also verify keyboard controls and visual states.
+- `tests/release-browser.html`: 120 scenarios / 1,200 completions for the new units.
+- `tests/electricity-unit-browser.html`: 40 / 400.
+- `tests/light-browser.html`: 30 / 300.
+- `tests/mixture-browser.html`: 30 / 300.
+- `tests/plants-browser.html`: 30 / 300.
 
-Target sizes: **1366×768, 1920×1080, 390×844, 360×640 and 800×450**. All three final strengthened matrices passed without horizontal overflow or clipped controls. Layer hit tests verify that visual overlays do not intercept taps. Vertical scrolling is intentional on compact screens.
+## Known limitations
 
-## Limitations
-
-Only Elektrik, Terang & Gelap and Campuran are playable. Other units, Buku Makmal and achievements remain placeholders. No XP/stars, backend, login, ads, analytics, audio files or Android packaging. Touch-style input is simulated; no physical Android test or OS-level reduced-motion emulation was performed. Blocked storage cannot survive reload. No v0.9.0 work is included.
+Other school years and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device, Android packaging or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified. No next milestone has been started.

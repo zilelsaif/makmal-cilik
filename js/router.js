@@ -1,12 +1,13 @@
 'use strict';
 window.MakmalRouter = (() => {
-  const valid = new Set(['title', 'mainMenu', 'yearSelect', 'year2', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
-  const parents = { mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
+  const valid = new Set(['title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
+  const parents = { mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
   let current = 'title';
   let currentContext = {};
   let render;
   function resolve(screen, context) {
     if (!valid.has(screen)) return { screen: 'title', context: {} };
+    if (screen === 'year2Complete' && !window.MakmalProgress.isYear2Complete()) return {screen:'year2', context:{}};
     context = context && typeof context === 'object' ? context : {};
     if (screen === 'unitDetail' || screen === 'missionPlaceholder') {
       const unit = window.MakmalContent.getUnit(context.unitId);
@@ -14,9 +15,9 @@ window.MakmalRouter = (() => {
       if (screen === 'missionPlaceholder' && !unit.missions.some(m => m.id === context.missionId)) return { screen: 'unitDetail', context: { unitId: unit.id } };
     }
     if (screen === 'experiment') {
-      if (!['electricity', 'light-dark', 'mixtures'].includes(context.unitId) || !new RegExp('^' + context.unitId + '-[1-5]$').test(context.missionId)) return { screen: 'year2', context: {} };
+      if (!['electricity', 'light-dark', 'mixtures', 'plants', 'animals', 'humans', 'science-skills'].includes(context.unitId) || !new RegExp('^' + context.unitId + '-[1-5]$').test(context.missionId)) return { screen: 'year2', context: {} };
     }
-    if (screen === 'experiment' && !window.MakmalProgress.isAvailable(Number(context.missionId.split('-').pop()), context.unitId === 'light-dark' ? 'lightDark' : context.unitId)) return { screen: 'unitDetail', context: { unitId: context.unitId } };
+    if (screen === 'experiment' && !window.MakmalProgress.isAvailable(Number(context.missionId.split('-').pop()), window.MakmalProgress.storageUnit(context.unitId))) return { screen: 'unitDetail', context: { unitId: context.unitId } };
     return { screen, context };
   }
   function display(state) {

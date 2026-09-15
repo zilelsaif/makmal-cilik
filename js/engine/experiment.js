@@ -48,13 +48,15 @@ window.MakmalExperiment = (() => {
     return { get state() { return state; }, canAdvance, act, reset: () => { state = createState(); return state; } };
   }
   function mount(root, { onExit, missionId = 'electricity-1' }) {
+    const discovery = Boolean(window.MakmalNewContent?.missions[missionId]);
+    const plants = missionId.startsWith('plants-');
     const mixture = missionId.startsWith('mixtures-');
     const light = missionId.startsWith('light-dark-');
-    const circuit = !mixture && !light && missionId !== 'electricity-1';
-    const definition = mixture ? window.MakmalMixtureContent.missions[missionId] : light ? window.MakmalLightContent.missions[missionId] : circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
+    const circuit = !discovery && !plants && !mixture && !light && missionId !== 'electricity-1';
+    const definition = discovery ? window.MakmalNewContent.missions[missionId] : plants ? window.MakmalPlantContent.missions[missionId] : mixture ? window.MakmalMixtureContent.missions[missionId] : light ? window.MakmalLightContent.missions[missionId] : circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
     const progressKey = definition.progressKey || 'mission1';
     const storageUnit = definition.storageUnit || 'electricity';
-    const session = mixture ? window.MakmalMixture.createSession(definition) : light ? window.MakmalLight.createSession(definition) : circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
+    const session = discovery ? window.MakmalDiscovery.createSession(definition) : plants ? window.MakmalPlants.createSession(definition) : mixture ? window.MakmalMixture.createSession(definition) : light ? window.MakmalLight.createSession(definition) : circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
     const progress = window.MakmalProgress;
     const controller = new AbortController();
     let disposed = false, renderedStep = -1, feedback = '', hintSelector = null;
@@ -73,12 +75,14 @@ window.MakmalExperiment = (() => {
       const current = definition.components?.[s.observed];
       const rail = `<ol class="learning-steps" aria-label="Lima langkah pembelajaran">${definition.steps.map((step, index) => `<li ${index === s.step ? 'aria-current="step"' : ''} class="${index < s.step ? 'step-done' : ''}"><span aria-hidden="true">${index < s.step ? '✓' : index + 1}</span><strong>${step}</strong></li>`).join('')}</ol>`;
       let activity = '';
-      if (!circuit && !light && !mixture) {
+      if (!discovery && !plants && !circuit && !light && !mixture) {
       if (s.step === 0) activity = `<h2 id="activity-heading" tabindex="-1">Alat manakah membekalkan tenaga?</h2><p class="activity-instruction">Sentuh satu alat untuk membuat ramalan.</p><div class="component-grid">${definition.components.map(c => `<button class="component-card ${s.predictionChoice === c.id ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-exp="predict" data-value="${c.id}" aria-pressed="${s.predictionChoice === c.id}">${image(c)}<strong>${c.name}</strong>${s.predictionChoice === c.id ? '<span>✓ Ramalan kamu</span>' : ''}</button>`).join('')}</div>`;
       if (s.step === 1) activity = `<h2 id="activity-heading" tabindex="-1">Padankan nama dengan alat</h2><p class="activity-instruction">Pilih label → sentuh alat, atau seret label ke alat. <strong>${Object.keys(s.matched).length} / 4 sepadan</strong></p><div class="label-tray" role="group" aria-label="Label peralatan">${['wire', 'battery', 'switch', 'bulb'].map(id => { const c = definition.components.find(c => c.id === id); return `<button class="label-chip" data-label="${c.id}" aria-pressed="${s.selected === c.id}" ${s.matched[c.id] ? 'disabled' : ''}>${c.name}${s.matched[c.id] ? ' ✓' : ''}</button>`; }).join('')}</div><div class="component-grid">${definition.components.map((c, i) => `<button class="component-card ${s.matched[c.id] ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-target="${c.id}" aria-label="${s.matched[c.id] ? c.name + ', sudah sepadan' : 'Padankan pada alat ' + (i + 1) + ': ' + c.visual}" ${s.matched[c.id] ? 'disabled' : ''}>${image(c, !!s.matched[c.id])}<strong>${s.matched[c.id] ? '✓ ' + c.name : 'Alat ' + (i + 1)}</strong><span>${s.matched[c.id] ? 'Sepadan' : 'Letakkan label di sini'}</span></button>`).join('')}</div>`;
       if (s.step === 2) activity = `<h2 id="activity-heading" tabindex="-1">Perhatikan: ${current.name}</h2><div class="observation"><div class="component-card observed">${image(current)}<strong>${current.name}</strong></div><div><p class="observation-count">Alat ${s.observed + 1} daripada 4</p><p class="explanation">${current.explanation}</p>${s.observed < 3 ? '<button class="primary" data-exp="observe">ALAT SETERUSNYA →</button>' : '<p class="observed-all">✓ Kamu sudah perhatikan keempat-empat alat.</p>'}</div></div>`;
       if (s.step === 3) activity = `<h2 id="activity-heading" tabindex="-1">Fikirkan sambungannya</h2><div class="think-panel">${image(definition.components[2])}<p>Jika wayar tidak disambungkan,<br>adakah litar boleh lengkap?</p></div><div class="answer-buttons"><button class="nav-button" data-exp="think" data-value="yes">Ya, boleh lengkap</button><button class="nav-button ${s.thought ? 'answer-correct' : ''}" data-exp="think" data-value="no">Tidak, belum lengkap</button></div>`;
       }
+      if (discovery && s.step < 4) activity = window.MakmalDiscovery.render(s, definition);
+      if (plants && s.step < 4) activity = window.MakmalPlants.render(s, definition);
       if (mixture && s.step < 4) activity = window.MakmalMixture.render(s, definition);
       if (light && s.step < 4) activity = window.MakmalLight.render(s, definition);
       if (circuit && s.step < 4) activity = window.MakmalCircuit.render(s, definition);
@@ -119,22 +123,24 @@ window.MakmalExperiment = (() => {
       const before = session.state.step, ready = session.canAdvance();
       const matched = Object.keys(session.state.matched).length;
       const wasLit = circuit && session.lit();
+      const wasYearComplete = progress.isYear2Complete();
       const wasUnitComplete = progress.isUnitComplete(storageUnit);
       session.act(action, value, target);
       const s = session.state;
       hintSelector=null;
       let event='click';feedback='';
-      if(action==='predict'){if(!(mixture&&definition.mode==='dissolve'))s.lastPrediction=value;}
+      if(action==='predict'){if(!(mixture&&definition.mode==='dissolve')&&!(plants&&definition.mode==='needs'))s.lastPrediction=value;}
       if(action==='think')s.lastThought=value;
       if(action==='hint'){hintSelector=ux.hint(s,definition);event='hint';feedback='hint';}
       else if(s.step!==before){event=s.step===4?'complete':s.step===3?'discovery':'click';feedback=s.step===4?'complete':'step';}
       else if(action==='think'||action==='match'){const correct=action==='think'?s.thought:Object.keys(s.matched).length>matched;event=correct?'correct':'wrong';feedback=event;}
       else if(circuit&&action==='terminal'){event=s.pose==='happy'?'connection':s.pose==='thinking'?'wrong':'click';feedback=s.pose==='happy'?'correct':s.pose==='thinking'?'wrong':'';}
       else if(circuit&&action==='toggle'){event='switch';feedback='';}
-      else if((light||mixture)&&s.effect){event=s.effect;feedback=event==='wrong'?'wrong':['correct','itemFound','magnetPickup','sieveAction','stirring'].includes(event)?'correct':'';}
+      else if((discovery||plants||light||mixture)&&s.effect){event=s.effect;feedback=event==='wrong'?'wrong':['correct','itemFound','magnetPickup','sieveAction','stirring','watering','plantGrowth','correctMatch','recovery','measurement','classification','observation'].includes(event)?'correct':'';}
       if(circuit&&!wasLit&&session.lit()){event=definition.mode==='repair'?'repair':'bulb';feedback='correct';}
       if(!ready&&session.canAdvance()&&before===1)feedback='step';
       if(s.step===4&&!s.saved){progress.completeMission(progressKey,storageUnit);s.saved=true;if(!wasUnitComplete&&progress.isUnitComplete(storageUnit)){event='unitComplete';feedback='unitComplete';}}
+      if(s.step===4&&!wasYearComplete&&progress.isYear2Complete())event='yearComplete';
       window.MakmalRewards.play(event);
       const focus=s.step!==before||action==='observe'?'#activity-heading':action==='select'?`[data-label="${s.selected}"]`:action==='match'?(session.canAdvance()?'[data-exp="next"]':'[data-label]:not(:disabled)'):action==='hint'?'[data-exp="hint"]':action==='terminal'?`[data-terminal="${value}"]:not(:disabled)`:`[data-exp="${action}"]${value===undefined?'':`[data-value="${value}"]`}`;
       draw(focus);
@@ -145,6 +151,7 @@ window.MakmalExperiment = (() => {
       if (!button || button.disabled || event.detail > 1) return;
       const action = button.dataset.exp;
       if (action === 'exit') { onExit(); window.MakmalRewards.play('click'); return; }
+      if (action === 'yearComplete') { window.MakmalRouter.navigate('year2Complete'); window.MakmalRewards.play('click'); return; }
       if (action === 'year2') { window.MakmalRouter.navigate('year2'); window.MakmalRewards.play('click'); return; }
       if (action === 'start' || action === 'restart') { start(); root.querySelector('#activity-heading')?.focus(); return; }
       dispatch(action, button.dataset.value);

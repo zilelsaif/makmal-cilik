@@ -1,6 +1,6 @@
 'use strict';
 window.MakmalProgress = (() => {
-  const APP_VERSION = '0.8.0';
+  const APP_VERSION = '1.0.0';
   const KEY = 'makmalCilikData';
   const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
   const defaults = () => ({ version: APP_VERSION, settings: { sound: true }, profile: { name: 'Saintis' }, progress: { year2: {} } });
@@ -10,7 +10,7 @@ window.MakmalProgress = (() => {
     const settings = isObject(value.settings) ? value.settings : {};
     const profile = isObject(value.profile) ? value.profile : {};
     // Preserve unknown fields and future versions while migrating supported saves.
-    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0', '0.4.0', '0.5.0', '0.6.0', '0.7.0'].includes(value.version) ? value.version : APP_VERSION,
+    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0', '0.4.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '0.9.0'].includes(value.version) ? value.version : APP_VERSION,
       settings: { ...settings, sound: typeof settings.sound === 'boolean' ? settings.sound : true },
       profile: { ...profile, name: typeof profile.name === 'string' && profile.name.trim() ? profile.name : 'Saintis' },
       progress: { ...(isObject(value.progress) ? value.progress : {}), year2: isObject(value.progress?.year2) ? value.progress.year2 : {} } };
@@ -34,6 +34,11 @@ window.MakmalProgress = (() => {
   const missionKeys = ['mission1', 'mission2', 'mission3', 'mission4', 'mission5'];
   const completedCount = (unit = 'electricity') => missionKeys.filter(key => isMissionComplete(key, unit)).length;
   const isUnitComplete = (unit = 'electricity') => completedCount(unit) === missionKeys.length;
+  const year2StorageUnits = ['scienceSkills','humans','animals','plants','lightDark','electricity','mixtures'];
+  const storageUnit = id => ({'science-skills':'scienceSkills','light-dark':'lightDark'}[id] || id);
+  const year2CompletedCount = () => year2StorageUnits.reduce((n,unit)=>n+completedCount(unit),0);
+  const year2CompletedUnits = () => year2StorageUnits.filter(unit=>isUnitComplete(unit)).length;
+  const isYear2Complete = () => year2CompletedCount() === 35;
   function isAvailable(number, unit = 'electricity') {
     return Number.isInteger(number) && number >= 1 && number <= 5 &&
       (number === 1 || isMissionComplete('mission' + number, unit) || isMissionComplete('mission' + (number - 1), unit));
@@ -53,5 +58,5 @@ window.MakmalProgress = (() => {
     const now = new Date().toISOString();
     return writeMission({ ...old, completed: true, attempts: Number.isSafeInteger(old.attempts) && old.attempts > 0 ? old.attempts : 1, completedAt: typeof old.completedAt === 'string' ? old.completedAt : now, lastCompletedAt: now }, key, unit);
   }
-  return { APP_VERSION, loadData, saveData, updateSetting, getData, isMissionComplete, completedCount, isUnitComplete, isAvailable, startMissionAttempt, completeMission };
+  return { APP_VERSION, storageUnit, year2StorageUnits, year2CompletedCount, year2CompletedUnits, isYear2Complete, loadData, saveData, updateSetting, getData, isMissionComplete, completedCount, isUnitComplete, isAvailable, startMissionAttempt, completeMission };
 })();

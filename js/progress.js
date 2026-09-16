@@ -1,6 +1,6 @@
 'use strict';
 window.MakmalProgress = (() => {
-  const APP_VERSION = '1.0.0';
+  const APP_VERSION = '1.2.0';
   const KEY = 'makmalCilikData';
   const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
   const defaults = () => ({ version: APP_VERSION, settings: { sound: true }, profile: { name: 'Saintis' }, progress: { year2: {} } });
@@ -10,7 +10,7 @@ window.MakmalProgress = (() => {
     const settings = isObject(value.settings) ? value.settings : {};
     const profile = isObject(value.profile) ? value.profile : {};
     // Preserve unknown fields and future versions while migrating supported saves.
-    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0', '0.4.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '0.9.0'].includes(value.version) ? value.version : APP_VERSION,
+    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0', '0.4.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '0.9.0', '1.0.0', '1.1.0'].includes(value.version) ? value.version : APP_VERSION,
       settings: { ...settings, sound: typeof settings.sound === 'boolean' ? settings.sound : true },
       profile: { ...profile, name: typeof profile.name === 'string' && profile.name.trim() ? profile.name : 'Saintis' },
       progress: { ...(isObject(value.progress) ? value.progress : {}), year2: isObject(value.progress?.year2) ? value.progress.year2 : {} } };

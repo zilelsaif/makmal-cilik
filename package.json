@@ -1,0 +1,23 @@
+{
+  "name": "makmal-cilik",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Makmal Cilik Android shell and web packaging",
+  "scripts": {
+    "build:web": "node scripts/build-web.cjs",
+    "sync:android": "npm run build:web && cap sync android",
+    "android:debug": "build-android-debug.bat",
+    "android:open": "cap open android"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/app": "8.1.1",
+    "@capacitor/core": "8.5.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.5.2"
+  }
+}

@@ -1,0 +1,12 @@
+:root{--safe-top:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));--safe-right:max(env(safe-area-inset-right,0px),var(--safe-area-inset-right,0px));--safe-bottom:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px));--safe-left:max(env(safe-area-inset-left,0px),var(--safe-area-inset-left,0px))}
+.native-android body{padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left)}
+.native-android .game-shell{min-height:calc(100svh - var(--safe-top) - var(--safe-bottom))}
+.native-android .experiment-screen .navigation{top:calc(var(--safe-top) + 5px)}
+.native-android .experiment-actions{bottom:var(--safe-bottom)}
+.native-android .toast{bottom:calc(var(--safe-bottom) + 24px)}
+.native-android{background:#eaf6ff}
+.native-android .exit-dialog{max-width:calc(100% - var(--safe-left) - var(--safe-right) - 32px);max-height:calc(100svh - var(--safe-top) - var(--safe-bottom) - 32px)}
+.native-android button:active:not(:disabled){filter:brightness(.92)}
+.exit-dialog{width:min(420px,calc(100% - 40px));max-height:calc(100svh - 40px);overflow:auto;border:3px solid #77c5fb;border-radius:24px;padding:24px;color:#102650;background:#f4fbff;box-shadow:0 8px 35px #10265044}
+.exit-dialog::backdrop{background:#10265088}.exit-dialog>div{display:flex;flex-wrap:wrap;gap:12px}.exit-dialog button{flex:1;min-height:48px;justify-content:center;padding:14px}
+@media(hover:none){button:hover{transform:none}}

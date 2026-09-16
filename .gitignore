@@ -6,3 +6,8 @@ node_modules/
 !.env.example
 dist/
 qa-output/
+
+www/
+.cache/
+.gradle/
+android/local.properties

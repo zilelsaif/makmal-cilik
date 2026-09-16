@@ -37,5 +37,5 @@ window.MakmalRouter = (() => {
     window.addEventListener('popstate', event => display(resolve(event.state?.screen, event.state?.context)));
   }
   // Future gameplay can extend these routes without changing content records.
-  return { init, navigate, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
+  return { init, navigate, currentScreen: () => current, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
 })();

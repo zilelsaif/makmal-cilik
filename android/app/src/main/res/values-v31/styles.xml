@@ -1,0 +1,8 @@
+<resources>
+ <style name="AppTheme.NoActionBarLaunch" parent="AppTheme.NoActionBar">
+  <item name="android:windowBackground">@color/lab_background</item>
+  <item name="android:windowSplashScreenBackground">@color/lab_background</item>
+  <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_mark</item>
+  <item name="android:windowSplashScreenBrandingImage">@drawable/splash_wordmark</item>
+ </style>
+</resources>

@@ -1,7 +1,7 @@
 'use strict';
 window.MakmalRouter = (() => {
-  const valid = new Set(['title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
-  const parents = { mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
+  const valid = new Set(['year3', 'year3Unit', 'year3Experiment', 'year3Complete', 'title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
+  const parents = { year3:'yearSelect', year3Unit:'year3', year3Experiment:'year3Unit', year3Complete:'year3', mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
   let current = 'title';
   let currentContext = {};
   let render;
@@ -9,6 +9,12 @@ window.MakmalRouter = (() => {
     if (!valid.has(screen)) return { screen: 'title', context: {} };
     if (screen === 'year2Complete' && !window.MakmalProgress.isYear2Complete()) return {screen:'year2', context:{}};
     context = context && typeof context === 'object' ? context : {};
+    if (screen.startsWith('year3')) {
+      const p=window.MakmalProgress.forYear(3), unit=window.MakmalYear3?.units.find(u=>u.id===context.unitId);
+      if(screen==='year3Complete'&&!p.isYearComplete())return {screen:'year3',context:{}};
+      if(['year3Unit','year3Experiment'].includes(screen)&&!unit)return {screen:'year3',context:{}};
+      if(screen==='year3Experiment'&&(!unit.missions.some(m=>m.id===context.missionId)||!p.isAvailable(Number(context.missionId.split('-').pop()),unit.id)))return {screen:'year3Unit',context:{unitId:unit.id}};
+    }
     if (screen === 'unitDetail' || screen === 'missionPlaceholder') {
       const unit = window.MakmalContent.getUnit(context.unitId);
       if (!unit) return { screen: 'year2', context: {} };
@@ -37,5 +43,5 @@ window.MakmalRouter = (() => {
     window.addEventListener('popstate', event => display(resolve(event.state?.screen, event.state?.context)));
   }
   // Future gameplay can extend these routes without changing content records.
-  return { init, navigate, currentScreen: () => current, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
+  return { init, navigate, currentScreen: () => current, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment' || current === 'year3Experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
 })();

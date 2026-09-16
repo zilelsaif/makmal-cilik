@@ -1,6 +1,6 @@
  'use strict';
 window.MakmalExperience = (() => {
- const content=id=>{const d=window.MakmalNewContent?.missions[id]||window.MakmalPlantContent?.missions[id];return window.MakmalExperienceContent[id] || {objective:d.objective,lines:d.dialogues};};
+ const content=id=>{const d=window.MakmalYear3?.missions[id]||window.MakmalNewContent?.missions[id]||window.MakmalPlantContent?.missions[id];return window.MakmalExperienceContent[id] || {objective:d.objective,lines:d.dialogues};};
  const label={click:'Pilihan dibuat',correct:'✓ Tepat',wrong:'Cuba cara lain',hint:'Petunjuk',step:'✓ Langkah selesai',discovery:'✓ Penemuan baharu',complete:'✓ Misi selesai',unitComplete:'✦ Unit selesai'};
  function hint(s,def){
   s.hints=Math.min(s.hints,3);s.pose='hint';s.hintTarget=null;
@@ -8,7 +8,7 @@ window.MakmalExperience = (() => {
   if(s.step===2){s.message=['Lihat bahagian yang sedang diperhatikan.','Bandingkan hasil dengan keadaan asal.','Baca pemerhatian, kemudian lihat bahagian seterusnya.'][s.hints-1];return s.hints>1?'#activity-heading':null;}
   if(s.step===3){s.message=['Ingat apa yang berubah semasa kamu mencuba.','Baca soalan dan bandingkan dengan hasil tadi.',def.discovery||content(def.id).discovery][s.hints-1];return s.hints>1?'#activity-heading':null;}
   let selector=null,clue=def.hints?.[2]||'Pilih satu label, kemudian sentuh alat yang sepadan.';
-  if(window.MakmalNewContent?.missions[def.id]){const h=window.MakmalDiscovery.hint(s,def);selector=h.selector;clue=h.clue;}else if(def.terminals){
+  if(def.year===3){const h=window.MakmalYear3Lab.hint(s,def);selector=h.selector;clue=h.clue;}else if(window.MakmalNewContent?.missions[def.id]){const h=window.MakmalDiscovery.hint(s,def);selector=h.selector;clue=h.clue;}else if(def.terminals){
    const terminal=def.terminals.find(t=>!s.links.some(i=>def.connections[i].ends.includes(t.id)));
    if(terminal){s.hintTarget=terminal.id;selector=`[data-terminal="${terminal.id}"]`;const pair=def.connections.find(c=>c.ends.includes(terminal.id));clue='Sambungkan '+pair.ends.map(id=>def.terminals.find(t=>t.id===id).name).join(' dengan ')+'.';}
    else if(def.mode==='switch'||!s.closed){s.hintTarget='switch';selector='[data-exp="toggle"]';clue=def.mode==='switch'?(s.seenClosed?'Buka suis untuk melihat mentol padam.':'Tutup suis untuk melihat mentol menyala.'):'Tutup suis supaya laluan lengkap.';}
@@ -33,6 +33,7 @@ window.MakmalExperience = (() => {
   if(s.hints===1){s.hintTarget=null;return null;}return selector||'[data-exp="next"]';
  }
  function completion(def,unit,celebrateUnit=false){
+  if(def.year===3)return window.MakmalYear3Screens.completion(def,celebrateUnit);
   const p=window.MakmalProgress,unitId=def.unitId||'electricity',details=window.MakmalContent.getUnit(unitId),done=p.isUnitComplete(unit);
   const finale=(def.number===5||celebrateUnit);
   return `<div class="completion ${finale&&done?'unit-celebration':'mission-celebration'}"><span class="completion-check" aria-hidden="true">✓</span><h2 id="activity-heading" tabindex="-1">Misi Selesai</h2><p class="discovery-copy">${def.discovery||content(def.id).discovery}</p>${finale?`<section class="unit-finale"><h3>${done?'UNIT '+details.title.toUpperCase()+' SELESAI!':'Kemajuan '+details.title}</h3><p class="unit-count">${p.completedCount(unit)} / 5 misi selesai</p><ul>${details.missions.map(m=>`<li><span>${p.isMissionComplete('mission'+m.number,unit)?'✓ Selesai':'○ Belum selesai'}</span> ${m.title}</li>`).join('')}</ul></section>`:''}${p.isYear2Complete()?'<section class="year-progress"><strong>SAINS TAHUN 2 SELESAI!</strong><p>7 / 7 unit selesai · 35 / 35 eksperimen</p><button class="primary" data-exp="yearComplete">Raikan Penemuan Tahun 2</button></section>':''}<div class="completion-actions"><button class="primary" data-exp="restart">Main Semula ↻</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button>${finale?'<button class="nav-button" data-exp="year2">Kembali ke Tahun 2</button>':''}</div></div>`;

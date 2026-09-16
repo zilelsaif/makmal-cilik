@@ -2,9 +2,9 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v1.2.0 by Zil-el-Saif** — Android polish and debug packaging for the complete Sains Tahun 2 release: **7 units and 35 playable missions**.
+**v1.3.0 by Zil-el-Saif** — Sains Tahun 2 and Sains Tahun 3: **17 units and 85 playable missions**.
 
-## Playable content
+## Year 2 — 35 playable missions
 
 | Unit | Five missions, in order |
 | --- | --- |
@@ -19,6 +19,36 @@
 Every mission follows **Ramal → Cuba → Perhati → Fikir → Temui**. Children provide resources, inspect evidence, match, classify, align and read a ruler, test predictions, build/repair circuits and compare observations. Predictions are not scored or penalized. Reflection follows an activity; this is not a bank of multiple-choice questions.
 
 The curriculum direction is Malaysian primary-school Science / KSSR / DSKP. This release follows the project's agreed Year 2 content plan; it does not claim official curriculum certification. Human content is basic senses, movement and general daily care, without medical or advanced anatomy advice. Movements are demonstrated by a screen model; children need not perform them physically. Plant growth takes days in reality and is explicitly a simulation. Ball/ramp tests are simplified demonstrations; the ruler measures the labelled diagram scale, not physical screen centimetres.
+
+## Year 3 — 50 playable missions
+
+| Unit | Five missions, in order |
+| --- | --- |
+| Kemahiran Saintifik | Mata Pemerhati; Kelas Dengan Bukti; Ukur Tepat; Buat Inferens; Ramal & Uji |
+| Peraturan Bilik Sains | Kenali Bahaya; Pilih Tindakan Selamat; Alat Pecah; Tumpahan Makmal; Cabaran Makmal Selamat |
+| Manusia | Kenali Jenis Gigi; Struktur Gigi; Jaga Gigi; Pinggan Seimbang; Laluan Makanan |
+| Haiwan | Herbivor, Karnivor atau Omnivor?; Cari Makanan; Gigi Haiwan; Teka Daripada Gigi; Cabaran Pemakanan |
+| Tumbuh-tumbuhan | Cara Membiak; Biji atau Keratan?; Satu Pokok, Banyak Cara; Mengapa Perlu Membiak?; Makmal Pembiakan |
+| Pengukuran | Ukur Luas; Anggar Luas; Isi Padu Kotak; Isi Padu Cecair; Objek Tidak Sekata |
+| Ketumpatan | Timbul atau Tenggelam?; Banding Ketumpatan; Ubah Air; Susun Objek; Cabaran Kapal Terapung |
+| Asid dan Alkali | Kenali Litmus; Uji Asid; Uji Alkali; Neutral atau Tidak?; Cabaran Bahan Misteri |
+| Sistem Suria | Kenali Ahli Sistem Suria; Susun Planet; Panas atau Sejuk; Ikut Orbit; Cabaran Sistem Suria |
+| Mesin | Kenali Takal; Angkat Beban; Arah Tarikan; Cari Takal; Bina Sistem Takal |
+
+Activities include inspecting evidence before classifying, arranging sequences, aligning rulers, counting area and volume, reading liquid levels, water displacement, testing floating objects, salt-water and boat models, two-colour litmus tests, planet ordering/orbit steps and a fixed pulley. Every mission retains the five learning phases, three-stage hints, replay and PICO.
+
+Content follows the Year 3 topics in the KPM-authored [Dokumen Penjajaran KSSR Sains Tahap 1 Edisi 3](https://ecentral.my/wp-content/uploads/2024/09/DOKUMEN-PENJAJARAN_KSSR-SAINS-TAHAP-1_EDISI-3.pdf); this is topic alignment, not official certification. Chemical activities are virtual: never taste or directly touch unknown materials. Diagrams are not to physical scale. Plant growth and orbit time are compressed; density models are qualitative. Venus is identified as the hottest planet, rather than assuming the nearest planet is hottest. A fixed pulley changes pull direction and does not claim to reduce the load's weight.
+
+### Year 3 architecture and saves
+
+- `js/content/year3/index.js` and ten unit files separate content from rendering.
+- `js/engine/year3/core.js` shares phase guards, feedback and hints; `sorting.js`, `measurement.js`, `density.js`, `acid-alkali.js` and `solar-pulley.js` implement the small activity models.
+- `js/engine/year3/screens.js` renders the hub, mission lists and year celebration; `css/year3.css` handles responsive presentation.
+- Shared experiment, progress, router, PICO, audio and Android integration remain in use.
+
+The same save key is retained. v1.2.0 saves gain `progress.year3` safely while keeping Year 2, settings, profile and unrelated fields. Records are `progress.year3[unitId].mission1` through `mission5`, each with completion, attempts and timestamps. Completion totals are derived independently for each year. Mission 1 always remains available; each completion unlocks the next mission in that unit. Completed missions remain replayable and preserve their first completion timestamp. All ten units are independently selectable.
+
+Year 3 completion shows **SAINS TAHUN 3 SELESAI!**, **10 / 10 units** and **50 / 50 experiments**, with replay and navigation controls. See `tests/QA-v1.3.0.md` for final verification and limitations.
 
 ## Progress, replay and Year 2 completion
 
@@ -54,7 +84,7 @@ The non-module `window.Makmal...` architecture remains. Versioned stylesheet/scr
 
 Follow `ASSET-GUIDELINES.md`. The official visual target in `assets/reference/` guides blue framing, rounded white cards and green/yellow accents; it is never production artwork.
 
-New production assets:
+Historical v1.0.0 production assets:
 
 | File | Bytes |
 | --- | ---: |
@@ -63,7 +93,7 @@ New production assets:
 | assets/experiments/humans/senses.svg | 1,355 |
 | **New total** | **12,338** |
 
-Rabbit artwork was generated in the Codex workflow and optimized to WebP. Animal/sense sprites are simple native SVG. Body poses, ruler, shape groups and ramp diagrams use SVG/CSS. See `assets/experiments/animals/ASSET-PROVENANCE.md`. PICO (17,468 bytes), all seven unit icons and existing experiment assets are reused. All production imagery totals 105,593 bytes; the unused-in-UI reference image is separate (2,027,103 bytes). No duplicate production imagery or oversized SVG was found.
+Rabbit artwork was generated in the Codex workflow and optimized to WebP. Animal/sense sprites are simple native SVG. Body poses, ruler, shape groups and ramp diagrams use SVG/CSS. See `assets/experiments/animals/ASSET-PROVENANCE.md`. PICO (17,468 bytes), all seven unit icons and existing experiment assets are reused. Before v1.3.0, production imagery totalled 105,593 bytes; the unused-in-UI reference image is separate (2,027,103 bytes). No duplicate production imagery or oversized SVG was found.
 
 All new missions support click, tap and keyboard Enter/Space with semantic controls, visible focus, text/checkmark state and targets at least 44px. No mission requires dragging. Reduced-motion rules disable optional movement and transitions; static results remain visible. Compact screens intentionally scroll vertically, with Back/Home and experiment controls available.
 
@@ -85,7 +115,7 @@ Browser fixtures, opened through the static server, use isolated disposable in-m
 
 ## Known limitations
 
-Other school years and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified. No v1.3.0 work has been started.
+Years 1, 4, 5 and 6 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified. No v1.4.0 work has been started.
 
 ## v1.1.0 — Android debug shell
 
@@ -143,3 +173,13 @@ v1.1.0 saves migrate to v1.2.0 with the same key/schema/origin and original comp
 The Windows workflow above is unchanged: `build-android-debug.bat` regenerates www, syncs Capacitor and builds the debug APK, stopping on errors. Current APK: **v1.2.0, versionCode 2**, package **com.zilelsaif.makmalcilik**, **4,147,164 bytes** at `android/app/build/outputs/apk/debug/app-debug.apk`. All 55 local web files were archive-verified; there is no remote server URL. Keep the existing local debug keystore to update an installed debug app without changing signing identity.
 
 QA and physical-device checklist: `tests/QA-v1.2.0.md`. No device or configured emulator was available: real system bars/cutouts, launcher/splash transitions, hardware Back, Home/resume and process restart still need physical validation. This is a debug APK, not a Play Store release. Earlier version sections above are historical records.
+
+## v1.3.0 asset additions
+
+Seven compact code-native SVG files add six hub icons and a shared evidence sprite (4,892 bytes total). See `assets/experiments/year3/ASSET-PROVENANCE.md`. Existing PICO, branding, Year 2 icons and artwork are reused. No new raster illustration or duplicate PICO was required; diagrams remain crisp at mobile sizes. The visual target stays reference-only.
+
+Year 3 controls are semantic buttons with visible focus, textual state labels, at least 44px targets, and click/tap/Enter/Space alternatives. No activity requires dragging. Orbit and growth models advance by explicit actions rather than running timers. Reduced-motion styling and existing Android safe-area rules remain intact.
+
+The v1.3.0 production web bundle contains 81 files (450,404 bytes before Capacitor bridge injection). Android source metadata is v1.3.0 / versionCode 3 and normal Capacitor sync passed. No new APK or release AAB was built for this curriculum milestone; previous APK sizes above are historical.
+
+Final v1.3.0 QA passed: 400 Year 3 scenarios / 4,000 completions, 250 Year 2 scenarios / 2,500 completions, all 50 Year 3 missions via actual Enter/Space, and five Android bridge simulations covering all 85 missions. All five requested viewports passed without horizontal overflow or application errors. See `tests/QA-v1.3.0.md` for the measured scope and remaining physical-device limitations.

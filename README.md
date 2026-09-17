@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v1.5.0 by Zil-el-Saif** — Sains Tahun 2–5: **37 units and 185 playable missions**.
+**v1.6.0 by Zil-el-Saif** — Sains Tahun 2–6: **48 units and 240 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -90,6 +90,26 @@ Year 5 extends the shared experiment shell with evidence-based sequences, classi
 
 Content is stored in `js/content/year5/`; reusable phase and activity logic is in `js/engine/year5/`; `css/year5.css` supplies responsive, reduced-motion-safe models. Saves use `progress.year5[unitId].mission1` through `mission5`. v1.4.0 migration preserves all earlier years, settings, profile, timestamps and unknown fields. Year completion is derived from the 50 mission records and shows **SAINS TAHUN 5 SELESAI!** with 10/10 units and 50/50 experiments.
 
+## Year 6 — 55 playable missions
+
+| Unit | Five missions, in order |
+| --- | --- |
+| Kemahiran Saintifik | Bukti atau Andaian?; Tafsir Corak Data; Tentukan Pemboleh Ubah; Rancang Penyiasatan; Cabaran Saintis Tahun 6 |
+| Mikroorganisma | Dunia Yang Terlalu Kecil; Mikroorganisma Hidup; Baik atau Memudaratkan?; Makanan dan Mikroorganisma; Kawal Pertumbuhan |
+| Interaksi Antara Hidupan | Bersendirian atau Berkumpulan?; Persaingan Haiwan; Persaingan Tumbuhan; Hubungan Antara Spesies; Ekosistem Seimbang |
+| Pemeliharaan dan Pemuliharaan | Jejak Haiwan Pupus; Siapa Terancam?; Mengapa Spesies Berkurang?; Lindungi Habitat; Pelan Pemuliharaan |
+| Daya | Tolak atau Tarik?; Kesan Daya; Geseran; Banyak atau Sedikit Geseran?; Cabaran Daya |
+| Kelajuan | Siapa Lebih Laju?; Ukur Jarak; Ukur Masa; Kira Kelajuan; Perlumbaan Saintifik |
+| Pengawetan Makanan | Mengapa Makanan Rosak?; Kenali Kaedah Pengawetan; Pilih Kaedah Sesuai; Hentikan Mikroorganisma; Makmal Pengawetan |
+| Bahan Buangan | Kenali Bahan Buangan; Terbiodegradasi atau Tidak?; Ke Mana Sampah Pergi?; Kurangkan Bahan Buangan; Bandar Lestari |
+| Gerhana | Matahari, Bumi dan Bulan; Gerhana Matahari; Gerhana Bulan; Susun Kedudukan; Makmal Gerhana |
+| Buruj | Corak Di Langit; Kenali Buruj; Cari Arah; Musim dan Buruj; Navigator Malam |
+| Mesin | Mesin dan Kehidupan; Mesin Ringkas Bergabung; Kenal Pasti Komponen; Baiki Reka Bentuk; Cipta Mesin Berguna |
+
+Year 6 uses evidence evaluation, virtual observation, controlled comparisons, measurement, modelling, diagnosis and design. Speed explicitly uses **Kelajuan = Jarak ÷ Masa** with simple metre/second examples. Microorganism and food-preservation work remains virtual, eclipse activities repeat the direct-Sun-viewing warning, and astronomy diagrams are labelled as not to scale.
+
+Content is stored in `js/content/year6/`; the session, activity and screen layers live in `js/engine/year6/`; responsive presentation is in `css/year6.css`. Saves use `progress.year6[unitId].mission1` through `mission5`. Migration from v1.5.0 preserves Years 2–5, settings, profile, timestamps and compatible unknown fields. Completion is derived from all 55 records and shows **SAINS TAHUN 6 SELESAI!** with 11/11 units and 55/55 experiments.
+
 ## Progress, replay and Year 2 completion
 
 Each unit is independently selectable. Mission 1 is always available; completing a mission unlocks the next. Completed missions remain replayable, even with missing earlier records. Both routing and hub buttons enforce availability.
@@ -155,7 +175,7 @@ Browser fixtures, opened through the static server, use isolated disposable in-m
 
 ## Known limitations
 
-Years 1 and 6 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified.
+Year 1 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified.
 
 ## v1.1.0 — Android debug shell
 
@@ -237,3 +257,11 @@ Ten Year 5 units add 50 playable missions while retaining every Year 2–4 missi
 The Year 5 curriculum direction covers stronger science-process skills, skeletal and circulatory systems, animal and plant survival, food webs, seed dispersal, series/parallel circuits, heat, rust, matter, Moon phases, constellations and combined machines. Simplifications and safety limits are documented in `tests/QA-v1.5.0.md`.
 
 Android source metadata is **v1.5.0 / versionCode 5**. The normal canonical web build and Capacitor sync are used to verify compatibility; no APK/AAB release build, commit, push or deployment is performed.
+
+## v1.6.0 — complete Sains Tahun 6
+
+Eleven Year 6 units add 55 playable missions while preserving all 185 missions from Years 2–5. The project now contains **48 playable units / 240 playable missions**. Tahun 6 is active in year selection; Tahun 1 remains planned.
+
+The release adds lightweight HTML/CSS models for microorganisms, ecosystems, conservation, force, speed, preservation, waste, eclipses, constellations and compound-machine design. Every mission keeps Ramal → Cuba → Perhati → Fikir → Temui, semantic keyboard controls, three-stage hints, replay and sequential progression. No new production image, SVG, audio or framework was required.
+
+Android source metadata is **v1.6.0 / versionCode 6**. Normal web build and Capacitor sync verify compatibility; no APK/AAB, commit, push or deployment is included. See `tests/QA-v1.6.0.md` for the release matrix and limitations.

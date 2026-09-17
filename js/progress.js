@@ -1,19 +1,19 @@
 'use strict';
 window.MakmalProgress = (() => {
-  const APP_VERSION = '1.4.0';
+  const APP_VERSION = '1.5.0';
   const KEY = 'makmalCilikData';
   const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
-  const defaults = () => ({ version: APP_VERSION, settings: { sound: true }, profile: { name: 'Saintis' }, progress: { year2: {}, year3: {}, year4: {} } });
+  const defaults = () => ({ version: APP_VERSION, settings: { sound: true }, profile: { name: 'Saintis' }, progress: { year2: {}, year3: {}, year4: {}, year5: {} } });
   let current = defaults();
   function normalize(value) {
     if (!isObject(value)) return defaults();
     const settings = isObject(value.settings) ? value.settings : {};
     const profile = isObject(value.profile) ? value.profile : {};
     // Preserve unknown fields and future versions while migrating supported saves.
-    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0', '0.4.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '0.9.0', '1.0.0', '1.1.0', '1.2.0', '1.3.0'].includes(value.version) ? value.version : APP_VERSION,
+    return { ...value, version: typeof value.version === 'string' && !['0.1.0', '0.2.0', '0.3.0', '0.4.0', '0.5.0', '0.6.0', '0.7.0', '0.8.0', '0.9.0', '1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0'].includes(value.version) ? value.version : APP_VERSION,
       settings: { ...settings, sound: typeof settings.sound === 'boolean' ? settings.sound : true },
       profile: { ...profile, name: typeof profile.name === 'string' && profile.name.trim() ? profile.name : 'Saintis' },
-      progress: { ...(isObject(value.progress) ? value.progress : {}), year2: isObject(value.progress?.year2) ? value.progress.year2 : {}, year3: isObject(value.progress?.year3) ? value.progress.year3 : {}, year4: isObject(value.progress?.year4) ? value.progress.year4 : {} } };
+      progress: { ...(isObject(value.progress) ? value.progress : {}), year2: isObject(value.progress?.year2) ? value.progress.year2 : {}, year3: isObject(value.progress?.year3) ? value.progress.year3 : {}, year4: isObject(value.progress?.year4) ? value.progress.year4 : {}, year5: isObject(value.progress?.year5) ? value.progress.year5 : {} } };
   }
   function loadData() {
     try { current = normalize(JSON.parse(localStorage.getItem(KEY))); } catch (_) { current = defaults(); }
@@ -61,10 +61,11 @@ window.MakmalProgress = (() => {
   // Year-scoped facade keeps existing Year 2 signatures and records unchanged.
   const year3Units = ['science-skills','lab-rules','humans','animals','plants','measurement','density','acid-alkali','solar-system','machines'];
   const year4Units = ['science-skills','humans','animals','plants','light-properties','sound','energy','materials','earth','machines'];
+  const year5Units = ['science-skills','humans','animals','plants','electricity','heat','rust','matter','moon-constellations','machines'];
   function forYear(year) {
-    if (![3,4].includes(year)) throw new Error('Unsupported year facade');
-    const units = year === 3 ? year3Units : year4Units;
-    const store = year === 3 ? 'year3' : 'year4';
+    if (![3,4,5].includes(year)) throw new Error('Unsupported year facade');
+    const units = year === 3 ? year3Units : year === 4 ? year4Units : year5Units;
+    const store = 'year'+year;
     const record = (key, unit) => current.progress[store][unit]?.[key];
     const complete = (key, unit) => record(key, unit)?.completed === true;
     const count = unit => missionKeys.filter(key => complete(key, unit)).length;
@@ -82,5 +83,5 @@ window.MakmalProgress = (() => {
       completedTotal:()=>units.reduce((n,u)=>n+count(u),0), completedUnits:()=>units.filter(u=>count(u)===5).length,
       isYearComplete:()=>units.every(u=>count(u)===5)};
   }
-  return { APP_VERSION, forYear, year3Units, year4Units, storageUnit, year2StorageUnits, year2CompletedCount, year2CompletedUnits, isYear2Complete, loadData, saveData, updateSetting, getData, isMissionComplete, completedCount, isUnitComplete, isAvailable, startMissionAttempt, completeMission };
+  return { APP_VERSION, forYear, year3Units, year4Units, year5Units, storageUnit, year2StorageUnits, year2CompletedCount, year2CompletedUnits, isYear2Complete, loadData, saveData, updateSetting, getData, isMissionComplete, completedCount, isUnitComplete, isAvailable, startMissionAttempt, completeMission };
 })();

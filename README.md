@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v1.4.0 by Zil-el-Saif** — Sains Tahun 2, Tahun 3 and Tahun 4: **27 units and 135 playable missions**.
+**v1.5.0 by Zil-el-Saif** — Sains Tahun 2–5: **37 units and 185 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -71,6 +71,25 @@ Content is separated in `js/content/year4/`; reusable phase and activity logic l
 
 Year 4 completion shows **SAINS TAHUN 4 SELESAI!**, **10 / 10 units** and **50 / 50 experiments**. See `tests/QA-v1.4.0.md` for the final matrix.
 
+## Year 5 — 50 playable missions
+
+| Unit | Five missions, in order |
+| --- | --- |
+| Kemahiran Saintifik | Cari Pola; Tafsir Data; Kawal Pemboleh Ubah; Bina Hipotesis; Penyiasatan Lengkap |
+| Manusia | Kenali Sistem Rangka; Sendi dan Pergerakan; Laluan Darah; Jantung Bekerja; Cabaran Sistem Tubuh |
+| Haiwan | Cara Haiwan Melindungi Diri; Kemandirian Spesies; Anak Dijaga atau Tidak?; Rantai Makanan; Jaringan Makanan |
+| Tumbuhan | Cara Tumbuhan Melindungi Diri; Kemandirian Tumbuhan; Biji Benih Bergerak; Cara Pencaran; Cabaran Pencaran Biji Benih |
+| Elektrik | Dari Mana Elektrik Datang?; Litar Bersiri; Litar Selari; Bandingkan Kecerahan; Jurutera Litar |
+| Haba | Panas dan Sejuk; Suhu Berubah; Mengembang Apabila Panas; Mengecut Apabila Sejuk; Cabaran Haba |
+| Pengaratan | Kenali Karat; Apa Menyebabkan Karat?; Uji Paku; Cegah Pengaratan; Selamatkan Peralatan |
+| Jirim | Pepejal, Cecair atau Gas?; Sifat Jirim; Perubahan Keadaan; Kitaran Air Mini; Cabaran Jirim |
+| Fasa Bulan dan Buruj | Bentuk Bulan Berubah; Susun Fasa Bulan; Bulan Mengelilingi Bumi; Kenali Buruj; Navigasi Dengan Buruj |
+| Mesin | Mesin Ringkas Di Sekeliling Kita; Gear Bergerak; Gabungkan Mesin; Pilih Mesin Sesuai; Cabaran Reka Mesin |
+
+Year 5 extends the shared experiment shell with evidence-based sequences, classification, fair tests, design choices and responsive scientific models. Circuits distinguish one-path series wiring from multi-path parallel wiring without equations. Heat and temperature are kept distinct, rust experiments remain virtual, and Moon content states that the Moon itself does not change shape. All activities have click, tap and keyboard alternatives and do not depend on colour, dragging or audio.
+
+Content is stored in `js/content/year5/`; reusable phase and activity logic is in `js/engine/year5/`; `css/year5.css` supplies responsive, reduced-motion-safe models. Saves use `progress.year5[unitId].mission1` through `mission5`. v1.4.0 migration preserves all earlier years, settings, profile, timestamps and unknown fields. Year completion is derived from the 50 mission records and shows **SAINS TAHUN 5 SELESAI!** with 10/10 units and 50/50 experiments.
+
 ## Progress, replay and Year 2 completion
 
 Each unit is independently selectable. Mission 1 is always available; completing a mission unlocks the next. Completed missions remain replayable, even with missing earlier records. Both routing and hub buttons enforce availability.
@@ -136,7 +155,7 @@ Browser fixtures, opened through the static server, use isolated disposable in-m
 
 ## Known limitations
 
-Years 1, 5 and 6 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified.
+Years 1 and 6 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified.
 
 ## v1.1.0 — Android debug shell
 
@@ -210,3 +229,11 @@ Final v1.3.0 QA passed: 400 Year 3 scenarios / 4,000 completions, 250 Year 2 sce
 Ten Year 4 units add 50 playable missions while reusing the shared PICO, navigation, progress, audio hooks and five-phase experiment shell. The release contains **135 playable missions** in total: 35 for Year 2, 50 for Year 3 and 50 for Year 4. No new raster or binary production asset was needed; the Year 4 laboratory models use lightweight HTML/CSS and child-friendly symbols.
 
 Final browser QA passed **400 Year 4 unit scenarios / 4,000 mission completions** across 1366×768, 1920×1080, 390×844, 360×640 and 800×450. Eight save states at every size cover fresh, v1.3.0, partial, complete, malformed and blocked storage. All local Node suites pass, including 800 Year 4 logic runs and the full Year 2/3 regressions. Android metadata is **v1.4.0 / versionCode 4**; normal web build and Capacitor sync are part of the release check. No APK/AAB was built, and no commit, push or deployment is performed by this work.
+
+## v1.5.0 — complete Sains Tahun 5
+
+Ten Year 5 units add 50 playable missions while retaining every Year 2–4 mission. The complete project now contains **37 units / 185 missions**. The Year 5 engine uses lightweight HTML/CSS scientific models, shared semantic controls, three-stage hints, PICO, replay and derived progress. No new raster, SVG, audio or duplicate production artwork was needed.
+
+The Year 5 curriculum direction covers stronger science-process skills, skeletal and circulatory systems, animal and plant survival, food webs, seed dispersal, series/parallel circuits, heat, rust, matter, Moon phases, constellations and combined machines. Simplifications and safety limits are documented in `tests/QA-v1.5.0.md`.
+
+Android source metadata is **v1.5.0 / versionCode 5**. The normal canonical web build and Capacitor sync are used to verify compatibility; no APK/AAB release build, commit, push or deployment is performed.

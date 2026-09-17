@@ -49,18 +49,19 @@ window.MakmalExperiment = (() => {
   }
   function mount(root, { onExit, missionId = 'electricity-1' }) {
     const year3=Boolean(window.MakmalYear3?.missions[missionId]);
+    const year5=Boolean(window.MakmalYear5?.missions[missionId]);
     const year4=Boolean(window.MakmalYear4?.missions[missionId]);
     const discovery = Boolean(window.MakmalNewContent?.missions[missionId]);
     const plants = missionId.startsWith('plants-');
     const mixture = missionId.startsWith('mixtures-');
     const light = missionId.startsWith('light-dark-');
-    const circuit = !year3 && !year4 && !discovery && !plants && !mixture && !light && missionId !== 'electricity-1';
-    const definition = year4 ? window.MakmalYear4.missions[missionId] : year3 ? window.MakmalYear3.missions[missionId] : discovery ? window.MakmalNewContent.missions[missionId] : plants ? window.MakmalPlantContent.missions[missionId] : mixture ? window.MakmalMixtureContent.missions[missionId] : light ? window.MakmalLightContent.missions[missionId] : circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
+    const circuit = !year3 && !year4 && !year5 && !discovery && !plants && !mixture && !light && missionId !== 'electricity-1';
+    const definition = year5 ? window.MakmalYear5.missions[missionId] : year4 ? window.MakmalYear4.missions[missionId] : year3 ? window.MakmalYear3.missions[missionId] : discovery ? window.MakmalNewContent.missions[missionId] : plants ? window.MakmalPlantContent.missions[missionId] : mixture ? window.MakmalMixtureContent.missions[missionId] : light ? window.MakmalLightContent.missions[missionId] : circuit ? window.MakmalCircuitMissions[missionId] : window.MakmalMission1;
     const progressKey = definition.progressKey || 'mission1';
     const storageUnit = definition.storageUnit || 'electricity';
-    const session = year4 ? window.MakmalYear4Lab.createSession(definition) : year3 ? window.MakmalYear3Lab.createSession(definition) : discovery ? window.MakmalDiscovery.createSession(definition) : plants ? window.MakmalPlants.createSession(definition) : mixture ? window.MakmalMixture.createSession(definition) : light ? window.MakmalLight.createSession(definition) : circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
-    const progress = year4 ? window.MakmalProgress.forYear(4) : year3 ? window.MakmalProgress.forYear(3) : window.MakmalProgress;
-    const yearComplete=()=>year4||year3?progress.isYearComplete():progress.isYear2Complete();
+    const session = year5 ? window.MakmalYear5Lab.createSession(definition) : year4 ? window.MakmalYear4Lab.createSession(definition) : year3 ? window.MakmalYear3Lab.createSession(definition) : discovery ? window.MakmalDiscovery.createSession(definition) : plants ? window.MakmalPlants.createSession(definition) : mixture ? window.MakmalMixture.createSession(definition) : light ? window.MakmalLight.createSession(definition) : circuit ? window.MakmalCircuit.createSession(definition) : createSession(definition);
+    const progress = year5 ? window.MakmalProgress.forYear(5) : year4 ? window.MakmalProgress.forYear(4) : year3 ? window.MakmalProgress.forYear(3) : window.MakmalProgress;
+    const yearComplete=()=>year5||year4||year3?progress.isYearComplete():progress.isYear2Complete();
     const controller = new AbortController();
     let disposed = false, renderedStep = -1, feedback = '', hintSelector = null;
     const ux = window.MakmalExperience;
@@ -78,7 +79,7 @@ window.MakmalExperiment = (() => {
       const current = definition.components?.[s.observed];
       const rail = `<ol class="learning-steps" aria-label="Lima langkah pembelajaran">${definition.steps.map((step, index) => `<li ${index === s.step ? 'aria-current="step"' : ''} class="${index < s.step ? 'step-done' : ''}"><span aria-hidden="true">${index < s.step ? '✓' : index + 1}</span><strong>${step}</strong></li>`).join('')}</ol>`;
       let activity = '';
-      if (!year3 && !year4 && !discovery && !plants && !circuit && !light && !mixture) {
+      if (!year3 && !year4 && !year5 && !discovery && !plants && !circuit && !light && !mixture) {
       if (s.step === 0) activity = `<h2 id="activity-heading" tabindex="-1">Alat manakah membekalkan tenaga?</h2><p class="activity-instruction">Sentuh satu alat untuk membuat ramalan.</p><div class="component-grid">${definition.components.map(c => `<button class="component-card ${s.predictionChoice === c.id ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-exp="predict" data-value="${c.id}" aria-pressed="${s.predictionChoice === c.id}">${image(c)}<strong>${c.name}</strong>${s.predictionChoice === c.id ? '<span>✓ Ramalan kamu</span>' : ''}</button>`).join('')}</div>`;
       if (s.step === 1) activity = `<h2 id="activity-heading" tabindex="-1">Padankan nama dengan alat</h2><p class="activity-instruction">Pilih label → sentuh alat, atau seret label ke alat. <strong>${Object.keys(s.matched).length} / 4 sepadan</strong></p><div class="label-tray" role="group" aria-label="Label peralatan">${['wire', 'battery', 'switch', 'bulb'].map(id => { const c = definition.components.find(c => c.id === id); return `<button class="label-chip" data-label="${c.id}" aria-pressed="${s.selected === c.id}" ${s.matched[c.id] ? 'disabled' : ''}>${c.name}${s.matched[c.id] ? ' ✓' : ''}</button>`; }).join('')}</div><div class="component-grid">${definition.components.map((c, i) => `<button class="component-card ${s.matched[c.id] ? 'matched' : ''} ${s.hintTarget === c.id ? 'hint-target' : ''}" data-target="${c.id}" aria-label="${s.matched[c.id] ? c.name + ', sudah sepadan' : 'Padankan pada alat ' + (i + 1) + ': ' + c.visual}" ${s.matched[c.id] ? 'disabled' : ''}>${image(c, !!s.matched[c.id])}<strong>${s.matched[c.id] ? '✓ ' + c.name : 'Alat ' + (i + 1)}</strong><span>${s.matched[c.id] ? 'Sepadan' : 'Letakkan label di sini'}</span></button>`).join('')}</div>`;
       if (s.step === 2) activity = `<h2 id="activity-heading" tabindex="-1">Perhatikan: ${current.name}</h2><div class="observation"><div class="component-card observed">${image(current)}<strong>${current.name}</strong></div><div><p class="observation-count">Alat ${s.observed + 1} daripada 4</p><p class="explanation">${current.explanation}</p>${s.observed < 3 ? '<button class="primary" data-exp="observe">ALAT SETERUSNYA →</button>' : '<p class="observed-all">✓ Kamu sudah perhatikan keempat-empat alat.</p>'}</div></div>`;
@@ -86,6 +87,7 @@ window.MakmalExperiment = (() => {
       }
       if (year3 && s.step < 4) activity = window.MakmalYear3Lab.render(s, definition);
       if (year4 && s.step < 4) activity = window.MakmalYear4Lab.render(s, definition);
+      if (year5 && s.step < 4) activity = window.MakmalYear5Lab.render(s, definition);
       if (discovery && s.step < 4) activity = window.MakmalDiscovery.render(s, definition);
       if (plants && s.step < 4) activity = window.MakmalPlants.render(s, definition);
       if (mixture && s.step < 4) activity = window.MakmalMixture.render(s, definition);
@@ -95,7 +97,7 @@ window.MakmalExperiment = (() => {
       const actions = s.step < 4 ? `<div class="experiment-actions"><div class="hint-control"><button class="hint-button" data-exp="hint">💡 Hint</button><span class="hint-level">${s.hints ? Math.min(s.hints,3)+' / 3' : ''}</span></div><button class="primary" data-exp="next" ${session.canAdvance() ? '' : 'disabled'}>${s.step === 3 ? 'Temui' : 'Seterusnya'} →</button></div>` : '';
       const picoText = s.message || presentation.lines[s.step];
       if (renderedStep !== s.step) {
-        root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN ${year4?4:year3?3:2} · ${definition.unitTitle || 'ELEKTRIK'} · MISI ${definition.number || 1}</p><h1>${definition.title}</h1>${s.step===0?`<p class="mission-objective">${presentation.objective}</p>`:''}</div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${window.MakmalPico.dialogue(picoText, s.pose)}<p class="feedback-note" role="status" aria-live="polite"></p><section class="workbench" aria-labelledby="activity-heading">${activity}</section>${actions}</div></div>`;
+        root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN ${year5?5:year4?4:year3?3:2} · ${definition.unitTitle || 'ELEKTRIK'} · MISI ${definition.number || 1}</p><h1>${definition.title}</h1>${s.step===0?`<p class="mission-objective">${presentation.objective}</p>`:''}</div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${window.MakmalPico.dialogue(picoText, s.pose)}<p class="feedback-note" role="status" aria-live="polite"></p><section class="workbench" aria-labelledby="activity-heading">${activity}</section>${actions}</div></div>`;
         renderedStep = s.step;
       } else {
         // Keep the mascot, live region and step rail stable while an activity changes.
@@ -141,7 +143,7 @@ window.MakmalExperiment = (() => {
       else if(action==='think'||action==='match'){const correct=action==='think'?s.thought:Object.keys(s.matched).length>matched;event=correct?'correct':'wrong';feedback=event;}
       else if(circuit&&action==='terminal'){event=s.pose==='happy'?'connection':s.pose==='thinking'?'wrong':'click';feedback=s.pose==='happy'?'correct':s.pose==='thinking'?'wrong':'';}
       else if(circuit&&action==='toggle'){event='switch';feedback='';}
-      else if((year4||year3||discovery||plants||light||mixture)&&s.effect){event=s.effect;feedback=event==='wrong'?'wrong':['correct','itemFound','magnetPickup','sieveAction','stirring','watering','plantGrowth','correctMatch','recovery','measurement','classification','observation'].includes(event)?'correct':'';}
+      else if((year5||year4||year3||discovery||plants||light||mixture)&&s.effect){event=s.effect;feedback=event==='wrong'?'wrong':['correct','itemFound','magnetPickup','sieveAction','stirring','watering','plantGrowth','correctMatch','recovery','measurement','classification','observation'].includes(event)?'correct':'';}
       if(circuit&&!wasLit&&session.lit()){event=definition.mode==='repair'?'repair':'bulb';feedback='correct';}
       if(!ready&&session.canAdvance()&&before===1)feedback='step';
       if(s.step===4&&!s.saved){progress.completeMission(progressKey,storageUnit);s.saved=true;if(!wasUnitComplete&&progress.isUnitComplete(storageUnit)){event='unitComplete';feedback='unitComplete';}}
@@ -156,8 +158,8 @@ window.MakmalExperiment = (() => {
       if (!button || button.disabled || event.detail > 1) return;
       const action = button.dataset.exp;
       if (action === 'exit') { onExit(); window.MakmalRewards.play('click'); return; }
-      if (action === 'yearComplete') { window.MakmalRouter.navigate(year4?'year4Complete':year3?'year3Complete':'year2Complete'); window.MakmalRewards.play('click'); return; }
-      if (action === 'year2') { window.MakmalRouter.navigate(year4?'year4':year3?'year3':'year2'); window.MakmalRewards.play('click'); return; }
+      if (action === 'yearComplete') { window.MakmalRouter.navigate(year5?'year5Complete':year4?'year4Complete':year3?'year3Complete':'year2Complete'); window.MakmalRewards.play('click'); return; }
+      if (action === 'year2') { window.MakmalRouter.navigate(year5?'year5':year4?'year4':year3?'year3':'year2'); window.MakmalRewards.play('click'); return; }
       if (action === 'start' || action === 'restart') { start(); root.querySelector('#activity-heading')?.focus(); return; }
       dispatch(action, button.dataset.value);
     }, { signal: controller.signal });

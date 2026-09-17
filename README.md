@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v1.3.0 by Zil-el-Saif** — Sains Tahun 2 and Sains Tahun 3: **17 units and 85 playable missions**.
+**v1.4.0 by Zil-el-Saif** — Sains Tahun 2, Tahun 3 and Tahun 4: **27 units and 135 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -49,6 +49,27 @@ Content follows the Year 3 topics in the KPM-authored [Dokumen Penjajaran KSSR S
 The same save key is retained. v1.2.0 saves gain `progress.year3` safely while keeping Year 2, settings, profile and unrelated fields. Records are `progress.year3[unitId].mission1` through `mission5`, each with completion, attempts and timestamps. Completion totals are derived independently for each year. Mission 1 always remains available; each completion unlocks the next mission in that unit. Completed missions remain replayable and preserve their first completion timestamp. All ten units are independently selectable.
 
 Year 3 completion shows **SAINS TAHUN 3 SELESAI!**, **10 / 10 units** and **50 / 50 experiments**, with replay and navigation controls. See `tests/QA-v1.3.0.md` for final verification and limitations.
+
+## Year 4 — 50 playable missions
+
+| Unit | Five missions, in order |
+| --- | --- |
+| Kemahiran Saintifik | Perhati Dengan Teliti; Cari Pemboleh Ubah; Bina Hipotesis; Uji Dengan Adil; Penyiasatan Saintis |
+| Manusia | Laluan Udara; Tarik dan Hembus Nafas; Oksigen dan Karbon Dioksida; Kadar Pernafasan; Cabaran Model Pernafasan |
+| Haiwan | Organ Pernafasan Haiwan; Cara Haiwan Bernafas; Vertebrata atau Invertebrata?; Kenali Kumpulan Vertebrata; Cabaran Pengelasan Haiwan |
+| Tumbuhan | Tumbuhan Bergerak Balas; Arah Cahaya; Akar Mencari Air; Daun Bertindak Balas; Cabaran Fotosintesis |
+| Sifat Cahaya | Cahaya Bergerak Lurus; Misteri Bayang-Bayang; Cermin Memantul; Cahaya Membelok; Makmal Cahaya |
+| Bunyi | Bunyi Daripada Getaran; Bunyi Ke Semua Arah; Gema!; Bunyi Baik atau Mengganggu?; Cabaran Kurangkan Bunyi |
+| Tenaga | Dari Mana Tenaga Datang?; Kenali Bentuk Tenaga; Tenaga Berubah Bentuk; Boleh Diperbaharui atau Tidak?; Jejak Tenaga |
+| Bahan | Dari Mana Bahan Datang?; Kenali Sifat Bahan; Pilih Bahan Sesuai; Serap atau Kalis Air?; Jurutera Bahan |
+| Bumi | Tarikan Bumi; Jatuh Ke Mana?; Putaran Bumi; Siang dan Malam; Cabaran Bumi Bergerak |
+| Mesin | Kenali Mesin Ringkas; Pilih Alat Yang Sesuai; Tuas Membantu; Mesin Dalam Kehidupan; Cabaran Cipta Mesin |
+
+Year 4 uses evidence inspection, classification, controlled comparisons, ordered investigations and design choices. Sound activities always include visible vibration/wave evidence, so audio is not required. Earth content distinguishes 24-hour rotation from the roughly 365¼-day revolution. Machines focus on levers, simple-machine selection and complex machines without repeating the Year 3 pulley simulator.
+
+Content is separated in `js/content/year4/`; reusable phase and activity logic lives in `js/engine/year4/`; responsive models and cards live in `css/year4.css`. Saves use `progress.year4[unitId].mission1` through `mission5`. Migration from v1.3.0 preserves Year 2, Year 3, settings, profile, unknown fields and first-completion timestamps. Ten unit totals and the 50-mission year total are derived from mission records.
+
+Year 4 completion shows **SAINS TAHUN 4 SELESAI!**, **10 / 10 units** and **50 / 50 experiments**. See `tests/QA-v1.4.0.md` for the final matrix.
 
 ## Progress, replay and Year 2 completion
 
@@ -115,7 +136,7 @@ Browser fixtures, opened through the static server, use isolated disposable in-m
 
 ## Known limitations
 
-Years 1, 4, 5 and 6 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified. No v1.4.0 work has been started.
+Years 1, 5 and 6 and Buku Makmal/profile/achievement pages remain placeholders. No XP, stars, full achievement logic, login, backend, ads, analytics or final sound files. Storage blocked by the browser cannot persist through reload. No physical Android device or Play Store readiness testing; touch-style events and responsive browser layouts were tested. OS-level reduced-motion and screen-reader testing were not performed. Scientific scenes are deliberately simplified.
 
 ## v1.1.0 — Android debug shell
 
@@ -183,3 +204,9 @@ Year 3 controls are semantic buttons with visible focus, textual state labels, a
 The v1.3.0 production web bundle contains 81 files (450,404 bytes before Capacitor bridge injection). Android source metadata is v1.3.0 / versionCode 3 and normal Capacitor sync passed. No new APK or release AAB was built for this curriculum milestone; previous APK sizes above are historical.
 
 Final v1.3.0 QA passed: 400 Year 3 scenarios / 4,000 completions, 250 Year 2 scenarios / 2,500 completions, all 50 Year 3 missions via actual Enter/Space, and five Android bridge simulations covering all 85 missions. All five requested viewports passed without horizontal overflow or application errors. See `tests/QA-v1.3.0.md` for the measured scope and remaining physical-device limitations.
+
+## v1.4.0 — complete Sains Tahun 4
+
+Ten Year 4 units add 50 playable missions while reusing the shared PICO, navigation, progress, audio hooks and five-phase experiment shell. The release contains **135 playable missions** in total: 35 for Year 2, 50 for Year 3 and 50 for Year 4. No new raster or binary production asset was needed; the Year 4 laboratory models use lightweight HTML/CSS and child-friendly symbols.
+
+Final browser QA passed **400 Year 4 unit scenarios / 4,000 mission completions** across 1366×768, 1920×1080, 390×844, 360×640 and 800×450. Eight save states at every size cover fresh, v1.3.0, partial, complete, malformed and blocked storage. All local Node suites pass, including 800 Year 4 logic runs and the full Year 2/3 regressions. Android metadata is **v1.4.0 / versionCode 4**; normal web build and Capacitor sync are part of the release check. No APK/AAB was built, and no commit, push or deployment is performed by this work.

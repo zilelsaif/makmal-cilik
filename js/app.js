@@ -28,19 +28,20 @@
   function render(name, context) {
     disposeExperiment?.(); disposeExperiment = null;
     clearTimeout(toastTimer); toast.hidden = true;
-    if (name === 'experiment' || name === 'year3Experiment') {
+    if (name === 'experiment' || name === 'year3Experiment' || name === 'year4Experiment') {
       screen.innerHTML = `<div class="content-screen experiment-screen">${nav()}<div id="experiment-root"></div></div>`;
-      disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate(name==='year3Experiment'?'year3Unit':'unitDetail', { unitId: context.unitId }) });
+      disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate(name==='year4Experiment'?'year4Unit':name==='year3Experiment'?'year3Unit':'unitDetail', { unitId: context.unitId }) });
       return;
     }
     if (name.startsWith('year3')) { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalYear3Screens.render(name,context)}</div>`; return; }
+    if (name.startsWith('year4')) { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalYear4Screens.render(name,context)}</div>`; return; }
     if (name === 'title') {
       screen.innerHTML = `<section class="title-screen"><div class="title-copy"><div class="eyebrow">✦ Makmal kecil, penemuan besar</div><h1>Makmal <span>Cilik</span></h1><p class="tagline">Eksperimen. Fikir. Temui.</p><button class="primary" data-route="mainMenu">MASUK MAKMAL <span aria-hidden="true">→</span></button><p class="curriculum">KSSR / DSKP · Sains Tahun 1–6</p></div><div class="lab-card"><div class="lab-label"><span>Pembantu makmal</span><span aria-hidden="true">✦ ✦ ✦</span></div>${pico()}<p class="pico-note">Hai, Saintis!<br>Jom teroka dunia Sains bersama saya.</p><div class="lab-symbols" aria-hidden="true">⚗️ <span>✦</span> 🌱 <span>✦</span> 🔬</div></div></section>`;
       return;
     }
     let content = '';
     if (name === 'mainMenu') content = `${heading('Hai, Saintis!', 'Apa yang ingin kamu terokai hari ini?')}<div class="main-layout"><aside class="welcome">${pico()}<p>Selamat datang ke Makmal Cilik! Mari kita teroka dunia Sains.</p></aside><div class="menu-grid"><button class="primary menu-start" data-route="yearSelect">MULA BELAJAR <span aria-hidden="true">→</span></button>${menu.map(([label, icon], index) => `<button class="menu-card" data-placeholder="${index}"><span class="card-icon" aria-hidden="true">${icon}</span><span>${label}</span><small>Akan Datang</small></button>`).join('')}</div></div>`;
-    if (name === 'yearSelect') content = `${heading('PILIH TAHUN', 'Mulakan perjalanan Sains kamu.', 'MULA BELAJAR')}<div class="year-grid">${[1,2,3,4,5,6].map(year => `<button class="year-card ${[2,3].includes(year) ? 'active' : ''}" ${[2,3].includes(year) ? `data-route="year${year}"` : 'data-message="Kandungan Tahun ini akan datang."'}><span class="year-number" aria-hidden="true">0${year}</span><span class="year-arrow" aria-hidden="true">${[2,3].includes(year) ? '↗' : '🔒'}</span><strong>TAHUN ${year}</strong><span class="badge">${[2,3].includes(year) ? 'Aktif' : 'Akan Datang'}</span></button>`).join('')}</div>`;
+    if (name === 'yearSelect') content = `${heading('PILIH TAHUN', 'Mulakan perjalanan Sains kamu.', 'MULA BELAJAR')}<div class="year-grid">${[1,2,3,4,5,6].map(year => `<button class="year-card ${[2,3,4].includes(year) ? 'active' : ''}" ${[2,3,4].includes(year) ? `data-route="year${year}"` : 'data-message="Kandungan Tahun ini akan datang."'}><span class="year-number" aria-hidden="true">0${year}</span><span class="year-arrow" aria-hidden="true">${[2,3,4].includes(year) ? '↗' : '🔒'}</span><strong>TAHUN ${year}</strong><span class="badge">${[2,3,4].includes(year) ? 'Aktif' : 'Akan Datang'}</span></button>`).join('')}</div>`;
     if (name === 'year2') content = `${heading('Sains Tahun 2', 'Pilih unit untuk meneroka lima eksperimen.', 'MAKMAL PEMBELAJARAN')}<div class="year-progress"><span>${progress.year2CompletedCount()} / 35 eksperimen selesai · ${progress.year2CompletedUnits()} / 7 unit selesai</span>${progress.isYear2Complete()?'<button class="primary" data-route="year2Complete">Lihat Sambutan Tahun 2</button>':''}</div><div class="units-grid hub-grid">${units.map((unit, index) => `<button class="unit-card hub-card unit-${unit.id}" data-unit="${unit.id}"><img class="unit-art" src="${unit.icon}" alt="" width="88" height="88"><span class="unit-copy"><small>UNIT ${String(index + 1).padStart(2, '0')}</small><strong>${unit.title}</strong><span class="unit-description">${unit.description}</span></span><span class="unit-summary"><span>${completedCount(unit)} / ${unit.totalMissions} eksperimen</span><span class="badge">${completedCount(unit) === 5 ? 'Selesai' : completedCount(unit) ? 'Sedang Diterokai' : 'Belum Dimainkan'}</span></span></button>`).join('')}</div>`;
     if (name === 'year2Complete') content = window.MakmalYearCompletion.render();
     if (name === 'unitDetail' || name === 'missionPlaceholder') {
@@ -62,10 +63,16 @@
     if (!button || event.composedPath().some(node => node.id === 'experiment-root')) return;
     window.MakmalRewards.play('click');
     if (button.dataset.y3unit) router.navigate('year3Unit',{unitId:button.dataset.y3unit});
+    if (button.dataset.y4unit) router.navigate('year4Unit',{unitId:button.dataset.y4unit});
     if (button.dataset.y3mission) {
       const unitId=button.dataset.y3id, missionId=button.dataset.y3mission;
       if(!progress.forYear(3).isAvailable(Number(missionId.split('-').pop()),unitId)){showToast('Selesaikan misi sebelumnya dahulu.');return;}
       router.navigate('year3Experiment',{unitId,missionId});
+    }
+    if (button.dataset.y4mission) {
+      const unitId=button.dataset.y4id, missionId=button.dataset.y4mission;
+      if(!progress.forYear(4).isAvailable(Number(missionId.split('-').pop()),unitId)){showToast('Selesaikan misi sebelumnya dahulu.');return;}
+      router.navigate('year4Experiment',{unitId,missionId});
     }
     if (button.dataset.unit) router.navigate('unitDetail', { unitId: button.dataset.unit });
     if (button.dataset.mission) {

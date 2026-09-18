@@ -2,7 +2,29 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.2.0 by Zil-el-Saif** — Sains Tahun 1–6 complete with local player profiles and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.4.0 by Zil-el-Saif** — Web production release with hardened Cloudflare Pages delivery, local player profiles and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.4.0 — Web production and Cloudflare Pages
+
+The production site is a static, local-first build. Runtime code, styles, images and learning content are served from this repository; there are no analytics, trackers, external APIs, accounts or cloud progress sync. Learning progress stays in the active player's browser storage. If browser storage is blocked, the app remains playable and displays a clear warning that progress cannot be saved.
+
+Use these exact Cloudflare Pages settings:
+
+| Setting | Value |
+| --- | --- |
+| Production branch | `main` |
+| Root directory | `/` (repository root) |
+| Build command | `npm run build:web` |
+| Build output directory | `www` |
+| Node.js version | `22` (`.nvmrc`) |
+
+For a clean local release check, run `npm ci` followed by `npm run verify:web`. The verification command runs the complete automated suite and creates a fresh `www` build. The build includes `_headers`, excludes tests and reference artwork, and does not need environment variables.
+
+`_headers` prevents stale HTML while allowing long-lived caching for versioned JavaScript and CSS. Production assets use shorter revalidation because their filenames are not content-hashed. Basic browser hardening adds MIME sniffing, frame, referrer and unused-device-permission controls. The app uses in-document History API state, so its routes do not create path URLs and no SPA catch-all redirect is needed.
+
+PWA and service-worker caching are intentionally deferred. A service worker would add a second cache lifecycle and could serve mixed release files without a dedicated update design. Android Capacitor configuration remains available, but v2.4.0 does not build or publish an APK/AAB. The existing Android shell version is unchanged in this web-only milestone.
+
+The install currently reports a deprecation warning for transitive `uuid@7.0.3` from the pinned Capacitor toolchain. It is not a runtime failure and is deferred until a compatible upstream Capacitor update is intentionally scheduled; dependencies were not upgraded arbitrarily.
 
 ## Year 2 — 35 playable missions
 
@@ -317,3 +339,12 @@ Standard game-feel vocabulary:
 | Year / master complete | counts, celebrate PICO, finite sparkle | larger short flourish | under 1 s |
 
 The release preserves six years, 58 units, 290 missions, local independent profiles, Parent / Guardian Zone, voluntary support, migration-safe storage and the Capacitor shell. Android uses `versionCode 10` and `versionName 2.2.0`. See `tests/QA-v2.2.0.md`.
+## v2.3.0 — Buku Makmal and progress experience
+
+Buku Makmal is a local, player-specific science learning record. Its overview shows the active avatar and player name, real overall totals, six accessible year progress cards, up to five recent discoveries and a stored-progress-based **Sambung Eksperimen** action. Year screens render only their units, unit screens render only five mission records, and mission screens retrieve the canonical `Temui` statement from the existing mission definition.
+
+Completed entries show the discovery and first completion date. Incomplete entries show only their title, unit and **Belum ditemui**, so Buku Makmal does not leak answers or solution concepts. An unlocked entry links to **Main Misi** and a completed entry links to **Main Semula**. Locked entries explain that the previous mission must be completed.
+
+The optional **BARU** state stores only a profile-local viewed key in `preferences.viewedDiscoveries`; it never duplicates mission content or changes `completedAt`. Malformed optional metadata is ignored safely. Core progress, recent history, counters and viewed states always follow `activeProfileId`, so switching players immediately switches Buku Makmal.
+
+The implementation remains local-only, renders one hierarchy level at a time, adds no framework or external API, and preserves all 6 years, 58 units and 290 missions. Android uses `versionCode 11` and `versionName 2.3.0`. See `tests/QA-v2.3.0.md`.

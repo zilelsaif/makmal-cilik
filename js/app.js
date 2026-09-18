@@ -10,7 +10,7 @@
   const toast = document.getElementById('toast');
   let toastTimer;
   const units = window.MakmalContent.year2Units;
-  const menu = [['BUKU MAKMAL', '📒'], ['PENCAPAIAN', '🏅'], ['TETAPAN', '⚙️']];
+  const menu = [['PENCAPAIAN', '🏅'], ['TETAPAN', '⚙️']];
   const pico = window.MakmalPico.portrait;
   let disposeExperiment = null;
   const playableUnit = id => ['electricity', 'light-dark', 'mixtures', 'plants', 'animals', 'humans', 'science-skills'].includes(id);
@@ -37,6 +37,10 @@
       disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate(name==='year1Experiment'?'year1Unit':name==='year6Experiment'?'year6Unit':name==='year5Experiment'?'year5Unit':name==='year4Experiment'?'year4Unit':name==='year3Experiment'?'year3Unit':'unitDetail', { unitId: context.unitId }) });
       return;
     }
+    if(name==='journalHome'||name==='journalYear'||name==='journalUnit'||name==='journalMission'){
+      const journal=window.MakmalJournal,body=name==='journalHome'?journal.home():name==='journalYear'?journal.year(context.year):name==='journalUnit'?journal.unit(context.year,context.unitId):journal.mission(context.year,context.unitId,context.missionId);
+      screen.innerHTML=`<div class="content-screen journal-screen">${nav()}${body}</div>`;return;
+    }
     if (name.startsWith('year3')) { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalYear3Screens.render(name,context)}</div>`; return; }
     if (name.startsWith('year4')) { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalYear4Screens.render(name,context)}</div>`; return; }
     if (name.startsWith('year5')) { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalYear5Screens.render(name,context)}</div>`; return; }
@@ -58,7 +62,7 @@
       return;
     }
     let content = '';
-    if (name === 'mainMenu') {const active=progress.getActiveProfile();content = `${heading(`Hai, ${window.MakmalProfiles.esc(active.name)}!`, 'Apa yang ingin kamu terokai hari ini?')}<div class="main-layout"><aside class="welcome">${pico()}<p>Selamat datang ke Makmal Cilik! Mari kita teroka dunia Sains.</p><button class="nav-button" data-route="profileSelect">Tukar Pemain</button></aside><div class="menu-grid"><button class="primary menu-start" data-route="yearSelect">MULA BELAJAR <span aria-hidden="true">→</span></button>${menu.map(([label, icon], index) => `<button class="menu-card" data-placeholder="${index}"><span class="card-icon" aria-hidden="true">${icon}</span><span>${label}</span><small>Akan Datang</small></button>`).join('')}<button class="menu-card parent-entry" data-route="parentGate"><span class="card-icon" aria-hidden="true">👪</span><span>Ibu Bapa / Penjaga</span><small>Kemajuan & sokongan</small></button></div></div>`;}
+    if (name === 'mainMenu') {const active=progress.getActiveProfile();content = `${heading(`Hai, ${window.MakmalProfiles.esc(active.name)}!`, 'Apa yang ingin kamu terokai hari ini?')}<div class="main-layout"><aside class="welcome">${pico()}<p>Selamat datang ke Makmal Cilik! Mari kita teroka dunia Sains.</p><button class="nav-button" data-route="profileSelect">Tukar Pemain</button></aside><div class="menu-grid"><button class="primary menu-start" data-route="yearSelect">MULA BELAJAR <span aria-hidden="true">→</span></button><button class="menu-card journal-entry-button" data-route="journalHome"><span class="card-icon" aria-hidden="true">📒</span><span>BUKU MAKMAL</span><small>Penemuan kamu</small></button>${menu.map(([label, icon], index) => `<button class="menu-card" data-placeholder="${index}"><span class="card-icon" aria-hidden="true">${icon}</span><span>${label}</span><small>Akan Datang</small></button>`).join('')}<button class="menu-card parent-entry" data-route="parentGate"><span class="card-icon" aria-hidden="true">👪</span><span>Ibu Bapa / Penjaga</span><small>Kemajuan & sokongan</small></button></div></div>`;}
     if (name === 'yearSelect') content = `${heading('PILIH TAHUN', 'Mulakan perjalanan Sains kamu.', 'MULA BELAJAR')}<div class="year-grid">${[1,2,3,4,5,6].map(year => `<button class="year-card active" data-route="year${year}"><span class="year-number" aria-hidden="true">0${year}</span><span class="year-arrow" aria-hidden="true">↗</span><strong>TAHUN ${year}</strong><span class="badge">Aktif</span></button>`).join('')}</div>${window.MakmalMaster.progressView()}`;
     if (name === 'year2') content = `${heading('Sains Tahun 2', 'Pilih unit untuk meneroka lima eksperimen.', 'MAKMAL PEMBELAJARAN')}<div class="year-progress"><span>${progress.year2CompletedCount()} / 35 eksperimen selesai · ${progress.year2CompletedUnits()} / 7 unit selesai</span>${progress.isYear2Complete()?'<button class="primary" data-route="year2Complete">Lihat Sambutan Tahun 2</button>':''}</div><div class="units-grid hub-grid">${units.map((unit, index) => `<button class="unit-card hub-card unit-${unit.id}" data-unit="${unit.id}"><img class="unit-art" src="${unit.icon}" alt="" width="88" height="88"><span class="unit-copy"><small>UNIT ${String(index + 1).padStart(2, '0')}</small><strong>${unit.title}</strong><span class="unit-description">${unit.description}</span></span><span class="unit-summary"><span>${completedCount(unit)} / ${unit.totalMissions} eksperimen</span><span class="badge">${completedCount(unit) === 5 ? 'Selesai' : completedCount(unit) ? 'Sedang Diterokai' : 'Belum Dimainkan'}</span></span></button>`).join('')}</div>`;
     if (name === 'year2Complete') content = window.MakmalYearCompletion.render();
@@ -80,6 +84,11 @@
     const button = event.target.closest('button');
     if (!button || event.composedPath().some(node => node.id === 'experiment-root')) return;
     window.MakmalRewards.play('click');
+    if(button.dataset.journalDirectScreen){router.navigate(button.dataset.journalDirectScreen,{unitId:button.dataset.journalDirectUnit,missionId:button.dataset.journalDirectMission});return;}
+    if(button.dataset.journalPlay!==undefined){const item=button.dataset.journalPlay==='first'?window.MakmalJournal.continueMission():window.MakmalJournal.getMission(Number(button.dataset.journalPlayYear),button.dataset.journalUnit,button.dataset.journalPlay);if(item){const route=window.MakmalJournal.playRoute(item);router.navigate(route.screen,route.context);}return;}
+    if(button.dataset.journalMission){router.navigate('journalMission',{year:Number(button.dataset.journalMissionYear),unitId:button.dataset.journalUnit,missionId:button.dataset.journalMission});return;}
+    if(button.dataset.journalUnit&&button.dataset.journalYear){router.navigate('journalUnit',{year:Number(button.dataset.journalYear),unitId:button.dataset.journalUnit});return;}
+    if(button.dataset.journalYear){router.navigate('journalYear',{year:Number(button.dataset.journalYear)});return;}
     if (button.dataset.y3unit) router.navigate('year3Unit',{unitId:button.dataset.y3unit});
     if (button.dataset.y4unit) router.navigate('year4Unit',{unitId:button.dataset.y4unit});
     if (button.dataset.y5unit) router.navigate('year5Unit',{unitId:button.dataset.y5unit});
@@ -178,4 +187,5 @@
     img.replaceWith(fallback);
   }, true);
   updateSound(); updateFullscreen(); router.init(render);
+  if(!progress.canPersist())setTimeout(()=>showToast('Kemajuan tidak dapat disimpan pada pelayar ini.','warning'),0);
 })();

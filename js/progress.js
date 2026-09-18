@@ -1,6 +1,6 @@
 'use strict';
 window.MakmalProgress = (() => {
-  const APP_VERSION='2.2.0', KEY='makmalCilikData', MAX_PROFILES=6;
+  const APP_VERSION='2.4.0', KEY='makmalCilikData', MAX_PROFILES=6;
   const AVATARS=['pico','flask','microscope','planet','bulb','leaf'];
   const isObject=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
   const emptyProgress=()=>({year1:{},year2:{},year3:{},year4:{},year5:{},year6:{}});
@@ -9,7 +9,7 @@ window.MakmalProgress = (() => {
   const makeId=()=>`p-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
   const makeProfile=(name='Pemain 1',avatar='pico',progress=emptyProgress(),extra={})=>{const now=new Date().toISOString();return {...extra,id:typeof extra.id==='string'&&extra.id?extra.id:makeId(),name:cleanName(name)||'Pemain 1',avatar:AVATARS.includes(avatar)?avatar:'pico',createdAt:typeof extra.createdAt==='string'?extra.createdAt:now,lastPlayedAt:typeof extra.lastPlayedAt==='string'?extra.lastPlayedAt:now,preferences:isObject(extra.preferences)?extra.preferences:{},progress:cleanProgress(progress)};};
   const defaults=()=>{const p=makeProfile();return {version:APP_VERSION,settings:{sound:true},profiles:[p],activeProfileId:p.id};};
-  let current=defaults();
+  let current=defaults(),storageAvailable=true;
   function attachAliases(data){let active=data.profiles.find(p=>p.id===data.activeProfileId)||data.profiles[0];if(!active){active=makeProfile();data.profiles=[active];}data.activeProfileId=active.id;const {progress:_progress,lastPlayedAt:_lastPlayedAt,...legacyProfile}=active;data.profile=legacyProfile;data.progress=active.progress;return data;}
   function normalize(value){
     if(!isObject(value))return defaults();
@@ -22,8 +22,9 @@ window.MakmalProgress = (() => {
     const extras=Object.fromEntries(Object.entries(value).filter(([k])=>!known.has(k)));
     return attachAliases({...extras,version:APP_VERSION,settings:{...settings,sound:typeof settings.sound==='boolean'?settings.sound:true},profiles,activeProfileId:profiles.some(p=>p.id===value.activeProfileId)?value.activeProfileId:profiles[0].id});
   }
-  function persist(){const {profile,progress,...stored}=current;try{localStorage.setItem(KEY,JSON.stringify(stored));}catch(_){/* In-memory fallback. */}}
-  function loadData(){try{current=normalize(JSON.parse(localStorage.getItem(KEY)));}catch(_){current=defaults();}return attachAliases(current);}
+  function persist(){const {profile,progress,...stored}=current;try{localStorage.setItem(KEY,JSON.stringify(stored));storageAvailable=true;}catch(_){storageAvailable=false;}return storageAvailable;}
+  function loadData(){let raw=null;try{raw=localStorage.getItem(KEY);storageAvailable=true;}catch(_){storageAvailable=false;}try{current=normalize(JSON.parse(raw));}catch(_){current=defaults();}return attachAliases(current);}
+  const canPersist=()=>storageAvailable;
   function saveData(data=current){const rootProgress=isObject(data?.progress)?data.progress:null;current=normalize(data);if(rootProgress){const active=current.profiles.find(p=>p.id===current.activeProfileId);active.progress=cleanProgress(rootProgress);attachAliases(current);}persist();return current;}
   const getData=()=>current,getProfiles=()=>current.profiles.slice(),getActiveProfile=()=>current.profiles.find(p=>p.id===current.activeProfileId)||current.profiles[0];
   function touch(){const p=getActiveProfile();if(p)p.lastPlayedAt=new Date().toISOString();}
@@ -31,8 +32,11 @@ window.MakmalProgress = (() => {
   function addProfile(name,avatar='pico'){if(current.profiles.length>=MAX_PROFILES)return {ok:false,error:'Had maksimum 6 pemain telah dicapai.'};const n=cleanName(name);if(!n)return {ok:false,error:'Masukkan nama pemain.'};const p=makeProfile(n,avatar);current.profiles.push(p);current.activeProfileId=p.id;attachAliases(current);persist();return {ok:true,profile:p};}
   function updateProfile(id,changes={}){const p=current.profiles.find(x=>x.id===id);if(!p)return {ok:false,error:'Profil tidak ditemui.'};const n=cleanName(changes.name??p.name);if(!n)return {ok:false,error:'Masukkan nama pemain.'};p.name=n;if(AVATARS.includes(changes.avatar))p.avatar=changes.avatar;persist();return {ok:true,profile:p};}
   function deleteProfile(id){if(current.profiles.length<=1)return {ok:false,error:'Sekurang-kurangnya satu profil diperlukan.'};const i=current.profiles.findIndex(p=>p.id===id);if(i<0)return {ok:false,error:'Profil tidak ditemui.'};current.profiles.splice(i,1);if(current.activeProfileId===id)current.activeProfileId=current.profiles[0].id;attachAliases(current);persist();return {ok:true};}
-  function resetProfile(id){const p=current.profiles.find(x=>x.id===id);if(!p)return false;p.progress=emptyProgress();p.preferences={...p.preferences,celebrations:{}};p.lastPlayedAt=new Date().toISOString();if(p.id===current.activeProfileId)attachAliases(current);persist();return true;}
+  function resetProfile(id){const p=current.profiles.find(x=>x.id===id);if(!p)return false;p.progress=emptyProgress();p.preferences={...p.preferences,celebrations:{},viewedDiscoveries:{}};p.lastPlayedAt=new Date().toISOString();if(p.id===current.activeProfileId)attachAliases(current);persist();return true;}
   function claimCelebration(key){const p=getActiveProfile();if(!p||typeof key!=='string'||!key)return false;const seen=isObject(p.preferences.celebrations)?p.preferences.celebrations:{};if(seen[key])return false;p.preferences={...p.preferences,celebrations:{...seen,[key]:new Date().toISOString()}};persist();return true;}
+  const discoveryKey=(year,unit,mission)=>`${Number(year)}:${String(unit)}:${String(mission)}`;
+  function isDiscoveryViewed(year,unit,mission){const viewed=getActiveProfile()?.preferences?.viewedDiscoveries;return isObject(viewed)&&viewed[discoveryKey(year,unit,mission)]===true;}
+  function markDiscoveryViewed(year,unit,mission){const p=getActiveProfile();if(!p)return false;const viewed=isObject(p.preferences.viewedDiscoveries)?p.preferences.viewedDiscoveries:{};p.preferences={...p.preferences,viewedDiscoveries:{...viewed,[discoveryKey(year,unit,mission)]:true}};persist();return true;}
   function updateSetting(name,value){if(name==='sound'&&typeof value==='boolean')current.settings.sound=value;persist();return current;}
   const missionKeys=['mission1','mission2','mission3','mission4','mission5'];
   const missionRecord=(key='mission1',unit='electricity')=>current.progress.year2[unit]?.[key];
@@ -60,5 +64,5 @@ window.MakmalProgress = (() => {
   function summaryForProgress(value){const old=current.progress;current.progress=cleanProgress(value);const rows=[{year:1,completed:forYear(1).completedTotal(),total:50,units:forYear(1).completedUnits(),unitTotal:10},{year:2,completed:year2CompletedCount(),total:35,units:year2CompletedUnits(),unitTotal:7},{year:3,completed:forYear(3).completedTotal(),total:50,units:forYear(3).completedUnits(),unitTotal:10},{year:4,completed:forYear(4).completedTotal(),total:50,units:forYear(4).completedUnits(),unitTotal:10},{year:5,completed:forYear(5).completedTotal(),total:50,units:forYear(5).completedUnits(),unitTotal:10},{year:6,completed:forYear(6).completedTotal(),total:55,units:forYear(6).completedUnits(),unitTotal:11}];current.progress=old;return rows;}
   const allYearsSummary=()=>summaryForProgress(current.progress),allYearsCompletedTotal=()=>allYearsSummary().reduce((n,r)=>n+r.completed,0),allYearsCompletedUnits=()=>allYearsSummary().reduce((n,r)=>n+r.units,0),allYearsComplete=()=>allYearsCompletedTotal()===290&&allYearsCompletedUnits()===58;
   function profileStats(id=current.activeProfileId){const p=current.profiles.find(x=>x.id===id);if(!p)return null;const years=summaryForProgress(p.progress),completed=years.reduce((n,r)=>n+r.completed,0),units=years.reduce((n,r)=>n+r.units,0);let attempts=0,latest=null;for(const year of Object.values(p.progress))for(const unit of Object.values(year||{}))for(const rec of Object.values(unit||{})){if(isObject(rec)){attempts+=Number.isSafeInteger(rec.attempts)&&rec.attempts>0?rec.attempts:0;const d=rec.lastCompletedAt||rec.completedAt;if(typeof d==='string'&&(!latest||d>latest))latest=d;}}return {profile:p,years,completed,total:290,units,unitTotal:58,percentage:Math.round(completed/290*100),attempts,latest,complete:completed===290&&units===58};}
-  return {APP_VERSION,MAX_PROFILES,AVATARS,cleanName,loadData,saveData,updateSetting,getData,getProfiles,getActiveProfile,switchProfile,addProfile,updateProfile,deleteProfile,resetProfile,claimCelebration,profileStats,summaryForProgress,forYear,year1Units,year3Units,year4Units,year5Units,year6Units,allYearsSummary,allYearsCompletedTotal,allYearsCompletedUnits,allYearsComplete,storageUnit,year2StorageUnits,year2CompletedCount,year2CompletedUnits,isYear2Complete,isMissionComplete,completedCount,isUnitComplete,isAvailable,startMissionAttempt,completeMission};
+  return {APP_VERSION,MAX_PROFILES,AVATARS,cleanName,loadData,saveData,canPersist,updateSetting,getData,getProfiles,getActiveProfile,switchProfile,addProfile,updateProfile,deleteProfile,resetProfile,claimCelebration,isDiscoveryViewed,markDiscoveryViewed,profileStats,summaryForProgress,forYear,year1Units,year3Units,year4Units,year5Units,year6Units,allYearsSummary,allYearsCompletedTotal,allYearsCompletedUnits,allYearsComplete,storageUnit,year2StorageUnits,year2CompletedCount,year2CompletedUnits,isYear2Complete,completedCount,isUnitComplete,isAvailable,isMissionComplete,startMissionAttempt,completeMission};
 })();

@@ -1,7 +1,7 @@
  'use strict';
 window.MakmalExperience = (() => {
  const content=id=>{const d=window.MakmalYear1?.missions[id]||window.MakmalYear6?.missions[id]||window.MakmalYear5?.missions[id]||window.MakmalYear4?.missions[id]||window.MakmalYear3?.missions[id]||window.MakmalNewContent?.missions[id]||window.MakmalPlantContent?.missions[id];return window.MakmalExperienceContent[id] || {objective:d.objective,lines:d.dialogues};};
- const label={click:'Pilihan dibuat',correct:'✓ Tepat',wrong:'Cuba cara lain',hint:'Petunjuk',step:'✓ Langkah selesai',discovery:'✓ Penemuan baharu',complete:'✓ Misi selesai',unitComplete:'✦ Unit selesai'};
+ const label={click:'Pilihan dibuat',uiTap:'Pilihan dibuat',uiSelect:'Pilihan dipilih',correct:'✓ Tepat — perhatikan hasilnya',wrong:'Belum lagi — semak hasil dan cuba semula',incorrect:'Belum lagi — semak hasil dan cuba semula',hint:'Petunjuk untuk langkah ini',step:'✓ Langkah selesai',discovery:'✓ Penemuan baharu',complete:'✓ Misi selesai dan kemajuan disimpan',missionComplete:'✓ Misi selesai dan kemajuan disimpan',unitComplete:'✦ Unit selesai'};
  function hint(s,def){
   s.hints=Math.min(s.hints,3);s.pose='hint';s.hintTarget=null;
   if(s.step===0){s.message=['Buat ramalan dahulu. Tidak mengapa jika belum pasti.','Lihat pilihan ramalan yang diserlahkan.','Pilih ramalan kamu, kemudian uji sendiri.'][s.hints-1];return s.hints>1?'.answer-buttons,#activity-heading':null;}

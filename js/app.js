@@ -19,15 +19,19 @@
   const missionStatus = mission => /^(electricity|light-dark|mixtures|plants|animals|humans|science-skills)-[1-5]$/.test(mission.id) ? (progress.isMissionComplete('mission' + mission.number, storageUnit(mission.id.replace(/-[1-5]$/, ''))) ? 'Selesai' : progress.isAvailable(mission.number, storageUnit(mission.id.replace(/-[1-5]$/, ''))) ? 'Seterusnya' : 'Akan Datang') : mission.status;
   const nav = () => {const p=progress.getActiveProfile();return `<nav class="navigation" aria-label="Navigasi makmal"><button class="nav-button" data-action="back">← Kembali</button><button class="nav-button" data-action="home">⌂ Menu Utama</button><button class="active-profile-chip" data-route="profileSelect" aria-label="Tukar pemain, pemain aktif ${window.MakmalProfiles.esc(p.name)}">${window.MakmalProfiles.avatar(p.avatar,p.name)}<span>${window.MakmalProfiles.esc(p.name)}</span></button></nav>`;};
   const heading = (title, subtitle, kicker = '') => `<div class="screen-heading">${kicker ? `<p class="section-kicker">${kicker}</p>` : ''}<h1>${title}</h1>${subtitle ? `<p class="subtext">${subtitle}</p>` : ''}</div>`;
-  function showToast(message) {
+  function showToast(message, type='info') {
     clearTimeout(toastTimer);
     toast.textContent = message;
+    toast.className = `toast-${type}`;
     toast.hidden = false;
     toastTimer = setTimeout(() => { toast.hidden = true; }, 4500);
   }
+  window.addEventListener('makmal:toast',event=>showToast(event.detail.message,event.detail.type));
   function render(name, context) {
     disposeExperiment?.(); disposeExperiment = null;
     clearTimeout(toastTimer); toast.hidden = true;
+    if(/^year[1-6]Complete$/.test(name)&&progress.claimCelebration(name))window.MakmalFeedback.emit('yearComplete');
+    if(name==='masterComplete'&&progress.claimCelebration('masterComplete'))window.MakmalFeedback.emit('masterComplete');
     if (name === 'experiment' || name === 'year3Experiment' || name === 'year4Experiment' || name === 'year5Experiment' || name === 'year6Experiment' || name === 'year1Experiment') {
       screen.innerHTML = `<div class="content-screen experiment-screen">${nav()}<div id="experiment-root"></div></div>`;
       disposeExperiment = window.MakmalExperiment.mount(document.getElementById('experiment-root'), { missionId: context.missionId, onExit: () => router.navigate(name==='year1Experiment'?'year1Unit':name==='year6Experiment'?'year6Unit':name==='year5Experiment'?'year5Unit':name==='year4Experiment'?'year4Unit':name==='year3Experiment'?'year3Unit':'unitDetail', { unitId: context.unitId }) });
@@ -114,7 +118,7 @@
       router.navigate(playable ? 'experiment' : 'missionPlaceholder', { unitId: button.dataset.unitId, missionId: button.dataset.mission });
     }
     if (button.dataset.route) router.navigate(button.dataset.route);
-    if(button.dataset.selectProfile){progress.switchProfile(button.dataset.selectProfile);data=progress.getData();router.navigate('mainMenu');}
+    if(button.dataset.selectProfile){progress.switchProfile(button.dataset.selectProfile);data=progress.getData();router.navigate('mainMenu');setTimeout(()=>showToast(`Pemain ${progress.getActiveProfile().name} dipilih.`,'success'),0);}
     if(button.dataset.editProfile)router.navigate('profileEdit',{profileId:button.dataset.editProfile});
     if(button.dataset.parentEditProfile)router.navigate('parentProfileEdit',{profileId:button.dataset.parentEditProfile});
     if(button.dataset.deleteProfile)router.navigate('confirmAction',{kind:'delete',profileId:button.dataset.deleteProfile,step:1});
@@ -125,8 +129,10 @@
     if (button.dataset.placeholder !== undefined) router.navigate('placeholder', { index: Number(button.dataset.placeholder) });
     if (button.dataset.message) showToast(button.dataset.message);
   });
+  document.addEventListener('pointerdown',()=>window.MakmalRewards.unlock(),{once:true,capture:true});
+  document.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' ')window.MakmalRewards.unlock();},{once:true,capture:true});
   document.addEventListener('change',event=>{if(event.target.matches('[data-parent-profile]'))router.navigate('parentDashboard',{profileId:event.target.value},true);});
-  document.addEventListener('submit',event=>{const form=event.target.closest('[data-profile-form]');if(!form)return;event.preventDefault();const values=new FormData(form),mode=form.dataset.profileForm,result=mode==='create'?progress.addProfile(values.get('name'),values.get('avatar')):progress.updateProfile(form.dataset.profileId,{name:values.get('name'),avatar:values.get('avatar')});const error=form.querySelector('.form-error');if(!result.ok){error.textContent=result.error;error.hidden=false;return;}data=progress.getData();router.navigate(mode==='parentEdit'||router.currentScreen()==='parentProfileCreate'?'parentDashboard':mode==='create'?'mainMenu':'profileSelect',{profileId:result.profile.id});});
+  document.addEventListener('submit',event=>{const form=event.target.closest('[data-profile-form]');if(!form)return;event.preventDefault();const values=new FormData(form),mode=form.dataset.profileForm,result=mode==='create'?progress.addProfile(values.get('name'),values.get('avatar')):progress.updateProfile(form.dataset.profileId,{name:values.get('name'),avatar:values.get('avatar')});const error=form.querySelector('.form-error');if(!result.ok){error.textContent=result.error;error.hidden=false;return;}data=progress.getData();router.navigate(mode==='parentEdit'||router.currentScreen()==='parentProfileCreate'?'parentDashboard':mode==='create'?'mainMenu':'profileSelect',{profileId:result.profile.id});setTimeout(()=>showToast(mode==='create'?'Profil pemain dicipta.':'Profil pemain dikemas kini.','success'),0);});
   let gateTimer=null,gateButton=null;
   const stopGate=()=>{clearTimeout(gateTimer);gateTimer=null;if(gateButton)gateButton.classList.remove('holding');gateButton=null;};
   const startGate=button=>{if(gateTimer)return;gateButton=button;button.classList.add('holding');gateTimer=setTimeout(()=>{stopGate();router.navigate('parentDashboard');},3000);};
@@ -142,7 +148,7 @@
   sound.addEventListener('click', () => {
     data = progress.updateSetting('sound', !data.settings.sound);
     updateSound();
-    if (!data.settings.sound) window.MakmalRewards.stop();
+    if (!data.settings.sound) window.MakmalRewards.stop(true); else window.MakmalRewards.unlock();
   });
   function updateFullscreen() {
     const active = Boolean(document.fullscreenElement);

@@ -3,7 +3,7 @@ let raw=null;const w={window:{},localStorage:{getItem:()=>raw,setItem:(k,v)=>raw
 for(const file of ['js/progress.js','js/content/experiments/electricity-mission1.js','js/content/experiments/electricity-mission2.js','js/content/experiments/electricity-missions3-5.js','js/engine/circuit.js'])vm.runInContext(fs.readFileSync(file,'utf8'),w);
 const p=w.window.MakmalProgress;
 for(const save of [null,'{bad','[]','42',JSON.stringify({version:'0.3.0',settings:{sound:false},profile:{name:'Aina'},extra:9,progress:{year2:{plants:{keep:1},electricity:{mission1:{completed:true,attempts:3,completedAt:'old'}}}}}),JSON.stringify({version:'0.4.0',progress:{year2:{electricity:{mission1:{completed:true},mission2:{completed:true}}}}}),JSON.stringify({version:'0.4.0',progress:{year2:{electricity:{mission4:{completed:true}}}}})]) {
-  raw=save;p.loadData();assert.equal(p.getData().version,'2.1.0');assert(p.isAvailable(1));assert(!p.isAvailable(0));assert(!p.isAvailable(6));assert(!p.isAvailable(NaN));
+  raw=save;p.loadData();assert.equal(p.getData().version,'2.2.0');assert(p.isAvailable(1));assert(!p.isAvailable(0));assert(!p.isAvailable(6));assert(!p.isAvailable(NaN));
   if(save?.includes('mission2'))assert(p.isAvailable(3));
   if(save?.includes('mission4'))assert(p.isAvailable(4)&&p.isAvailable(5));
   const unrelated=JSON.stringify([p.getData().profile,p.getData().settings,p.getData().extra,p.getData().progress.year2.plants]);

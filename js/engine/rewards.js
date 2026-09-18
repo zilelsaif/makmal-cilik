@@ -1,20 +1,17 @@
 'use strict';
 window.MakmalRewards = (() => {
-  // Audio is optional. Register a source only after the corresponding asset exists.
-  const sources = new Map();
-  const allowed = new Set(['movement', 'measurement', 'classification', 'observation', 'yearComplete', 'watering', 'plantGrowth', 'correctMatch', 'recovery', 'hint', 'discovery', 'click', 'correct', 'wrong', 'complete', 'connection', 'switch', 'bulb', 'repair', 'unitComplete', 'lightOn', 'itemFound', 'shadowFormed', 'itemSelected', 'magnetPickup', 'sieveAction', 'stirring', 'separation']);
-  const playing = new Set();
-  function play(event) {
-    if (!allowed.has(event) || !window.MakmalProgress.getData().settings.sound || !sources.has(event)) return;
-    try {
-      const audio = new Audio(sources.get(event));
-      playing.add(audio);
-      const release = () => playing.delete(audio);
-      audio.addEventListener('ended', release, { once: true });
-      audio.addEventListener('error', release, { once: true });
-      Promise.resolve(audio.play()).catch(release);
-    } catch (_) { /* Missing/blocked audio must never interrupt the experiment. */ }
-  }
-  function stop() { playing.forEach(audio => { audio.pause(); }); playing.clear(); }
-  return { play, stop, register: (event, source) => { if (allowed.has(event) && typeof source === 'string') sources.set(event, source); } };
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  const semantic = new Set(['uiTap','uiSelect','correct','incorrect','hint','discovery','missionComplete','unitComplete','yearComplete','masterComplete']);
+  const aliases = {click:'uiTap',select:'uiSelect',itemSelected:'uiSelect',movement:'uiSelect',switch:'uiSelect',connection:'uiSelect',correctMatch:'correct',itemFound:'correct',magnetPickup:'correct',sieveAction:'correct',stirring:'correct',separation:'correct',watering:'correct',plantGrowth:'correct',recovery:'correct',measurement:'correct',classification:'correct',observation:'correct',lightOn:'correct',shadowFormed:'correct',bulb:'correct',repair:'correct',wrong:'incorrect',complete:'missionComplete'};
+  const cooldown = {uiTap:55,uiSelect:75,correct:120,incorrect:180,hint:250,discovery:350,missionComplete:900,unitComplete:1200,yearComplete:1600,masterComplete:2200};
+  const patterns = {uiTap:[[520,.035,.045]],uiSelect:[[610,.045,.055]],correct:[[660,.06,.07],[880,.07,.09]],incorrect:[[250,.05,.08],[220,.035,.08]],hint:[[520,.05,.08],[700,.045,.1]],discovery:[[520,.05,.08],[700,.06,.09],[920,.055,.12]],missionComplete:[[523,.06,.1],[659,.07,.11],[784,.08,.16]],unitComplete:[[440,.06,.11],[554,.07,.12],[659,.075,.13],[880,.09,.2]],yearComplete:[[392,.06,.1],[523,.07,.11],[659,.08,.13],[784,.09,.17],[1047,.08,.22]],masterComplete:[[330,.06,.1],[440,.07,.1],[554,.08,.11],[659,.09,.13],[880,.1,.18],[1175,.08,.24]]};
+  let context=null,unlocked=false,generation=0;
+  const active=new Set(),lastPlayed=new Map();
+  const soundOn=()=>window.MakmalProgress?.getData?.().settings?.sound!==false;
+  const normalize=event=>semantic.has(event)?event:(aliases[event]||(event==='yearComplete'||event==='unitComplete'?event:'uiTap'));
+  function unlock(){if(!soundOn()||!AudioContextClass)return false;try{context||=new AudioContextClass();const result=context.state==='suspended'?context.resume():null;if(result?.catch)result.catch(()=>{});unlocked=true;return true;}catch(_){return false;}}
+  function tone(frequency,volume,duration,delay,token){if(!context||token!==generation||active.size>=10)return;try{const oscillator=context.createOscillator(),gain=context.createGain(),start=context.currentTime+delay;oscillator.type='sine';oscillator.frequency.setValueAtTime(frequency,start);gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(volume,start+.012);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);oscillator.connect(gain);gain.connect(context.destination);active.add(oscillator);oscillator.onended=()=>active.delete(oscillator);oscillator.start(start);oscillator.stop(start+duration+.02);}catch(_){}}
+  function play(event){const name=normalize(event),now=Date.now();if(!soundOn()||!unlocked||!context||context.state==='closed')return false;if(now-(lastPlayed.get(name)||0)<cooldown[name])return false;lastPlayed.set(name,now);if(/Complete$/.test(name))stop(false);const token=generation;let delay=0;for(const [frequency,volume,duration] of patterns[name]){tone(frequency,volume,duration,delay,token);delay+=duration*.72;}return true;}
+  function stop(resetUnlock=false){generation++;active.forEach(node=>{try{node.stop();}catch(_){}});active.clear();if(resetUnlock&&context?.state==='running'){const result=context.suspend();if(result?.catch)result.catch(()=>{});unlocked=false;}}
+  return {play,playSound:play,unlock,stop,normalize,events:[...semantic],register:()=>false};
 })();

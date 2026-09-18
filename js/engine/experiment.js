@@ -136,6 +136,7 @@ window.MakmalExperiment = (() => {
       const wasLit = circuit && session.lit();
       const wasYearComplete = yearComplete();
       const wasUnitComplete = progress.isUnitComplete(storageUnit);
+      const wasMissionComplete = progress.isMissionComplete(progressKey,storageUnit);
       session.act(action, value, target);
       const s = session.state;
       hintSelector=null;
@@ -143,7 +144,7 @@ window.MakmalExperiment = (() => {
       if(action==='predict'){if(!(mixture&&definition.mode==='dissolve')&&!(plants&&definition.mode==='needs'))s.lastPrediction=value;}
       if(action==='think')s.lastThought=value;
       if(action==='hint'){hintSelector=ux.hint(s,definition);event='hint';feedback='hint';}
-      else if(s.step!==before){event=s.step===4?'complete':s.step===3?'discovery':'click';feedback=s.step===4?'complete':'step';}
+      else if(s.step!==before){event=s.step===4?(wasMissionComplete?'discovery':'complete'):s.step===3?'discovery':'click';feedback=s.step===4?(wasMissionComplete?'discovery':'complete'):'step';}
       else if(action==='think'||action==='match'){const correct=action==='think'?s.thought:Object.keys(s.matched).length>matched;event=correct?'correct':'wrong';feedback=event;}
       else if(circuit&&action==='terminal'){event=s.pose==='happy'?'connection':s.pose==='thinking'?'wrong':'click';feedback=s.pose==='happy'?'correct':s.pose==='thinking'?'wrong':'';}
       else if(circuit&&action==='toggle'){event='switch';feedback='';}
@@ -152,7 +153,9 @@ window.MakmalExperiment = (() => {
       if(!ready&&session.canAdvance()&&before===1)feedback='step';
       if(s.step===4&&!s.saved){progress.completeMission(progressKey,storageUnit);s.saved=true;if(!wasUnitComplete&&progress.isUnitComplete(storageUnit)){event='unitComplete';feedback='unitComplete';}}
       if(s.step===4&&!wasYearComplete&&yearComplete())event='yearComplete';
-      window.MakmalRewards.play(event);
+      event=window.MakmalFeedback?.emit(event,{root})||event;
+      if(feedback==='wrong')feedback='incorrect';
+      if(s.step===4&&before!==4&&definition.number<5)window.dispatchEvent(new CustomEvent('makmal:toast',{detail:{message:'Misi baharu dibuka!',type:'success'}}));
       const focus=s.step!==before||action==='observe'?'#activity-heading':action==='select'?`[data-label="${s.selected}"]`:action==='match'?(session.canAdvance()?'[data-exp="next"]':'[data-label]:not(:disabled)'):action==='hint'?'[data-exp="hint"]':action==='terminal'?`[data-terminal="${value}"]:not(:disabled)`:`[data-exp="${action}"]${value===undefined?'':`[data-value="${value}"]`}`;
       draw(focus);
       if(s.step!==before||action==='observe')root.querySelector('#activity-heading')?.scrollIntoView({block:'nearest',behavior:'instant'});

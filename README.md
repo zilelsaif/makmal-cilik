@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.1.0 by Zil-el-Saif** — Sains Tahun 1–6 complete with local player profiles and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.2.0 by Zil-el-Saif** — Sains Tahun 1–6 complete with local player profiles and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -298,3 +298,22 @@ The Parent / Guardian Zone uses a deliberate three-second hold gate that works w
 The voluntary **Sokong Pembangunan** section includes RM4.90, RM9.90 and RM19.90 suggestions plus the supplied Touch 'n Go eWallet / Malaysia National QR poster. Support does not unlock content, rewards, missions, avatars or gameplay advantages. Payment occurs outside the app and is not claimed as verified.
 
 All profiles and progress remain on the device. The app has no login, cloud sync, tracker, analytics, targeted advertising or personal-data upload. The production web bundle remains offline-first. The Android shell uses `versionCode 9` and `versionName 2.1.0`; no release APK/AAB is produced by this milestone. See `tests/QA-v2.1.0.md`.
+
+## v2.2.0 — audio, feedback and game feel
+
+v2.2.0 adds one shared procedural Web Audio system and one shared feedback vocabulary across all 290 missions. The ten semantic sound events are `uiTap`, `uiSelect`, `correct`, `incorrect`, `hint`, `discovery`, `missionComplete`, `unitComplete`, `yearComplete` and `masterComplete`. Sounds are short, generated locally and add **0 bytes of audio assets**. Audio unlocks only after a user action, obeys the existing device-wide mute preference, limits concurrent voices and fails silently when Web Audio is unavailable.
+
+Correct, retry, hint, discovery, unlock and completion states now share concise status text, PICO reactions and small CSS animations. Replay completion is intentionally lighter than first completion. Year and master celebrations are recorded per profile so they do not repeatedly fire after reload. `prefers-reduced-motion` disables nonessential movement without removing state labels, icons, focus or sound controls. Every mission remains operable with sound off; sound never supplies scientific evidence.
+
+Standard game-feel vocabulary:
+
+| Event | Visual / PICO | Sound | Duration |
+| --- | --- | --- | --- |
+| UI tap / selection | pressed or selected state | subtle blip | 45–55 ms |
+| Correct | soft lift/glow, happy PICO | ascending two-note cue | under 170 ms |
+| Incorrect | gentle nudge, encourage PICO | soft descending cue | under 180 ms |
+| Hint / discovery | clear status, thinking/curious PICO | light chime | under 300 ms |
+| Mission / unit complete | saved text, celebrate PICO, finite sparkle | short flourish | under 600 ms |
+| Year / master complete | counts, celebrate PICO, finite sparkle | larger short flourish | under 1 s |
+
+The release preserves six years, 58 units, 290 missions, local independent profiles, Parent / Guardian Zone, voluntary support, migration-safe storage and the Capacitor shell. Android uses `versionCode 10` and `versionName 2.2.0`. See `tests/QA-v2.2.0.md`.

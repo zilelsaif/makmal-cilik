@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.0.0 by Zil-el-Saif** — Sains Tahun 1–6 complete: **6 years, 58 playable units and 290 playable missions**.
+**v2.1.0 by Zil-el-Saif** — Sains Tahun 1–6 complete with local player profiles and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -286,3 +286,15 @@ The compact progress summary on Pilih Tahun shows all six year totals. `MakmalPr
 Accessibility includes semantic buttons, visible focus, keyboard Enter/Space paths, click/tap controls, reduced-motion support, visual/text equivalents for sound activities and no drag-only mission. Year 1 retains larger controls. The application stores settings, profile and progress locally, preserves compatible unknown fields during migration and has no analytics, tracker, login, cloud sync or runtime remote dependency.
 
 `npm run build:web` creates the offline production bundle in `www/`. The Capacitor Android shell remains available for normal sync with `versionCode 8` and `versionName 2.0.0`; APK/AAB generation, signing, device QA and store submission remain deferred. See `tests/MASTER-AUDIT-v2.0.0.md` and `tests/QA-v2.0.0.md`.
+
+## v2.1.0 — local profiles and Parent / Guardian Zone
+
+Makmal Cilik supports up to six local player profiles. Every profile has its own Year 1–6 progress, attempts, completion dates and 290-mission master completion state. Device settings such as sound remain global. Existing single-player saves from v2.0.0 and earlier are migrated automatically into the first profile without removing compatible data.
+
+The player selector supports adding, renaming, changing avatars and switching profiles. Profile deletion and profile progress reset are available in the Parent / Guardian Zone. Deletion requires confirmation; resetting all progress requires two confirmations and affects only the selected profile.
+
+The Parent / Guardian Zone uses a deliberate three-second hold gate that works with pointer, touch, Space and Enter. It presents descriptive local progress by year, completed and incomplete units, attempt counts and recent activity. It does not calculate intelligence, mastery or predicted examination scores.
+
+The voluntary **Sokong Pembangunan** section includes RM4.90, RM9.90 and RM19.90 suggestions plus the supplied Touch 'n Go eWallet / Malaysia National QR poster. Support does not unlock content, rewards, missions, avatars or gameplay advantages. Payment occurs outside the app and is not claimed as verified.
+
+All profiles and progress remain on the device. The app has no login, cloud sync, tracker, analytics, targeted advertising or personal-data upload. The production web bundle remains offline-first. The Android shell uses `versionCode 9` and `versionName 2.1.0`; no release APK/AAB is produced by this milestone. See `tests/QA-v2.1.0.md`.

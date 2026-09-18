@@ -10,14 +10,14 @@
   const toast = document.getElementById('toast');
   let toastTimer;
   const units = window.MakmalContent.year2Units;
-  const menu = [['BUKU MAKMAL', '📒'], ['PENCAPAIAN', '🏅'], ['PROFIL', '🧑‍🔬'], ['TETAPAN', '⚙️']];
+  const menu = [['BUKU MAKMAL', '📒'], ['PENCAPAIAN', '🏅'], ['TETAPAN', '⚙️']];
   const pico = window.MakmalPico.portrait;
   let disposeExperiment = null;
   const playableUnit = id => ['electricity', 'light-dark', 'mixtures', 'plants', 'animals', 'humans', 'science-skills'].includes(id);
   const storageUnit = progress.storageUnit;
   const completedCount = unit => playableUnit(unit.id) ? progress.completedCount(storageUnit(unit.id)) : 0;
   const missionStatus = mission => /^(electricity|light-dark|mixtures|plants|animals|humans|science-skills)-[1-5]$/.test(mission.id) ? (progress.isMissionComplete('mission' + mission.number, storageUnit(mission.id.replace(/-[1-5]$/, ''))) ? 'Selesai' : progress.isAvailable(mission.number, storageUnit(mission.id.replace(/-[1-5]$/, ''))) ? 'Seterusnya' : 'Akan Datang') : mission.status;
-  const nav = () => '<nav class="navigation" aria-label="Navigasi makmal"><button class="nav-button" data-action="back">← Kembali</button><button class="nav-button" data-action="home">⌂ Menu Utama</button></nav>';
+  const nav = () => {const p=progress.getActiveProfile();return `<nav class="navigation" aria-label="Navigasi makmal"><button class="nav-button" data-action="back">← Kembali</button><button class="nav-button" data-action="home">⌂ Menu Utama</button><button class="active-profile-chip" data-route="profileSelect" aria-label="Tukar pemain, pemain aktif ${window.MakmalProfiles.esc(p.name)}">${window.MakmalProfiles.avatar(p.avatar,p.name)}<span>${window.MakmalProfiles.esc(p.name)}</span></button></nav>`;};
   const heading = (title, subtitle, kicker = '') => `<div class="screen-heading">${kicker ? `<p class="section-kicker">${kicker}</p>` : ''}<h1>${title}</h1>${subtitle ? `<p class="subtext">${subtitle}</p>` : ''}</div>`;
   function showToast(message) {
     clearTimeout(toastTimer);
@@ -39,12 +39,22 @@
     if (name.startsWith('year1')) { screen.innerHTML=`<div class="content-screen year1-screen">${nav()}${window.MakmalYear1Screens.render(name,context)}</div>`; return; }
     if (name.startsWith('year6')) { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalYear6Screens.render(name,context)}</div>`; return; }
     if (name === 'masterComplete') { screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalMaster.completion()}</div>`; return; }
+    if(name==='profileSelect'){screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalProfiles.select()}</div>`;return;}
+    if(name==='profileCreate'||name==='profileEdit'||name==='parentProfileCreate'||name==='parentProfileEdit'){const mode=name.includes('Create')||name==='profileCreate'?'create':name==='parentProfileEdit'?'parentEdit':'edit';screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalProfiles.form(mode,context)}</div>`;return;}
+    if(name==='parentGate'){screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalProfiles.gate()}</div>`;return;}
+    if(name==='parentGateConfirm'){screen.innerHTML=`<div class="content-screen">${nav()}<section class="confirm-panel" role="dialog" aria-labelledby="adult-confirm-title"><p class="section-kicker">PENGESAHAN ORANG DEWASA</p><h1 id="adult-confirm-title">Masuk ke Ruang Ibu Bapa / Penjaga?</h1><p>Bahagian ini mengandungi pengurusan profil, reset kemajuan dan sokongan sukarela.</p><div class="form-actions"><button class="primary" data-route="parentDashboard">Saya ibu bapa / penjaga</button><button class="nav-button" data-route="mainMenu">Batal</button></div></section></div>`;return;}
+    if(name==='parentDashboard'){screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalProfiles.dashboard(context)}</div>`;return;}
+    if(name==='support'){screen.innerHTML=`<div class="content-screen">${nav()}${window.MakmalProfiles.support()}</div>`;return;}
+    if(name==='confirmAction'){
+      const target=progress.getProfiles().find(p=>p.id===context.profileId)||progress.getActiveProfile(),reset=context.kind==='reset',second=reset&&context.step===2;
+      screen.innerHTML=`<div class="content-screen">${nav()}<section class="confirm-panel" role="dialog" aria-labelledby="confirm-title"><p class="section-kicker">PENGESAHAN DIPERLUKAN</p><h1 id="confirm-title">${reset?second?'Pengesahan Akhir':`Reset semua kemajuan ${window.MakmalProfiles.esc(target.name)}?`:`Padam profil ${window.MakmalProfiles.esc(target.name)}?`}</h1><p>${reset?second?'290 rekod misi boleh dipadam. Teruskan?':'Kemajuan profil ini akan dikosongkan. Profil dan tetapan peranti dikekalkan.':'Kemajuan profil ini akan dipadam dari peranti ini.'}</p><div class="form-actions"><button class="danger-button" data-confirm-kind="${reset?'reset':'delete'}" data-confirm-id="${target.id}" data-confirm-step="${context.step||1}">${second?'Ya, reset kemajuan':reset?'Teruskan':'Ya, padam profil'}</button><button class="nav-button" data-route="parentDashboard">Batal</button></div></section></div>`;return;
+    }
     if (name === 'title') {
-      screen.innerHTML = `<section class="title-screen"><div class="title-copy"><div class="eyebrow">✦ Makmal kecil, penemuan besar</div><h1>Makmal <span>Cilik</span></h1><p class="tagline">Eksperimen. Fikir. Temui.</p><button class="primary" data-route="mainMenu">MASUK MAKMAL <span aria-hidden="true">→</span></button><p class="curriculum">KSSR / DSKP · Sains Tahun 1–6</p></div><div class="lab-card"><div class="lab-label"><span>Pembantu makmal</span><span aria-hidden="true">✦ ✦ ✦</span></div>${pico()}<p class="pico-note">Hai, Saintis!<br>Jom teroka dunia Sains bersama saya.</p><div class="lab-symbols" aria-hidden="true">⚗️ <span>✦</span> 🌱 <span>✦</span> 🔬</div></div></section>`;
+      screen.innerHTML = `<section class="title-screen"><div class="title-copy"><div class="eyebrow">✦ Makmal kecil, penemuan besar</div><h1>Makmal <span>Cilik</span></h1><p class="tagline">Eksperimen. Fikir. Temui.</p><button class="primary" data-route="profileSelect">MASUK MAKMAL <span aria-hidden="true">→</span></button><p class="curriculum">KSSR / DSKP · Sains Tahun 1–6</p></div><div class="lab-card"><div class="lab-label"><span>Pembantu makmal</span><span aria-hidden="true">✦ ✦ ✦</span></div>${pico()}<p class="pico-note">Hai, Saintis!<br>Jom teroka dunia Sains bersama saya.</p><div class="lab-symbols" aria-hidden="true">⚗️ <span>✦</span> 🌱 <span>✦</span> 🔬</div></div></section>`;
       return;
     }
     let content = '';
-    if (name === 'mainMenu') content = `${heading('Hai, Saintis!', 'Apa yang ingin kamu terokai hari ini?')}<div class="main-layout"><aside class="welcome">${pico()}<p>Selamat datang ke Makmal Cilik! Mari kita teroka dunia Sains.</p></aside><div class="menu-grid"><button class="primary menu-start" data-route="yearSelect">MULA BELAJAR <span aria-hidden="true">→</span></button>${menu.map(([label, icon], index) => `<button class="menu-card" data-placeholder="${index}"><span class="card-icon" aria-hidden="true">${icon}</span><span>${label}</span><small>Akan Datang</small></button>`).join('')}</div></div>`;
+    if (name === 'mainMenu') {const active=progress.getActiveProfile();content = `${heading(`Hai, ${window.MakmalProfiles.esc(active.name)}!`, 'Apa yang ingin kamu terokai hari ini?')}<div class="main-layout"><aside class="welcome">${pico()}<p>Selamat datang ke Makmal Cilik! Mari kita teroka dunia Sains.</p><button class="nav-button" data-route="profileSelect">Tukar Pemain</button></aside><div class="menu-grid"><button class="primary menu-start" data-route="yearSelect">MULA BELAJAR <span aria-hidden="true">→</span></button>${menu.map(([label, icon], index) => `<button class="menu-card" data-placeholder="${index}"><span class="card-icon" aria-hidden="true">${icon}</span><span>${label}</span><small>Akan Datang</small></button>`).join('')}<button class="menu-card parent-entry" data-route="parentGate"><span class="card-icon" aria-hidden="true">👪</span><span>Ibu Bapa / Penjaga</span><small>Kemajuan & sokongan</small></button></div></div>`;}
     if (name === 'yearSelect') content = `${heading('PILIH TAHUN', 'Mulakan perjalanan Sains kamu.', 'MULA BELAJAR')}<div class="year-grid">${[1,2,3,4,5,6].map(year => `<button class="year-card active" data-route="year${year}"><span class="year-number" aria-hidden="true">0${year}</span><span class="year-arrow" aria-hidden="true">↗</span><strong>TAHUN ${year}</strong><span class="badge">Aktif</span></button>`).join('')}</div>${window.MakmalMaster.progressView()}`;
     if (name === 'year2') content = `${heading('Sains Tahun 2', 'Pilih unit untuk meneroka lima eksperimen.', 'MAKMAL PEMBELAJARAN')}<div class="year-progress"><span>${progress.year2CompletedCount()} / 35 eksperimen selesai · ${progress.year2CompletedUnits()} / 7 unit selesai</span>${progress.isYear2Complete()?'<button class="primary" data-route="year2Complete">Lihat Sambutan Tahun 2</button>':''}</div><div class="units-grid hub-grid">${units.map((unit, index) => `<button class="unit-card hub-card unit-${unit.id}" data-unit="${unit.id}"><img class="unit-art" src="${unit.icon}" alt="" width="88" height="88"><span class="unit-copy"><small>UNIT ${String(index + 1).padStart(2, '0')}</small><strong>${unit.title}</strong><span class="unit-description">${unit.description}</span></span><span class="unit-summary"><span>${completedCount(unit)} / ${unit.totalMissions} eksperimen</span><span class="badge">${completedCount(unit) === 5 ? 'Selesai' : completedCount(unit) ? 'Sedang Diterokai' : 'Belum Dimainkan'}</span></span></button>`).join('')}</div>`;
     if (name === 'year2Complete') content = window.MakmalYearCompletion.render();
@@ -104,11 +114,26 @@
       router.navigate(playable ? 'experiment' : 'missionPlaceholder', { unitId: button.dataset.unitId, missionId: button.dataset.mission });
     }
     if (button.dataset.route) router.navigate(button.dataset.route);
+    if(button.dataset.selectProfile){progress.switchProfile(button.dataset.selectProfile);data=progress.getData();router.navigate('mainMenu');}
+    if(button.dataset.editProfile)router.navigate('profileEdit',{profileId:button.dataset.editProfile});
+    if(button.dataset.parentEditProfile)router.navigate('parentProfileEdit',{profileId:button.dataset.parentEditProfile});
+    if(button.dataset.deleteProfile)router.navigate('confirmAction',{kind:'delete',profileId:button.dataset.deleteProfile,step:1});
+    if(button.dataset.resetProfile)router.navigate('confirmAction',{kind:'reset',profileId:button.dataset.resetProfile,step:1});
+    if(button.dataset.confirmKind){const id=button.dataset.confirmId;if(button.dataset.confirmKind==='reset'&&button.dataset.confirmStep==='1'){router.navigate('confirmAction',{kind:'reset',profileId:id,step:2});return;}const result=button.dataset.confirmKind==='delete'?progress.deleteProfile(id):{ok:progress.resetProfile(id)};data=progress.getData();showToast(result.ok?(button.dataset.confirmKind==='delete'?'Profil telah dipadam.':'Kemajuan telah direset.'):result.error||'Tindakan tidak dapat diselesaikan.');router.navigate('parentDashboard');}
     if (button.dataset.action === 'back') router.back();
     if (button.dataset.action === 'home') router.home();
     if (button.dataset.placeholder !== undefined) router.navigate('placeholder', { index: Number(button.dataset.placeholder) });
     if (button.dataset.message) showToast(button.dataset.message);
   });
+  document.addEventListener('change',event=>{if(event.target.matches('[data-parent-profile]'))router.navigate('parentDashboard',{profileId:event.target.value},true);});
+  document.addEventListener('submit',event=>{const form=event.target.closest('[data-profile-form]');if(!form)return;event.preventDefault();const values=new FormData(form),mode=form.dataset.profileForm,result=mode==='create'?progress.addProfile(values.get('name'),values.get('avatar')):progress.updateProfile(form.dataset.profileId,{name:values.get('name'),avatar:values.get('avatar')});const error=form.querySelector('.form-error');if(!result.ok){error.textContent=result.error;error.hidden=false;return;}data=progress.getData();router.navigate(mode==='parentEdit'||router.currentScreen()==='parentProfileCreate'?'parentDashboard':mode==='create'?'mainMenu':'profileSelect',{profileId:result.profile.id});});
+  let gateTimer=null,gateButton=null;
+  const stopGate=()=>{clearTimeout(gateTimer);gateTimer=null;if(gateButton)gateButton.classList.remove('holding');gateButton=null;};
+  const startGate=button=>{if(gateTimer)return;gateButton=button;button.classList.add('holding');gateTimer=setTimeout(()=>{stopGate();router.navigate('parentDashboard');},3000);};
+  document.addEventListener('pointerdown',event=>{const button=event.target.closest('[data-adult-gate]');if(button)startGate(button);});
+  document.addEventListener('pointerup',stopGate);document.addEventListener('pointercancel',stopGate);
+  document.addEventListener('keydown',event=>{const button=event.target.closest?.('[data-adult-gate]');if(button&&(event.key===' '||event.key==='Enter')){event.preventDefault();startGate(button);}});
+  document.addEventListener('keyup',event=>{if(event.key===' '||event.key==='Enter')stopGate();});
   function updateSound() {
     sound.setAttribute('aria-pressed', String(data.settings.sound));
     sound.textContent = data.settings.sound ? 'Bunyi: Hidup' : 'Bunyi: Mati';

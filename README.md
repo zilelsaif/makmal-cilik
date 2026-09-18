@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v1.6.0 by Zil-el-Saif** — Sains Tahun 2–6: **48 units and 240 playable missions**.
+**v1.7.0 by Zil-el-Saif** — Sains Tahun 1–6: **58 playable units and 290 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -265,3 +265,13 @@ Eleven Year 6 units add 55 playable missions while preserving all 185 missions f
 The release adds lightweight HTML/CSS models for microorganisms, ecosystems, conservation, force, speed, preservation, waste, eclipses, constellations and compound-machine design. Every mission keeps Ramal → Cuba → Perhati → Fikir → Temui, semantic keyboard controls, three-stage hints, replay and sequential progression. No new production image, SVG, audio or framework was required.
 
 Android source metadata is **v1.6.0 / versionCode 6**. Normal web build and Capacitor sync verify compatibility; no APK/AAB, commit, push or deployment is included. See `tests/QA-v1.6.0.md` for the release matrix and limitations.
+
+## v1.7.0 — complete Sains Tahun 1–6
+
+Sains Tahun 1 is now complete with 10 independently selectable units and 50 playable missions. Its interactions use shorter Malay prompts, larger controls, direct observation and visible feedback for young learners. All units preserve the Ramal → Cuba → Perhati → Fikir → Temui flow, sequential mission unlocks and replay.
+
+Sains Tahun 2–6 remain complete. The application now contains **58 playable units and 290 playable missions** across all six primary school years. `MakmalProgress.allYearsComplete()` becomes true only after every one of those missions is complete; no v2.0 master finale is included.
+
+Year 1 units: Kemahiran Saintifik, Peraturan Bilik Sains, Benda Hidup dan Benda Bukan Hidup, Manusia, Haiwan, Tumbuhan, Magnet, Penyerapan, Bumi and Asas Binaan.
+
+The v1.7.0 browser and storage suites cover five target viewports, safe v1.6 migration, replay and completion timestamps, all-years totals, keyboard paths and Years 2–6 regression. See `tests/QA-v1.7.0.md`.

@@ -1,7 +1,7 @@
 'use strict';
 window.MakmalRouter = (() => {
-  const valid = new Set(['year6','year6Unit','year6Experiment','year6Complete','year5','year5Unit','year5Experiment','year5Complete','year4','year4Unit','year4Experiment','year4Complete','year3', 'year3Unit', 'year3Experiment', 'year3Complete', 'title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
-  const parents = {year6:'yearSelect',year6Unit:'year6',year6Experiment:'year6Unit',year6Complete:'year6',year5:'yearSelect',year5Unit:'year5',year5Experiment:'year5Unit',year5Complete:'year5',year4:'yearSelect',year4Unit:'year4',year4Experiment:'year4Unit',year4Complete:'year4',year3:'yearSelect', year3Unit:'year3', year3Experiment:'year3Unit', year3Complete:'year3', mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
+  const valid = new Set(['year1','year1Unit','year1Experiment','year1Complete','year6','year6Unit','year6Experiment','year6Complete','year5','year5Unit','year5Experiment','year5Complete','year4','year4Unit','year4Experiment','year4Complete','year3', 'year3Unit', 'year3Experiment', 'year3Complete', 'title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
+  const parents = {year1:'yearSelect',year1Unit:'year1',year1Experiment:'year1Unit',year1Complete:'year1',year6:'yearSelect',year6Unit:'year6',year6Experiment:'year6Unit',year6Complete:'year6',year5:'yearSelect',year5Unit:'year5',year5Experiment:'year5Unit',year5Complete:'year5',year4:'yearSelect',year4Unit:'year4',year4Experiment:'year4Unit',year4Complete:'year4',year3:'yearSelect', year3Unit:'year3', year3Experiment:'year3Unit', year3Complete:'year3', mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
   let current = 'title';
   let currentContext = {};
   let render;
@@ -26,6 +26,12 @@ window.MakmalRouter = (() => {
       if(screen==='year5Complete'&&!p.isYearComplete())return {screen:'year5',context:{}};
       if(['year5Unit','year5Experiment'].includes(screen)&&!unit)return {screen:'year5',context:{}};
       if(screen==='year5Experiment'&&(!unit.missions.some(m=>m.id===context.missionId)||!p.isAvailable(Number(context.missionId.split('-').pop()),unit.id)))return {screen:'year5Unit',context:{unitId:unit.id}};
+    }
+    if (screen.startsWith('year1')) {
+      const p=window.MakmalProgress.forYear(1), unit=window.MakmalYear1?.units.find(u=>u.id===context.unitId);
+      if(screen==='year1Complete'&&!p.isYearComplete())return {screen:'year1',context:{}};
+      if(['year1Unit','year1Experiment'].includes(screen)&&!unit)return {screen:'year1',context:{}};
+      if(screen==='year1Experiment'&&(!unit.missions.some(m=>m.id===context.missionId)||!p.isAvailable(Number(context.missionId.split('-').pop()),unit.id)))return {screen:'year1Unit',context:{unitId:unit.id}};
     }
     if (screen.startsWith('year6')) {
       const p=window.MakmalProgress.forYear(6), unit=window.MakmalYear6?.units.find(u=>u.id===context.unitId);
@@ -61,5 +67,5 @@ window.MakmalRouter = (() => {
     window.addEventListener('popstate', event => display(resolve(event.state?.screen, event.state?.context)));
   }
   // Future gameplay can extend these routes without changing content records.
-  return { init, navigate, currentScreen: () => current, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment' || current === 'year3Experiment' || current === 'year4Experiment' || current === 'year5Experiment' || current === 'year6Experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
+  return { init, navigate, currentScreen: () => current, back: () => navigate(parents[current] || 'title', (current === 'missionPlaceholder' || current === 'experiment' || current === 'year3Experiment' || current === 'year4Experiment' || current === 'year5Experiment' || current === 'year1Experiment' || current === 'year6Experiment') ? { unitId: currentContext.unitId } : {}), home: () => navigate('mainMenu') };
 })();

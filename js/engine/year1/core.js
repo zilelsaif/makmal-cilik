@@ -1,0 +1,17 @@
+'use strict';
+window.MakmalYear1Domains={};
+window.MakmalYear1UI={
+ button(action,value,label,disabled=false,pressed=null){return `<button class="nav-button" data-exp="${action}" ${value===undefined?'':`data-value="${value}"`} ${disabled?'disabled':''} ${pressed===null?'':`aria-pressed="${pressed}"`}>${label}</button>`;},
+ message(s,text,correct=true){s.message=text;s.effect=correct?'correct':'wrong';s.pose=correct?'happy':'thinking';},
+ art(value){return `<span class="y1-art" aria-hidden="true">${value||'🔎'}</span>`;},
+ scene(d,s){const done=Object.keys(s.done||{}).length,turn=done*16;return `<div class="y1-scene y1-${d.domain}" role="img" aria-label="Aktiviti ${d.title}: ${done} langkah siap"><div class="y1-model" style="--turn:${turn}deg"><span>${d.scene||'🔬'}</span></div><div class="y1-meter" aria-hidden="true"><i></i><i></i><i></i><i></i></div><strong>${done} / ${d.actions.length} siap</strong></div>`;}
+};
+window.MakmalYear1Lab=(()=>{
+ function createSession(d){const domain=window.MakmalYear1Domains[d.mode];if(!domain)throw Error('Unknown Year1 mode '+d.mode);let s;const reset=()=>{s={step:0,prediction:false,predictionChoice:null,observed:0,thought:false,hints:0,message:'',pose:'neutral',effect:null,saved:false,done:{},selected:null,inspected:{},matched:{}};domain.init?.(s,d);return s;};reset();const canAdvance=()=>s.step===0?s.prediction:s.step===1?domain.solved(s,d):s.step===2?s.observed===d.observations.length-1:s.step===3?s.thought:false;
+  function act(a,v){s.effect=null;if(a==='predict'&&s.step===0&&['0','1'].includes(v)){s.prediction=true;s.predictionChoice=v;s.message='Bagus! Sekarang cuba.';s.effect='itemSelected';}else if(s.step===1)domain.act(s,d,a,v);if(a==='observe'&&s.step===2&&s.observed<d.observations.length-1){s.observed++;s.message='';}if(a==='think'&&s.step===3&&['correct','wrong'].includes(v)){s.thought=v==='correct';window.MakmalYear1UI.message(s,s.thought?d.discovery:'Lihat hasil tadi. Cuba lagi.',s.thought);}if(a==='hint'&&s.step<4){s.hints=Math.min(3,s.hints+1);s.pose='hint';}if(a==='next'&&canAdvance()){s.step++;s.message='';s.hints=0;s.pose=s.step===4?'success':'neutral';}return s;}
+  return {get state(){return s;},act,canAdvance,solved:()=>domain.solved(s,d),reset};
+ }
+ function render(s,d){const ui=window.MakmalYear1UI,b=ui.button,domain=window.MakmalYear1Domains[d.mode];if(s.step===0)return `<h2 id="activity-heading" tabindex="-1">${d.prediction}</h2><p>${d.objective}</p><div class="answer-buttons">${d.choices.map((x,i)=>b('predict',String(i),x,false,s.predictionChoice===String(i))).join('')}</div>`;if(s.step===3)return `<h2 id="activity-heading" tabindex="-1">${d.question}</h2><div class="answer-buttons">${d.answers.map((x,i)=>b('think',i?'wrong':'correct',x,false,s.thought&&!i)).join('')}</div>`;return `<h2 id="activity-heading" tabindex="-1">${s.step===1?'Cuba sekarang!':'Apa yang kamu nampak?'}</h2><p class="activity-instruction">${s.step===1?d.instruction:d.observations[s.observed]}</p><div class="y1-lab">${domain.render(s,d,s.step===1)}</div>${s.step===2?(s.observed<d.observations.length-1?b('observe',undefined,'Lihat Lagi →'):'<p>✓ Sudah dilihat.</p>'):b('restart',undefined,'Main Semula ↻')}`;}
+ function hint(s,d){const [a,v,clue]=window.MakmalYear1Domains[d.mode].hint(s,d);return {selector:`[data-exp="${a}"]${v===undefined?'':`[data-value="${v}"]`}`,clue};}
+ return {createSession,render,hint};
+})();

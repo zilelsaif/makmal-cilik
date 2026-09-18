@@ -13,7 +13,7 @@ for(let n=1;n<=5;n++)for(let repeat=0;repeat<30;repeat++){
 }
 const old={completed:true,attempts:9,completedAt:'2026-01-01',extra:'keep'},all=Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,old]));
 for(const value of [null,'{bad',JSON.stringify({version:'0.6.0',settings:{sound:false},profile:{name:'Aina'},progress:{year2:{electricity:all,lightDark:all,plants:{keep:true},mixtures:{mission3:old}}}})]){
- raw=value;p.loadData();assert.equal(p.getData().version,'1.6.0');const before=JSON.stringify([p.getData().settings,p.getData().profile,p.getData().progress.year2.electricity,p.getData().progress.year2.lightDark,p.getData().progress.year2.plants]);
+ raw=value;p.loadData();assert.equal(p.getData().version,'1.7.0');const before=JSON.stringify([p.getData().settings,p.getData().profile,p.getData().progress.year2.electricity,p.getData().progress.year2.lightDark,p.getData().progress.year2.plants]);
  for(let n=1;n<=5;n++){assert(p.isAvailable(n,'mixtures'));const key='mission'+n;p.startMissionAttempt(key,'mixtures');p.completeMission(key,'mixtures');const date=p.getData().progress.year2.mixtures[key].completedAt;p.startMissionAttempt(key,'mixtures');p.completeMission(key,'mixtures');assert.equal(p.getData().progress.year2.mixtures[key].completedAt,date);}
  p.loadData();assert(p.isUnitComplete('mixtures'));assert.equal(JSON.stringify([p.getData().settings,p.getData().profile,p.getData().progress.year2.electricity,p.getData().progress.year2.lightDark,p.getData().progress.year2.plants]),before);
 }

@@ -2,7 +2,7 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v1.7.0 by Zil-el-Saif** — Sains Tahun 1–6: **58 playable units and 290 playable missions**.
+**v2.0.0 by Zil-el-Saif** — Sains Tahun 1–6 complete: **6 years, 58 playable units and 290 playable missions**.
 
 ## Year 2 — 35 playable missions
 
@@ -275,3 +275,14 @@ Sains Tahun 2–6 remain complete. The application now contains **58 playable un
 Year 1 units: Kemahiran Saintifik, Peraturan Bilik Sains, Benda Hidup dan Benda Bukan Hidup, Manusia, Haiwan, Tumbuhan, Magnet, Penyerapan, Bumi and Asas Binaan.
 
 The v1.7.0 browser and storage suites cover five target viewports, safe v1.6 migration, replay and completion timestamps, all-years totals, keyboard paths and Years 2–6 regression. See `tests/QA-v1.7.0.md`.
+## v2.0.0 — complete curriculum audit and release polish
+
+Makmal Cilik provides the complete current project curriculum range: **6 years, 58 units and 290 playable missions**. The release audits curriculum placement, science wording, repeated discoveries, progression, Malay language, PICO tone, accessibility, persistence, responsive behavior and local-first packaging without adding missions or school years.
+
+Every mission retains **Ramal → Cuba → Perhati → Fikir → Temui**. Difficulty progresses from direct observation in Year 1 toward comparison and measurement, relationships, systems, evidence interpretation and design in later years. Predictions are not penalized; the activity and observations provide evidence for reflection.
+
+The compact progress summary on Pilih Tahun shows all six year totals. `MakmalProgress.allYearsComplete()` unlocks the master celebration only at **6 / 6 years, 58 / 58 units and 290 / 290 missions**. Replay never clears completion or replaces the first `completedAt` timestamp.
+
+Accessibility includes semantic buttons, visible focus, keyboard Enter/Space paths, click/tap controls, reduced-motion support, visual/text equivalents for sound activities and no drag-only mission. Year 1 retains larger controls. The application stores settings, profile and progress locally, preserves compatible unknown fields during migration and has no analytics, tracker, login, cloud sync or runtime remote dependency.
+
+`npm run build:web` creates the offline production bundle in `www/`. The Capacitor Android shell remains available for normal sync with `versionCode 8` and `versionName 2.0.0`; APK/AAB generation, signing, device QA and store submission remain deferred. See `tests/MASTER-AUDIT-v2.0.0.md` and `tests/QA-v2.0.0.md`.

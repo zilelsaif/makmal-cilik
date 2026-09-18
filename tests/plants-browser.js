@@ -8,7 +8,7 @@ document.getElementById('run').onclick=async()=>{
  const scenarios=[['fresh',null],['v0.8',seed({})],['partial',seed({mission3:record})],['complete',seed(all)],['malformed','{bad'],['blocked',null]];
  try{
   const html=await(await fetch('../index.html')).text();assert((await fetch('../assets/experiments/plants/garden.svg')).ok,'Sprite missing');
-  for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const [name,raw] of scenarios){
+  for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const [name,raw] of (new URLSearchParams(location.search).has('quick')?scenarios.slice(0,1):scenarios)){
    const frame=document.createElement('iframe');frame.style.width=width+'px';frame.style.height=height+'px';
    const boot=`<base href="../"><script>window.qaErrors=[];addEventListener('error',e=>{if(e.message)qaErrors.push(e.message)});addEventListener('unhandledrejection',e=>qaErrors.push(String(e.reason)));let raw=${JSON.stringify(raw)};Object.defineProperty(window,'localStorage',{value:{getItem:()=>{${name==='blocked'?"throw Error('blocked')":'return raw'}},setItem:(k,v)=>{${name==='blocked'?"throw Error('blocked')":'raw=v'}}}});<\/script>`;
    frame.srcdoc=html.replace('<head>','<head>'+boot);document.getElementById('frame').replaceChildren(frame);await new Promise(r=>frame.onload=r);

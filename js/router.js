@@ -1,12 +1,13 @@
 'use strict';
 window.MakmalRouter = (() => {
-  const valid = new Set(['year1','year1Unit','year1Experiment','year1Complete','year6','year6Unit','year6Experiment','year6Complete','year5','year5Unit','year5Experiment','year5Complete','year4','year4Unit','year4Experiment','year4Complete','year3', 'year3Unit', 'year3Experiment', 'year3Complete', 'title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
-  const parents = {year1:'yearSelect',year1Unit:'year1',year1Experiment:'year1Unit',year1Complete:'year1',year6:'yearSelect',year6Unit:'year6',year6Experiment:'year6Unit',year6Complete:'year6',year5:'yearSelect',year5Unit:'year5',year5Experiment:'year5Unit',year5Complete:'year5',year4:'yearSelect',year4Unit:'year4',year4Experiment:'year4Unit',year4Complete:'year4',year3:'yearSelect', year3Unit:'year3', year3Experiment:'year3Unit', year3Complete:'year3', mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
+  const valid = new Set(['masterComplete','year1','year1Unit','year1Experiment','year1Complete','year6','year6Unit','year6Experiment','year6Complete','year5','year5Unit','year5Experiment','year5Complete','year4','year4Unit','year4Experiment','year4Complete','year3', 'year3Unit', 'year3Experiment', 'year3Complete', 'title', 'mainMenu', 'yearSelect', 'year2', 'year2Complete', 'unitDetail', 'missionPlaceholder', 'experiment', 'placeholder']);
+  const parents = {masterComplete:'yearSelect',year1:'yearSelect',year1Unit:'year1',year1Experiment:'year1Unit',year1Complete:'year1',year6:'yearSelect',year6Unit:'year6',year6Experiment:'year6Unit',year6Complete:'year6',year5:'yearSelect',year5Unit:'year5',year5Experiment:'year5Unit',year5Complete:'year5',year4:'yearSelect',year4Unit:'year4',year4Experiment:'year4Unit',year4Complete:'year4',year3:'yearSelect', year3Unit:'year3', year3Experiment:'year3Unit', year3Complete:'year3', mainMenu: 'title', yearSelect: 'mainMenu', year2: 'yearSelect', year2Complete: 'year2', unitDetail: 'year2', missionPlaceholder: 'unitDetail', experiment: 'unitDetail', placeholder: 'mainMenu' };
   let current = 'title';
   let currentContext = {};
   let render;
   function resolve(screen, context) {
     if (!valid.has(screen)) return { screen: 'title', context: {} };
+    if (screen === 'masterComplete' && !window.MakmalProgress.allYearsComplete()) return {screen:'yearSelect', context:{}};
     if (screen === 'year2Complete' && !window.MakmalProgress.isYear2Complete()) return {screen:'year2', context:{}};
     context = context && typeof context === 'object' ? context : {};
     if (screen.startsWith('year3')) {

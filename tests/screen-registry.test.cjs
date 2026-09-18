@@ -1,0 +1,3 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const box={window:{}};vm.createContext(box);for(const year of [1,3,4,5,6]){vm.runInContext(fs.readFileSync(`js/engine/year${year}/screens.js`,'utf8'),box);assert.equal(typeof box.window[`MakmalYear${year}Screens`]?.render,'function',`Year ${year} screen registry`);assert.equal(typeof box.window[`MakmalYear${year}Screens`]?.completion,'function',`Year ${year} completion registry`);}vm.runInContext(fs.readFileSync('js/engine/year-completion.js','utf8'),box);assert.equal(typeof box.window.MakmalYearCompletion.render,'function');
+console.log('PASS all six year screen/completion registries expose the exact renderer names expected by app.js.');

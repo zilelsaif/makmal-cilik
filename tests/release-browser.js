@@ -5,7 +5,7 @@ document.getElementById('run').onclick=async()=>{
  const record={completed:true,attempts:3,completedAt:'2026-01-01T00:00:00Z',extra:8},all=Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,record]));
  try{
   const html=await(await fetch('../index.html')).text();for(const url of ['animals/rabbit.webp','animals/animals.svg','humans/senses.svg'])assert((await fetch('../assets/experiments/'+url)).ok,'Missing asset '+url);
-  for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const unit of ['animals','humans','science-skills'])for(const scenario of ['fresh','v0.9','partial','unit-complete','all-complete','malformed','bad-records','blocked']){
+  for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const unit of ['animals','humans','science-skills'])for(const scenario of (new URLSearchParams(location.search).has('quick')?['fresh']:['fresh','v0.9','partial','unit-complete','all-complete','malformed','bad-records','blocked'])){
    const storage=unit==='science-skills'?'scienceSkills':unit;
    const year2={electricity:all,lightDark:all,mixtures:all,plants:all,animals:{},humans:{},scienceSkills:{},future:{keep:9}};
    year2[storage]=scenario==='partial'?{mission3:record}:scenario==='unit-complete'?all:scenario==='bad-records'?{mission1:null,mission2:'bad',mission3:{attempts:-2}}:{};

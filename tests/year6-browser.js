@@ -2,7 +2,7 @@
 document.getElementById('run').onclick=async()=>{
  const run=document.getElementById('run'),out=document.getElementById('results');run.disabled=true;out.textContent='';let scenarios=0,total=0;
  const assert=(v,m)=>{if(!v)throw Error(m);},old={completed:true,attempts:3,completedAt:'2026-01-01',extra:7},all=Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,old]));
- try{const html=await(await fetch('../index.html')).text();for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const scenario of ['fresh','v1.5','partial','unit','full','malformed','blocked','bad-records']){
+ try{const html=await(await fetch('../index.html')).text(),storageScenarios=new URLSearchParams(location.search).has('quick')?['fresh']:['fresh','v1.5','partial','unit','full','malformed','blocked','bad-records'];for(const [width,height] of [[1366,768],[1920,1080],[390,844],[360,640],[800,450]])for(const scenario of storageScenarios){
  const year2={electricity:all,animals:all,plants:{keep:9}},year3={humans:all,machines:{keep:6}},year4={earth:all,sound:{keep:7}},year5={heat:all,machines:{keep:8}},ids=['science-skills','microorganisms','living-interactions','conservation','force','speed','food-preservation','waste','eclipses','constellations','machines'];
  const year6=scenario==='full'?Object.fromEntries(ids.map(id=>[id,all])):scenario==='unit'?{microorganisms:all}:scenario==='partial'?{microorganisms:{mission3:old}}:scenario==='bad-records'?{microorganisms:{mission1:null,mission2:'bad',mission3:{attempts:-8}}}:{};
  const raw=scenario==='malformed'?'{bad':scenario==='fresh'?null:JSON.stringify({version:'1.5.0',settings:{sound:false},profile:{name:'Aina'},extra:8,progress:{year2,year3,year4,year5,year6}});

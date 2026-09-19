@@ -60,7 +60,8 @@ window.MakmalRouter = (() => {
   function display(state) {
     current = state.screen; currentContext = state.context;
     render(current, currentContext);
-    document.getElementById('screen').focus({ preventScroll: true });
+    const screen=document.getElementById('screen'),preferred=screen.querySelector('[autofocus]');
+    (preferred||screen).focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }
   function navigate(screen, context = {}, replace = false) {

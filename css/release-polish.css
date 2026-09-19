@@ -1,0 +1,98 @@
+/* v2.5.0 final web UI/UX polish. Shared presentation only; no curriculum rules. */
+:root{
+  --mc-blue:#0874da;--mc-blue-dark:#0b3472;--mc-blue-soft:#e6f4ff;
+  --mc-yellow:#ffd539;--mc-green:#187b38;--mc-red:#9b1f1f;
+  --mc-bg:#edf8ff;--mc-surface:#fff;--mc-surface-soft:#f4f9fe;
+  --mc-border:#b7d7f3;--mc-text:#102650;--mc-muted:#435d7b;
+  --mc-success:#187b38;--mc-warning:#76520b;
+  --mc-radius-sm:14px;--mc-radius:20px;--mc-radius-lg:28px;
+  --mc-shadow-sm:0 3px 0 #c2d9ea;--mc-shadow:0 5px 0 #bdd7eb,0 12px 24px #234b7812;
+  --mc-focus:3px solid #102650;--mc-control:48px;
+  --mc-space-1:.5rem;--mc-space-2:.75rem;--mc-space-3:1rem;--mc-space-4:1.5rem;--mc-space-5:2rem;
+  --mc-fast:140ms;--mc-normal:200ms;
+  color:var(--mc-text);--blue:var(--mc-blue);--green:var(--mc-green);--yellow:var(--mc-yellow);--muted:var(--mc-muted);--line:var(--mc-border);--shadow:var(--mc-shadow)
+}
+body{color:var(--mc-text);line-height:1.5}
+h1,h2,h3{color:var(--mc-blue-dark);text-wrap:balance}
+h1{font-weight:900}h2{font-size:clamp(1.35rem,2.5vw,1.8rem);line-height:1.2}h3{line-height:1.3}
+p,.subtext,.activity-instruction{max-width:70ch}.subtext,small{color:var(--mc-muted)}
+button{min-height:var(--mc-control);transition:transform var(--mc-fast),box-shadow var(--mc-fast),background-color var(--mc-normal),border-color var(--mc-normal)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:var(--mc-focus);outline-offset:3px}
+button:disabled,[aria-disabled=true]{cursor:not-allowed}
+.primary,.nav-button,.utility,.menu-card,.year-card,.unit-card,.mission-card,.profile-card,.journal-year-card,.journal-unit-card{isolation:isolate}
+.primary{min-height:54px;border-radius:var(--mc-radius);letter-spacing:.01em}
+.nav-button{min-height:var(--mc-control);border-radius:var(--mc-radius-sm)}
+.danger-button{background:#fff7f7;border-color:#c83d3d;color:#801919}.danger-button:hover{background:#ffe9e9}
+.utility{min-height:44px;border-radius:var(--mc-radius-sm)}
+.screen-heading{padding:clamp(1.1rem,2.5vw,1.65rem);margin-bottom:var(--mc-space-4)}
+.screen-heading h1{margin-bottom:.55rem}.screen-heading p:last-child{margin-bottom:0}
+.section-kicker{line-height:1.35;color:#285f91}.badge{line-height:1.2;font-weight:800}
+.navigation{align-items:center;flex-wrap:wrap}.active-profile-chip{margin-left:auto;min-height:48px}
+
+/* Title and menu hierarchy */
+.title-screen{width:100%;max-width:1260px;margin-inline:auto;gap:clamp(2rem,5vw,5rem)}
+.title-copy{max-width:650px}.title-copy .primary{font-size:1.05rem;min-width:min(100%,270px)}
+.lab-card{max-width:560px;width:100%;justify-self:end}.title-screen .pico-image{filter:drop-shadow(0 12px 12px #124e7c1f)}
+.main-layout{grid-template-columns:minmax(245px,.68fr) minmax(440px,1.32fr);max-width:1180px;width:100%;margin-inline:auto}
+.welcome{position:sticky;top:1rem}.welcome .nav-button{margin-top:1rem}
+.menu-grid{align-content:start}.menu-start{font-size:1.12rem}.menu-card{min-height:126px}
+.menu-card[data-placeholder]{background:#f6f9fc;border-color:#d5e2ec;color:#536a80;box-shadow:0 3px 0 #d5e0e8}.menu-card[data-placeholder] .card-icon{filter:saturate(.55)}
+.parent-entry{grid-column:1/-1;min-height:78px;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:14px;align-items:center;background:#f7fafc}.parent-entry .card-icon{grid-row:1/-1}.parent-entry small{grid-column:2}
+
+/* Shared cards and state language */
+.profile-card,.year-card,.unit-card,.mission-card,.journal-year-card,.journal-unit-card,.journal-recent,.journal-empty,.journal-complete,.journal-discovery,.parent-summary,.parent-facts,.parent-info{
+  border-color:var(--mc-border);border-radius:var(--mc-radius);box-shadow:var(--mc-shadow-sm),0 10px 22px #234b780b
+}
+.profile-card.selected{border-color:#2d9450;background:linear-gradient(#fff,#edf9ef)}
+.current-profile{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .65rem;border-radius:999px;background:#dff4e4;color:#155c2d;font-size:.78rem;font-weight:900}
+.profile-manage{min-height:44px}.profile-meter,.journal-progress{min-height:10px}
+.year-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.year-card{min-height:170px;padding:22px;gap:11px}
+.year-card .year-number{font-size:2.25rem}.year-card .year-progress-copy{font-size:.86rem;line-height:1.35;color:#eaf7ff}.year-card .badge{margin-top:auto}
+.year-card.year-complete .badge{background:#dff4d9;color:#174f28;border-color:#8bc395}.year-card.year-complete .year-arrow::before{content:'✓ ';font-size:.9rem}
+.hub-card{height:100%}.unit-summary{margin-top:auto}.unit-card,.mission-card{overflow-wrap:anywhere}
+.mission-card[aria-disabled=true]{background:#f3f6f9;border-color:#cedbe5;box-shadow:0 3px 0 #dbe4eb;color:#506479}.mission-card[aria-disabled=true] .mission-number{background:#e5ebf0;color:#52677a}.mission-card[aria-disabled=true] .badge::before{content:'🔒 ';font-size:.72rem}
+
+/* Gameplay shell and five-step rail */
+.experiment-screen{width:100%}.experiment-title{padding:.35rem 0}.experiment-title>div{min-width:0}
+.learning-steps{box-shadow:var(--mc-shadow-sm)}
+.learning-steps li{font-weight:700}.learning-steps li[aria-current] strong::after{content:' · Sekarang';font-size:.72em;font-weight:800}.learning-steps .step-done strong::after{content:' · Selesai';font-size:.7em;font-weight:700}
+.pico-dialogue{max-width:100%;box-shadow:var(--mc-shadow-sm)}.pico-dialogue p{font-size:clamp(.9rem,1.5vw,1rem)}
+.workbench{max-width:100%}.workbench>p,.workbench>.activity-instruction{max-width:68ch}
+.experiment-actions{border-radius:var(--mc-radius)}.feedback-note{overflow-wrap:anywhere}
+.completion{max-width:860px;margin-inline:auto}.completion-check{box-shadow:0 4px 0 #acd5b2}.completion h2{margin-bottom:.6rem}
+.unit-celebration{border-width:3px}.master-finale{padding-inline:clamp(.5rem,3vw,2rem)}
+
+/* Journal and adult-facing surfaces */
+.journal-hero{border-radius:var(--mc-radius-lg)}.journal h2{letter-spacing:0;text-transform:none}
+.journal-recent h2::before{content:'✦ ';color:var(--mc-yellow)}
+.journal-discovery{border-top:6px solid var(--mc-green)}.journal-discovery>span{display:inline-flex;padding:.35rem .7rem;border-radius:999px;background:#e4f5e7;letter-spacing:.08em}
+.journal-discovery blockquote{color:var(--mc-blue-dark);font-weight:750}
+.parent-zone{max-width:1050px}.parent-heading{padding-bottom:.8rem}.year-progress-table>div{align-items:center;border-color:#d2e1ec}
+.parent-actions{padding-top:1rem;border-top:1px solid #dbe6ee}.support-button{margin-left:auto}
+.adult-gate,.confirm-panel{border-radius:var(--mc-radius-lg)}.hold-button{min-height:62px}.hold-button i{transition:none}
+.confirm-panel[role=dialog]{position:relative}.confirm-panel .form-actions{justify-content:center}.confirm-panel .danger-button{order:2}.confirm-panel .nav-button{order:1}
+.support-copy{border-radius:var(--mc-radius-lg)}.support-policy{color:#523b08}.support-poster img{border-radius:0;image-rendering:auto}
+.toast-info,.toast-success,.toast-warning,.toast-error{font-weight:800;line-height:1.4;border:2px solid #ffffff80}
+
+@media(hover:hover){button:not(:disabled):not([aria-disabled=true]):hover{transform:translateY(-2px)}.profile-card:hover,.journal-year-card:hover,.journal-unit-card:hover{border-color:#5eaee8}}
+@media(max-width:900px){.main-layout{grid-template-columns:1fr}.welcome{position:static;display:grid;grid-template-columns:auto 1fr;align-items:center;text-align:left}.welcome .pico{grid-row:1/3}.welcome p{margin:0}.welcome .nav-button{margin:0;justify-self:start}.year-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.learning-steps li[aria-current] strong::after,.learning-steps .step-done strong::after{content:''}.parent-actions .support-button{margin-left:0}}
+@media(max-width:640px){
+  :root{--mc-radius:17px;--mc-radius-lg:22px}
+  body{font-size:15px}.game-shell{padding-inline:14px}.topbar{min-height:72px}.brand{font-size:17px}.utility{min-height:44px;padding-inline:9px}
+  .navigation{gap:7px;margin-bottom:16px}.navigation .nav-button{padding:9px 11px;font-size:.78rem}.active-profile-chip{width:100%;margin-left:0;justify-content:center;order:3}
+  .title-screen{padding-top:10px;gap:18px}.title-copy h1{font-size:clamp(2.8rem,15vw,3.7rem)}.title-copy .primary{width:100%}.lab-card{padding:15px}.pico-note{margin-top:10px}
+  .screen-heading{padding:16px}.screen-heading h1{font-size:clamp(1.7rem,9vw,2.15rem)}
+  .main-layout{gap:15px}.welcome{padding:14px;grid-template-columns:70px 1fr}.welcome .pico{grid-row:1}.welcome .pico-image{width:66px;height:66px}.welcome p{padding:10px}.welcome .nav-button{grid-column:1/-1;width:100%}
+  .menu-grid{gap:10px}.menu-card{min-height:94px;padding:15px}.parent-entry{min-height:72px}
+  .year-grid{gap:10px}.year-card{min-height:144px;padding:16px}.year-card .year-number{font-size:1.8rem}.year-card .year-arrow{right:16px;top:18px}.year-card strong{font-size:1rem}
+  .profile-grid{gap:11px}.profile-card{min-height:165px;padding:15px}.profile-avatar{width:62px;height:62px;font-size:2rem}.profile-card strong{font-size:1.1rem}
+  .mission-card{min-height:104px}.mission-copy strong{font-size:1rem}.mission-copy>span{font-size:.86rem}
+  .experiment-title{flex-direction:column}.experiment-title>.badge{align-self:flex-start}.learning-steps li strong{font-size:.68rem}.pico-dialogue{align-items:flex-start}.workbench{border-width:2px;box-shadow:0 4px 0 #78add1}
+  .experiment-actions{padding-bottom:max(12px,env(safe-area-inset-bottom))}.experiment-actions .primary{min-height:50px}
+  .journal-hero{gap:.6rem}.journal-year-card,.journal-unit-card{padding:.85rem}.journal-discovery blockquote{margin-inline:0}
+  .parent-summary{padding:15px}.year-progress-table>div{gap:5px}.parent-actions>*{flex:1 1 145px}.support-copy{padding:20px}.confirm-panel{padding:22px 16px}.confirm-panel .form-actions>*{width:100%}
+}
+@media(max-width:370px){.year-grid{grid-template-columns:1fr}.year-card{min-height:126px}.profile-grid{grid-template-columns:1fr}.learning-steps{overflow-x:auto;justify-content:flex-start}.learning-steps li{min-width:58px}.learning-steps li strong{font-size:.64rem}}
+@media(max-height:550px) and (min-width:641px){.topbar{min-height:58px}.game-shell{padding-inline:20px}.navigation{margin-bottom:10px}.screen-heading{padding:12px 18px;margin-bottom:14px}.title-screen{max-width:1080px}.main-layout{gap:18px}.welcome{position:static;padding:14px}.menu-card{min-height:78px;padding:14px}.year-card{min-height:138px;padding:16px}.profile-card{min-height:145px;padding:13px}.support-screen{align-items:start}.support-copy{padding:18px}.confirm-panel{padding:18px}.workbench{padding:14px}.pico-dialogue{margin-bottom:8px}}
+@media(min-width:1500px){.content-screen{max-width:1280px}.profile-shell,.parent-zone,.support-screen{max-width:1240px}.units-grid:not(.hub-grid){grid-template-columns:repeat(4,minmax(0,1fr))}.hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}

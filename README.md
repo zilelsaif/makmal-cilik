@@ -2,7 +2,17 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.4.0 by Zil-el-Saif** — Web production release with hardened Cloudflare Pages delivery, local player profiles and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.5.0 by Zil-el-Saif** — Final web UI / UX and visual polish release with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.5.0 — Final web UI / UX and visual polish
+
+This release unifies the existing Makmal Cilik interface without changing curriculum or gameplay. Shared design tokens now govern brand colours, readable text, spacing, radii, shadows, control sizes, focus outlines and motion. Title, menus, profiles, year selection, unit and mission cards, the five-step experiment flow, PICO dialogue, Buku Makmal, Parent Zone, support and confirmation dialogs share one consistent visual system.
+
+Year cards now show profile-specific experiment and unit totals with text and check marks in addition to colour. The active profile has a visible labelled state. Confirmation dialogs place keyboard focus on **Batal**, while destructive controls remain visually separate. Mobile portrait, reduced-height landscape and wide desktop layouts receive dedicated, conservative refinements with no framework, external font, icon library or new image.
+
+The release retains all **6 years, 58 units and 290 playable missions**, independent local profiles, profile-specific Buku Makmal, procedural audio, feedback, exact master completion, Parent / Guardian tools and voluntary support. The support poster is unchanged and remains the largest production asset. Support unlocks no content.
+
+The v2.4 Cloudflare pipeline remains in place: Node 22, `npm ci`, `npm run verify:web`, `npm run build:web`, `www`, versioned `v=2.5.0` CSS/JavaScript URLs and the existing `_headers` policy. Runtime remains local-first with no login, analytics, trackers, API dependency or cloud upload. Android APK/AAB and Play Store work remain deferred.
 
 ## v2.4.0 — Web production and Cloudflare Pages
 

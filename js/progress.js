@@ -1,6 +1,6 @@
 'use strict';
 window.MakmalProgress = (() => {
-  const APP_VERSION='2.4.0', KEY='makmalCilikData', MAX_PROFILES=6;
+  const APP_VERSION='2.5.0', KEY='makmalCilikData', MAX_PROFILES=6;
   const AVATARS=['pico','flask','microscope','planet','bulb','leaf'];
   const isObject=v=>v!==null&&typeof v==='object'&&!Array.isArray(v);
   const emptyProgress=()=>({year1:{},year2:{},year3:{},year4:{},year5:{},year6:{}});

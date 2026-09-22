@@ -13,7 +13,7 @@ for(let n=1;n<=5;n++)for(let repeat=0;repeat<25;repeat++){
 }
 const electricity=Object.fromEntries([1,2,3,4,5].map(n=>['mission'+n,{completed:true,attempts:n,completedAt:'old'+n,extra:n}]));
 for(const value of [null,'{bad',JSON.stringify({version:'0.5.0',profile:{name:'Aina'},settings:{sound:false},extra:3,progress:{year2:{electricity,plants:{keep:1},lightDark:{mission3:{completed:true,attempts:4,completedAt:'first'}}}}})]){
- raw=value;p.loadData();assert.equal(p.getData().version,'2.5.0');const before=JSON.stringify([p.getData().progress.year2.electricity,p.getData().settings,p.getData().profile,p.getData().progress.year2.plants,p.getData().extra]);assert(p.isAvailable(1,'lightDark'));
+ raw=value;p.loadData();assert.equal(p.getData().version,'2.5.1');const before=JSON.stringify([p.getData().progress.year2.electricity,p.getData().settings,p.getData().profile,p.getData().progress.year2.plants,p.getData().extra]);assert(p.isAvailable(1,'lightDark'));
  for(let n=1;n<=5;n++){assert(p.isAvailable(n,'lightDark'));p.startMissionAttempt('mission'+n,'lightDark');p.completeMission('mission'+n,'lightDark');const first=p.getData().progress.year2.lightDark['mission'+n].completedAt;p.startMissionAttempt('mission'+n,'lightDark');p.completeMission('mission'+n,'lightDark');assert.equal(p.getData().progress.year2.lightDark['mission'+n].completedAt,first);}
  p.loadData();assert(p.isUnitComplete('lightDark'));assert.equal(JSON.stringify([p.getData().progress.year2.electricity,p.getData().settings,p.getData().profile,p.getData().progress.year2.plants,p.getData().extra]),before);
 }

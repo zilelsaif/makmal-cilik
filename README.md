@@ -2,7 +2,19 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.5.0 by Zil-el-Saif** — Final web UI / UX and visual polish release with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.5.1 by Zil-el-Saif** — Visual Target Alignment Pass with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.5.1 — Visual Target Alignment Pass
+
+The official image in `assets/reference/makmal-cilik-visual-target.png` is the project's visual North Star, not a feature specification. This patch brings the existing interface closer to its bright modern-laboratory language through stronger blue framing, yellow accents, white tactile cards, clearer green success states, restrained laboratory atmosphere and more consistent depth. The reference image itself is not embedded in production.
+
+The shared mission shell now gives the experiment workspace greater visual priority. On wide screens the five-step **Ramal → Cuba → Perhati → Fikir → Temui** rail becomes a compact vertical guide beside the workbench; smaller screens retain a readable horizontal flow. PICO is more clearly anchored as the laboratory assistant, feedback and scientific discoveries have stronger hierarchy, and completion actions remain easy to find. Title, menus, year/unit/mission cards, Buku Makmal and Parent Zone receive related but appropriately restrained refinements.
+
+Responsive treatment remains content-first: mobile portrait stacks controls without covering answers, reduced-height landscape stays vertically scrollable, and desktop uses available width without forcing the reference image's fixed composition. Existing keyboard focus, semantic controls, reduced-motion support and non-colour status labels are preserved.
+
+This release adds no XP, stars, reward economy, curriculum content, missions or progression rules. It retains all **6 years, 58 units and 290 playable missions**, profile isolation, Buku Makmal, Parent / Guardian tools, voluntary support and local-first privacy. The support poster and its payment QR are unchanged.
+
+The Cloudflare pipeline remains Node 22, `npm ci`, `npm run verify:web`, `npm run build:web` and output directory `www`. Production CSS/JavaScript cache markers are versioned as `v=2.5.1`. Android Capacitor configuration and package versions are unchanged; APK/AAB publishing remains outside this patch.
 
 ## v2.5.0 — Final web UI / UX and visual polish
 

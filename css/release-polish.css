@@ -1,4 +1,4 @@
-/* v2.5.0 final web UI/UX polish. Shared presentation only; no curriculum rules. */
+/* v2.5.1 visual-target alignment. Shared presentation only; no curriculum rules. */
 :root{
   --mc-blue:#0874da;--mc-blue-dark:#0b3472;--mc-blue-soft:#e6f4ff;
   --mc-yellow:#ffd539;--mc-green:#187b38;--mc-red:#9b1f1f;
@@ -96,3 +96,88 @@ button:disabled,[aria-disabled=true]{cursor:not-allowed}
 @media(max-height:550px) and (min-width:641px){.topbar{min-height:58px}.game-shell{padding-inline:20px}.navigation{margin-bottom:10px}.screen-heading{padding:12px 18px;margin-bottom:14px}.title-screen{max-width:1080px}.main-layout{gap:18px}.welcome{position:static;padding:14px}.menu-card{min-height:78px;padding:14px}.year-card{min-height:138px;padding:16px}.profile-card{min-height:145px;padding:13px}.support-screen{align-items:start}.support-copy{padding:18px}.confirm-panel{padding:18px}.workbench{padding:14px}.pico-dialogue{margin-bottom:8px}}
 @media(min-width:1500px){.content-screen{max-width:1280px}.profile-shell,.parent-zone,.support-screen{max-width:1240px}.units-grid:not(.hub-grid){grid-template-columns:repeat(4,minmax(0,1fr))}.hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+
+/* North Star alignment: brighter laboratory atmosphere without a production bitmap. */
+body::before,body::after{content:"";position:fixed;z-index:0;pointer-events:none;opacity:.48}
+body::before{inset:7rem auto auto -4rem;width:15rem;height:15rem;border:2px solid #86caf144;border-radius:50%;box-shadow:5rem 12rem 0 -4rem #ffe26b29,82vw 7rem 0 -3rem #7cd89c26}
+body::after{right:3vw;bottom:4vh;width:11rem;height:11rem;background:radial-gradient(circle at 30% 35%,#fff 0 5%,transparent 6%),radial-gradient(circle at 67% 24%,#ffd94c 0 4%,transparent 5%),linear-gradient(145deg,transparent 42%,#65b9ed24 43% 47%,transparent 48%);transform:rotate(-8deg)}
+.game-shell{position:relative;z-index:1}
+
+/* Tactile shared surfaces: one visual language, with restrained depth. */
+.menu-card,.year-card,.unit-card,.mission-card,.profile-card,.journal-year-card,.journal-unit-card{border-top-color:#86c9f3;box-shadow:inset 0 2px 0 #fff,0 4px 0 #b7d3e8,0 12px 24px #214b7612}
+.menu-card::after,.year-card::after,.unit-card::after,.mission-card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(120deg,#fff8,transparent 22%);opacity:.5}
+.menu-card,.year-card,.unit-card,.mission-card{position:relative;overflow:hidden}
+.menu-card .card-icon,.unit-card .card-icon,.unit-art{box-shadow:inset 0 -4px 0 #9cc9e738,0 3px 0 #a9cce5;border:2px solid #fff;outline:2px solid #b7daf2}
+.hub-card{border-top-width:6px}.unit-summary{background:#f7fbff;border-radius:0 0 14px 14px;margin-inline:-8px;padding:13px 8px 0}
+.mission-number{box-shadow:inset 0 -4px 0 #1d5f9d1f,0 3px 0 #a8cae3}.mission-card:active{transform:translateY(2px);box-shadow:inset 0 2px 0 #fff,0 2px 0 #9cbdd7}
+
+/* Mission header reads as one laboratory assignment rather than a second page header. */
+.experiment-title{position:relative;padding:18px 20px 18px 86px;border:3px solid #79c9fa;border-radius:var(--mc-radius-lg);background:linear-gradient(105deg,#fff 0 70%,#e2f3ff);box-shadow:inset 0 0 0 3px #fff,0 5px 0 #4b9cd4,0 14px 26px #234b7812;overflow:hidden}
+.experiment-title::before{content:"⚗";position:absolute;left:20px;top:50%;translate:0 -50%;display:grid;place-items:center;width:48px;height:48px;border-radius:50%;background:linear-gradient(#ffe86f,#ffc932);color:#0b4d92;border:3px solid #fff;box-shadow:0 0 0 2px #80cafa,0 3px 0 #4e99cd;font-size:1.55rem}
+.experiment-title .section-kicker{letter-spacing:.08em;color:#2a6592}.experiment-title h1{color:#0b2c6c;text-shadow:0 1px 0 #fff}.mission-objective{font-weight:650;color:#314f70}
+
+/* Five scientific stages: distinct identity with text and symbol states. */
+.learning-steps{position:relative;border-width:3px;background:linear-gradient(#fff,#edf7ff);box-shadow:inset 0 0 0 2px #fff,0 5px 0 #accde4,0 12px 24px #244c7010}
+.learning-steps li{--step-color:#2f8ed6;position:relative;border-color:#d2e4f1;background:#fff;box-shadow:0 2px 0 #d2e2ed}
+.learning-steps li:nth-child(2){--step-color:#2a9b50}.learning-steps li:nth-child(3){--step-color:#d39a10}.learning-steps li:nth-child(4){--step-color:#7758c2}.learning-steps li:nth-child(5){--step-color:#e06b21}
+.learning-steps li>span{border:2px solid #fff;outline:2px solid #c5dae9;box-shadow:0 2px 0 #c4d7e5}
+.learning-steps li[aria-current]{border-color:var(--step-color);box-shadow:inset 4px 0 0 var(--step-color),0 3px 0 #b7cfe0;background:#f8fcff;color:#102f62}
+.learning-steps li[aria-current]>span{background:var(--step-color);outline-color:var(--step-color)}
+.learning-steps .step-done{border-color:#9bcaa8;background:#f2fbf3}.learning-steps .step-done>span{background:#258449;color:#fff;outline-color:#258449}
+
+/* PICO is anchored to the current experiment as a compact laboratory assistant. */
+.pico-dialogue{position:relative;padding:25px 22px 17px;border-width:3px;background:linear-gradient(110deg,#fff,#edf8ff);box-shadow:inset 0 0 0 2px #fff,0 5px 0 #9ec9e7,0 13px 24px #234b7811}
+.pico-dialogue::before{content:"PEMBANTU MAKMAL";position:absolute;left:104px;top:7px;color:#27638f;font-size:.67rem;font-weight:900;letter-spacing:.1em}
+.pico-dialogue::after{content:"";position:absolute;left:74px;bottom:-11px;width:20px;height:20px;background:#f5fbff;border-right:3px solid #9eccf0;border-bottom:3px solid #9eccf0;rotate:45deg}
+.pico-dialogue .pico-image{filter:drop-shadow(0 7px 6px #194f7920)}.pico-dialogue p{padding-top:7px;color:#102d62}
+.pico-hint{background:linear-gradient(110deg,#fffdf4,#fff6cd)}.pico-hint::after{background:#fff9df;border-color:#dfba45}
+.pico-happy,.pico-success{background:linear-gradient(110deg,#fafff9,#e8f8e8)}.pico-happy::after,.pico-success::after{background:#f0fbef;border-color:#84c791}
+
+/* Experiment bench: brighter rim, warm tabletop centre and local grouping. */
+.workbench{position:relative;border-width:4px;border-color:#62bdf5;background:linear-gradient(180deg,#fff 0 9%,#f4faff 9% 72%,#edf5fa 72%);box-shadow:inset 0 0 0 4px #fff,inset 0 -9px 0 #c5dce9,0 7px 0 #498fc2,0 18px 34px #173f6818;overflow:hidden}
+.workbench::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 49.7%,#7abbe412 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,#7abbe40d 50%,transparent 50.3%);background-size:54px 54px;mask-image:linear-gradient(#0005,transparent 65%)}
+.workbench>*{position:relative}.component-card,.y1-card,.y3-card,.y4-card,.y5-card,.y6-card{box-shadow:inset 0 2px 0 #fff,0 4px 0 #c0d8e8,0 9px 15px #244c700d}
+.component-card strong,.y1-card strong,.y3-card strong,.y4-card strong,.y5-card strong,.y6-card strong{color:#102e62}
+.label-chip{border-width:3px;box-shadow:inset 0 1px 0 #fff,0 4px 0 #8fb8d4}.label-chip:active{translate:0 2px;box-shadow:0 2px 0 #8fb8d4}
+
+/* Feedback stays close to the experiment and prioritises the science explanation. */
+.feedback-note{padding:9px 13px;border-radius:12px;background:#eaf8ec;border-left:5px solid #2a9b50;color:#185b30}
+.feedback-note[hidden]{padding:0;border:0;background:transparent}
+#experiment-root[data-feedback=wrong] .feedback-note{background:#fff7df;border-left-color:#d39a10;color:#66480b}
+#experiment-root[data-feedback=hint] .feedback-note{background:#fff8d8;border-left-color:#e5b329;color:#66480b}
+.completion{padding:24px;border:3px solid #83cc91;border-radius:var(--mc-radius-lg);background:linear-gradient(120deg,#f8fff7,#e5f8e6);box-shadow:inset 0 0 0 3px #fff,0 6px 0 #92c99c,0 16px 28px #1d68301a}
+.completion::before{content:"PENEMUAN SAINS";display:inline-flex;padding:5px 11px;margin-bottom:10px;border-radius:999px;background:#fff3ad;color:#604707;font-size:.72rem;font-weight:900;letter-spacing:.1em}
+.completion-check{width:68px;height:68px;background:#33aa54;color:#fff;border-color:#eaffea;box-shadow:0 0 0 3px #75ca88,0 5px 0 #5cab6e}
+.discovery-copy{padding:15px 18px;border-radius:16px;background:#fff;border-left:6px solid #2a9b50;color:#153d2a;text-align:left}
+.experiment-actions .primary,.completion-actions .primary{background:linear-gradient(#34b653,#168036);border-color:#a6e5ae;box-shadow:inset 0 2px 0 #ffffff70,0 5px 0 #12652c,0 12px 20px #187b3822}
+.experiment-actions .primary:hover,.completion-actions .primary:hover{background:linear-gradient(#2ba64a,#126f2e)}
+.experiment-actions .primary:disabled{background:#dce6ed;border-color:#b7cbd9;box-shadow:none}
+.hint-button{box-shadow:inset 0 2px 0 #fff7bd,0 4px 0 #bc9225,0 10px 18px #8e6c1617}.hint-button:active{translate:0 2px;box-shadow:0 2px 0 #bc9225}
+
+/* Quiet journal identity and restrained adult surfaces. */
+.journal-hero{position:relative;border-left:9px solid #ffd44a;background:linear-gradient(110deg,#fff 0 72%,#e7f5ff)}
+.journal-hero::after{content:"REKOD SAINS";position:absolute;right:18px;top:14px;color:#47708d;font-size:.68rem;font-weight:900;letter-spacing:.12em}
+.journal-discovery{box-shadow:inset 0 0 0 3px #fff,0 5px 0 #aad1e9,0 14px 24px #244c7010}
+.parent-zone .parent-heading{border-bottom-color:#86bfe6}.parent-zone .parent-summary{box-shadow:inset 0 0 0 2px #fff,0 4px 0 #c1d8e8}.support-copy{box-shadow:inset 0 0 0 3px #fff,0 5px 0 #9fcbe8,0 16px 28px #234b7812}
+
+@media(min-width:1100px){
+  .experiment-layout{grid-template-columns:190px minmax(0,1fr);align-items:start;gap:24px}
+  .learning-steps{position:sticky;top:12px;flex-direction:column;padding:10px;gap:10px}
+  .learning-steps li{justify-content:flex-start;padding:13px 10px}
+  .pico-dialogue{margin-left:auto;width:min(100%,760px)}
+}
+@media(max-width:1099px){.learning-steps li[aria-current]{box-shadow:inset 0 -4px 0 var(--step-color),0 3px 0 #b7cfe0}}
+@media(max-width:640px){
+  body::before{width:10rem;height:10rem;opacity:.3}.experiment-title{padding:14px 14px 14px 62px;border-width:2px}.experiment-title::before{left:10px;width:38px;height:38px;font-size:1.2rem}
+  .learning-steps{border-width:2px;box-shadow:0 4px 0 #accde4}.learning-steps li{box-shadow:none}.learning-steps li[aria-current]{box-shadow:inset 0 -4px 0 var(--step-color)}
+  .pico-dialogue{padding:23px 11px 11px}.pico-dialogue::before{left:70px;top:6px;font-size:.58rem}.pico-dialogue::after{left:50px;width:15px;height:15px;bottom:-9px}
+  .workbench{border-width:3px;box-shadow:inset 0 0 0 2px #fff,inset 0 -6px 0 #c5dce9,0 5px 0 #498fc2}.workbench::before{background-size:42px 42px}
+  .experiment-actions{position:static;background:transparent;border-top:0;border-radius:0;padding:12px 0 max(12px,env(safe-area-inset-bottom))}
+  .feedback-note{padding:8px 10px}.completion{padding:18px 12px}.completion::before{font-size:.65rem}.discovery-copy{padding:12px 13px}
+  .journal-hero::after{position:static;display:block;margin-top:.5rem}.unit-summary{margin-inline:0}
+}
+@media(max-height:550px) and (min-width:641px){
+  body::after{display:none}.experiment-title{padding:10px 15px 10px 65px}.experiment-title::before{left:12px;width:38px;height:38px;font-size:1.15rem}
+  .experiment-layout{gap:9px}.learning-steps{box-shadow:0 3px 0 #accde4}.pico-dialogue{padding:20px 12px 8px}.pico-dialogue::before{left:72px;top:4px;font-size:.58rem}
+  .workbench{box-shadow:inset 0 0 0 2px #fff,inset 0 -5px 0 #c5dce9,0 4px 0 #498fc2}.experiment-actions{position:static}.completion{padding:14px}.completion-check{width:54px;height:54px}
+}

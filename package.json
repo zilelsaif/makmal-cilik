@@ -1,6 +1,6 @@
 {
   "name": "makmal-cilik",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "private": true,
   "description": "Makmal Cilik Android shell and web packaging",
   "scripts": {

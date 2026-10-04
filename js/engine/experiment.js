@@ -68,6 +68,7 @@ window.MakmalExperiment = (() => {
     let disposed = false, renderedStep = -1, feedback = '', hintSelector = null;
     const ux = window.MakmalExperience;
     const presentation = ux.content(missionId);
+    const golden = missionId === 'electricity-2';
     let replayIntro = progress.isMissionComplete(progressKey, storageUnit);
     const image = (component, named = true) => `<img src="${component.image}" alt="${named ? component.name : component.visual}" data-fallback="${named ? component.name : component.visual}" width="160" height="160" draggable="false">`;
     function start() { window.MakmalRewards.stop(); replayIntro = false; session.reset(); renderedStep = -1; feedback = ''; hintSelector = null; progress.startMissionAttempt(progressKey, storageUnit); window.MakmalRewards.play('click'); draw(); }
@@ -101,7 +102,11 @@ window.MakmalExperiment = (() => {
       const actions = s.step < 4 ? `<div class="experiment-actions"><div class="hint-control"><button class="hint-button" data-exp="hint">💡 Hint</button><span class="hint-level">${s.hints ? Math.min(s.hints,3)+' / 3' : ''}</span></div><button class="primary" data-exp="next" ${session.canAdvance() ? '' : 'disabled'}>${s.step === 3 ? 'Temui' : 'Seterusnya'} →</button></div>` : '';
       const picoText = s.message || presentation.lines[s.step];
       if (renderedStep !== s.step) {
-        root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN ${year1?1:year6?6:year5?5:year4?4:year3?3:2} · ${definition.unitTitle || 'ELEKTRIK'} · MISI ${definition.number || 1}</p><h1>${definition.title}</h1>${s.step===0?`<p class="mission-objective">${presentation.objective}</p>`:''}</div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${window.MakmalPico.dialogue(picoText, s.pose)}<p class="feedback-note" role="status" aria-live="polite"></p><section class="workbench" aria-labelledby="activity-heading">${activity}</section>${actions}</div></div>`;
+        const pico = window.MakmalPico.dialogue(picoText, s.pose);
+        const missionStage = golden
+          ? `<div class="golden-stage"><div class="golden-workspace"><p class="feedback-note" role="status" aria-live="polite"></p><section class="workbench" aria-labelledby="activity-heading">${activity}</section></div><div class="golden-assistant">${pico}</div></div>${actions}`
+          : `${pico}<p class="feedback-note" role="status" aria-live="polite"></p><section class="workbench" aria-labelledby="activity-heading">${activity}</section>${actions}`;
+        root.innerHTML = `<header class="experiment-title"><div><p class="section-kicker">SAINS TAHUN ${year1?1:year6?6:year5?5:year4?4:year3?3:2} · ${definition.unitTitle || 'ELEKTRIK'} · MISI ${definition.number || 1}</p><h1>${definition.title}</h1>${s.step===0?`<p class="mission-objective">${presentation.objective}</p>`:''}</div><span class="badge">${s.step + 1} / 5 langkah</span></header><div class="experiment-layout">${rail}<div class="experiment-main">${missionStage}</div></div>`;
         renderedStep = s.step;
       } else {
         // Keep the mascot, live region and step rail stable while an activity changes.
@@ -113,6 +118,7 @@ window.MakmalExperiment = (() => {
         const level=root.querySelector('.hint-level');if(level)level.textContent=s.hints?Math.min(s.hints,3)+' / 3':'';
       }
       root.dataset.unit = storageUnit;
+      root.dataset.mission = missionId;
       root.dataset.feedback = feedback;
       const note=root.querySelector('.feedback-note');note.textContent=ux.label[feedback]||'';
       note.hidden=!feedback;

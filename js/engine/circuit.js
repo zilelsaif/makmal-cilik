@@ -20,11 +20,11 @@ window.MakmalCircuit = (() => {
           const index = def.connections.findIndex(c => c.ends.includes(value) && c.ends.includes(state.selected));
           if (index >= 0 && !state.links.includes(index)) {
             state.links.push(index); state.selected = null; state.pose = 'happy';
-            state.message = lit() ? 'Litar lengkap! Mentol sudah menyala.' : state.links.length === 3 ? 'Semua wayar bersambung. Sekarang periksa suis.' : 'Wayar sudah bersambung! Teruskan sambungan seterusnya.';
+            state.message = lit() ? (def.id === 'electricity-2' ? 'Hebat! Litar kamu lengkap dan mentol pun menyala!' : 'Litar lengkap! Mentol sudah menyala.') : state.links.length === 3 ? 'Semua wayar bersambung. Sekarang periksa suis.' : 'Wayar sudah bersambung! Teruskan sambungan seterusnya.';
           } else { state.hintTarget = value; state.pose = 'thinking'; state.message = 'Sambungan ini belum sesuai. Ikut laluan bertitik dan cuba terminal lain.'; }
         }
       }
-      if (action === 'toggle' && state.step === 1) { state.closed = !state.closed; state[state.closed ? 'seenClosed' : 'seenOpen'] = true; state.pose = lit() ? 'happy' : 'neutral'; state.message = lit() ? 'Mentol menyala. Litar lengkap dan suis ditutup.' : state.closed ? 'Suis sudah ditutup. Sambungkan semua wayar supaya litar lengkap.' : 'Suis terbuka. Laluan terputus dan mentol tidak menyala.'; }
+      if (action === 'toggle' && state.step === 1) { state.closed = !state.closed; state[state.closed ? 'seenClosed' : 'seenOpen'] = true; state.pose = lit() ? 'happy' : 'neutral'; state.message = lit() ? (def.id === 'electricity-2' ? 'Hebat! Litar kamu lengkap dan mentol pun menyala!' : 'Mentol menyala. Litar lengkap dan suis ditutup.') : state.closed ? 'Suis sudah ditutup. Sambungkan semua wayar supaya litar lengkap.' : 'Suis terbuka. Laluan terputus dan mentol tidak menyala.'; }
       if (action === 'observe' && state.step === 2 && state.observed < (def.observations?.length || 4) - 1) state.observed++;
       if (action === 'think' && state.step === 3) { state.thought = value === (def.mode ? 'correct' : 'open'); state.pose = state.thought ? 'happy' : 'thinking'; state.message = state.thought ? (def.discovery || 'Betul! Suis terbuka memutuskan laluan dalam litar.') : 'Cuba perhatikan sambungan dan suis sekali lagi.'; }
       if (action === 'hint' && state.step < 4) {
@@ -40,6 +40,9 @@ window.MakmalCircuit = (() => {
     return { get state() { return state; }, lit, canAdvance, act, reset: () => { state = fresh(); return state; } };
   }
   function render(s, def) {
+    const golden = def.id === 'electricity-2';
+    const goldenLit = golden && s.links.length === def.connections.length && s.closed;
+    const goldenResult = () => goldenLit ? '<section class="golden-success" role="status" aria-live="polite"><span class="golden-success-check" aria-hidden="true">✓</span><div><strong>Bagus! Mentol menyala!</strong><p>Litar lengkap membolehkan arus elektrik mengalir dan mentol menyala.</p></div></section>' : '';
     const image = id => { const c = def.components.find(c => c.id === id); return `<img src="${c.image}" alt="${c.name}" data-fallback="${c.name}" width="90" height="90" draggable="false">`; };
     function board(interactive = false, forceOpen = false) {
       const switchInteractive = interactive && def.mode !== 'repair';
@@ -57,7 +60,7 @@ window.MakmalCircuit = (() => {
       return `<div class="completion"><span class="completion-check" aria-hidden="true">✓</span><h2 id="activity-heading" tabindex="-1">Misi Selesai</h2><p>${def.discovery}</p>${checklist}${board()}<div class="completion-actions"><button class="primary" data-exp="restart">MAIN SEMULA ↻</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></div></div>`;
     }
     if (s.step === 0) return `<h2 id="activity-heading" tabindex="-1">Adakah mentol akan menyala jika semua komponen tidak bersambung?</h2><p>Buat ramalan, kemudian uji di meja eksperimen.</p><div class="answer-buttons"><button class="nav-button" data-exp="predict" data-value="yes">Ya, menyala</button><button class="nav-button" data-exp="predict" data-value="no">Tidak menyala</button></div>`;
-    if (s.step === 1) return `<h2 id="activity-heading" tabindex="-1">Sambung dan nyalakan!</h2><p>Sentuh satu terminal A/B, kemudian terminal di hujung laluan bertitik. Tutup suis selepas menyambung.</p>${board(true)}<button class="nav-button" data-exp="restart">MULA SEMULA</button>`;
+    if (s.step === 1) return `<h2 id="activity-heading" tabindex="-1">Sambung dan nyalakan!</h2><p>Sentuh satu terminal A/B, kemudian terminal di hujung laluan bertitik. Tutup suis selepas menyambung.</p>${board(true)}${goldenResult()}<button class="nav-button" data-exp="restart">MULA SEMULA</button>`;
     if (s.step === 2) return `<h2 id="activity-heading" tabindex="-1">Perhatikan litar kamu</h2><p class="explanation">${['Bateri membekalkan tenaga elektrik.', 'Wayar menyambungkan komponen.', 'Suis yang ditutup melengkapkan laluan.', 'Mentol menyala apabila litar lengkap dan suis ditutup.'][s.observed]}</p>${board()}${s.observed < 3 ? '<button class="primary" data-exp="observe">PERHATI SETERUSNYA →</button>' : '<p>✓ Keempat-empat bahagian telah diperhatikan.</p>'}`;
     if (s.step === 3) return `<h2 id="activity-heading" tabindex="-1">Mengapa mentol tidak menyala?</h2>${board(false, true)}<div class="answer-buttons"><button class="nav-button ${s.thought ? 'answer-correct' : ''}" data-exp="think" data-value="open">Suis terbuka</button><button class="nav-button" data-exp="think" data-value="bright">Mentol terlalu terang</button></div>`;
     return `<div class="completion"><span class="completion-check" aria-hidden="true">✓</span><h2 id="activity-heading" tabindex="-1">Misi Selesai</h2><p>Litar perlu lengkap supaya mentol boleh menyala.</p>${board()}<div class="completion-actions"><button class="primary" data-exp="restart">MAIN SEMULA ↻</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></div></div>`;

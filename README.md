@@ -2,7 +2,17 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.5.1 by Zil-el-Saif** — Visual Target Alignment Pass with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.5.2 by Zil-el-Saif** — Golden Mission Visual Refinement with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.5.2 — Golden Mission Visual Refinement
+
+**Tahun 2 → Elektrik → Nyalakan Mentol** is the current visual reference implementation for Makmal Cilik gameplay. Its existing circuit rules, three connections, switch, replay, hints, progress, audio hooks and five learning steps remain unchanged. The refinement gives the experiment a dedicated responsive stage, positions PICO beside the workbench as **PEMBANTU MAKMAL** on desktop, and uses a compact assistant card on mobile.
+
+The bulb now has clearly labelled OFF and ON states. Completing the circuit and closing the switch produces a one-time CSS glow and light-ray response, a concise green result panel explaining what happened, and a happy PICO reaction. The later Temui step keeps its separate role as the formal scientific discovery. Connected terminals become visually quieter while retaining their check marks, labels and accessible state.
+
+This release adds no bitmap, dependency, sound file, curriculum content or mission. It does not propagate the Golden Mission layout across all 290 missions yet. The official visual target remains a design North Star; XP, stars, reward cards, photorealistic laboratory scenery and its exact fixed desktop composition remain intentionally absent. The support poster and QR are unchanged.
+
+Cloudflare production remains Node 22 with `npm ci`, `npm run verify:web`, `npm run build:web` and output directory `www`. Runtime cache markers use `v=2.5.2`.
 
 ## v2.5.1 — Visual Target Alignment Pass
 

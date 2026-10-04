@@ -9,5 +9,65 @@
 
 .circuit-wires .repaired-wire{stroke:#238e42;stroke-width:8;filter:drop-shadow(0 0 5px #7ae790)}
 .repair-story,.unit-finale{padding:18px;background:#fff5cf;border:2px solid #e7bf52;border-radius:18px;margin:16px 0;color:#24476a;font-weight:700}.available-tools{display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;margin-top:12px}.available-tools img{width:64px;height:64px;border-radius:12px}.unit-finale{background:#edffe9;border-color:#70bc77}.unit-finale h3{font-size:1.3rem;line-height:1.3;margin-top:0}.unit-finale ul{list-style:none;padding:0;text-align:left}.unit-finale li{padding:10px 0;line-height:1.5;border-top:1px solid #b8ddba}.unit-finale li span{color:#246235;font-size:.85rem;margin-right:8px}.repair-celebration{text-align:center;color:#25632e;font-weight:800;animation:repair-arrive .4s ease-out}.lab-repair.circuit-lit{box-shadow:0 0 24px #ffe67077}.switch-observations{font-weight:700;color:#254e70}.mission-card[aria-disabled=true]{background:#edf3f8;border-color:#bbcedd}
+
+/* v2.5.2 Golden Mission: Year 2 Electricity Mission 2 only. */
+#experiment-root[data-mission="electricity-2"] .golden-stage{display:grid;grid-template-columns:minmax(0,1fr) 220px;align-items:start;gap:18px}
+#experiment-root[data-mission="electricity-2"] .golden-workspace{min-width:0}
+#experiment-root[data-mission="electricity-2"] .golden-assistant{position:sticky;top:12px;min-width:0}
+#experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue{width:100%;margin:0;padding:30px 14px 17px;flex-direction:column;gap:10px;text-align:center}
+#experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue::before{left:50%;translate:-50% 0;white-space:nowrap}
+#experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue::after{left:28px;bottom:-10px}
+#experiment-root[data-mission="electricity-2"] .golden-assistant .pico-image{width:126px;height:126px}
+#experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue p{padding-top:0;font-size:.94rem}
+#experiment-root[data-mission="electricity-2"] .workbench{background:linear-gradient(180deg,#fff 0 8%,#fffaf0 8% 76%,#e9f2f7 76%);box-shadow:inset 0 0 0 4px #fff,inset 0 -9px 0 #c7dce7,0 7px 0 #3f8fc7,0 20px 36px #173f6820}
+#experiment-root[data-mission="electricity-2"] .circuit-board{background:linear-gradient(145deg,#fffdf7,#f4e8d7 72%,#e6d4bc);border:3px solid #d1b995;box-shadow:inset 0 2px 0 #fff, inset 0 -8px 0 #c8ae89,0 10px 22px #5b40231f}
+#experiment-root[data-mission="electricity-2"] .circuit-component{border-color:#a8cce3;box-shadow:inset 0 2px 0 #fff,0 5px 0 #9dbcd0,0 10px 18px #244c7012}
+#experiment-root[data-mission="electricity-2"] .component-bulb{background:#fff;color:#17385f}
+#experiment-root[data-mission="electricity-2"] .circuit-lit .component-bulb{position:absolute;background:radial-gradient(circle at 50% 42%,#fffbd2 0 22%,#fff2a9 48%,#fff8dd 100%);border-color:#e6ad1d;box-shadow:0 0 0 4px #fff7bd,0 0 34px 12px #ffd94f80,0 5px 0 #d3a535;animation:golden-bulb-pulse .72s ease-out 1}
+#experiment-root[data-mission="electricity-2"] .circuit-lit .component-bulb .circuit-art::before{content:"";position:absolute;inset:-28px;z-index:-1;border-radius:50%;background:repeating-conic-gradient(from 0deg,#ffc928 0 5deg,transparent 5deg 45deg);mask:radial-gradient(circle,transparent 0 43%,#000 44% 58%,transparent 59%);opacity:.92;animation:golden-rays .72s ease-out 1}
+#experiment-root[data-mission="electricity-2"] .circuit-lit .component-bulb .circuit-art::after{box-shadow:0 0 24px 9px #ffda3d;background:radial-gradient(ellipse,#fff 0%,#fffbd0 32%,#ffe46eaa 63%,transparent 76%)}
+#experiment-root[data-mission="electricity-2"] .terminal.connected{width:40px;height:40px;min-width:40px;opacity:.8;border-width:2px;box-shadow:0 2px 0 #43864c;font-size:.8rem}
+#experiment-root[data-mission="electricity-2"] .circuit-wires .connected{stroke-width:6;filter:drop-shadow(0 2px 1px #80272a40)}
+#experiment-root[data-mission="electricity-2"] .circuit-status{display:inline-flex;justify-content:center;width:100%;margin:12px auto 0;padding:7px 12px;border-radius:999px;background:#ffffffd9;border:2px solid #bfd9e8}
+#experiment-root[data-mission="electricity-2"] .golden-success{display:flex;align-items:center;gap:14px;margin:18px auto 14px;padding:15px 17px;border:3px solid #69be79;border-radius:19px;background:linear-gradient(110deg,#f7fff5,#dff6df);box-shadow:inset 0 0 0 2px #fff,0 5px 0 #78ad80,0 12px 22px #24633418;color:#174b29;text-align:left}
+#experiment-root[data-mission="electricity-2"] .golden-success-check{display:grid;place-items:center;width:48px;height:48px;flex:0 0 48px;border-radius:50%;background:#2daa4d;color:#fff;border:3px solid #eaffea;font-size:1.7rem;font-weight:900;box-shadow:0 0 0 2px #65c678}
+#experiment-root[data-mission="electricity-2"] .golden-success strong{display:block;font-size:1.15rem;color:#155b2c}
+#experiment-root[data-mission="electricity-2"] .golden-success p{margin:3px 0 0;line-height:1.45}
+#experiment-root[data-mission="electricity-2"] [data-exp="restart"]{background:linear-gradient(#44a9f0,#0874da);border-color:#82caf7;color:#fff;box-shadow:inset 0 2px 0 #ffffff70,0 4px 0 #0755a0}
+@keyframes golden-bulb-pulse{0%{scale:.94;filter:brightness(.92)}55%{scale:1.045;filter:brightness(1.16)}100%{scale:1;filter:brightness(1)}}
+@keyframes golden-rays{0%{opacity:0;scale:.6;rotate:-10deg}65%{opacity:1;scale:1.08}100%{opacity:.92;scale:1}}
+@media(max-width:900px){
+  #experiment-root[data-mission="electricity-2"] .golden-stage{grid-template-columns:1fr;gap:12px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant{position:static;order:-1}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue{padding:23px 12px 11px;flex-direction:row;text-align:left}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue::before{left:76px;translate:0 0}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue::after{left:50px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-image{width:66px;height:66px}
+}
+@media(max-width:640px){
+  #experiment-root[data-mission="electricity-2"] .golden-stage{gap:9px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue{margin-bottom:2px;padding:21px 10px 9px;gap:10px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue::before{left:68px;font-size:.56rem}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-image{width:56px;height:56px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue p{font-size:.82rem;line-height:1.35}
+  #experiment-root[data-mission="electricity-2"] .circuit-board{margin-block:12px;height:510px}
+  #experiment-root[data-mission="electricity-2"] .golden-success{gap:10px;padding:12px;margin-top:14px}
+  #experiment-root[data-mission="electricity-2"] .golden-success-check{width:40px;height:40px;flex-basis:40px;font-size:1.35rem}
+  #experiment-root[data-mission="electricity-2"] .golden-success strong{font-size:1rem}
+  #experiment-root[data-mission="electricity-2"] .golden-success p{font-size:.86rem}
+}
+@media(max-height:550px) and (min-width:641px){
+  #experiment-root[data-mission="electricity-2"] .golden-stage{grid-template-columns:minmax(0,1fr) 185px;gap:12px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant{position:sticky;order:0}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue{padding:23px 10px 9px;flex-direction:column;text-align:center}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue::before{left:50%;translate:-50% 0}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-image{width:78px;height:78px}
+  #experiment-root[data-mission="electricity-2"] .golden-assistant .pico-dialogue p{font-size:.78rem}
+  #experiment-root[data-mission="electricity-2"] .golden-success{padding:10px 12px;margin-block:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #experiment-root[data-mission="electricity-2"] .circuit-lit .component-bulb,
+  #experiment-root[data-mission="electricity-2"] .circuit-lit .component-bulb .circuit-art::before{animation:none!important}
+}
 @keyframes repair-arrive{from{opacity:.3;transform:translateY(5px)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){.repair-celebration{animation:none}}

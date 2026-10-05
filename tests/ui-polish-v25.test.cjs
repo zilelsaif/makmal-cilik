@@ -2,8 +2,8 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const read=file=>fs.readFileSync(file,'utf8');
 const index=read('index.html'),css=read('css/release-polish.css'),app=read('js/app.js'),profiles=read('js/engine/profiles.js'),router=read('js/router.js');
-assert(index.includes('<meta name="app-version" content="2.5.2">'));
-assert(index.includes('css/release-polish.css?v=2.5.2'));
+assert(index.includes('<meta name="app-version" content="2.5.3">'));
+assert(index.includes('css/release-polish.css?v=2.5.3'));
 for(const key of ['--mc-blue','--mc-blue-dark','--mc-yellow','--mc-bg','--mc-surface','--mc-border','--mc-text','--mc-muted','--mc-success','--mc-warning','--mc-radius','--mc-shadow','--mc-control','--mc-focus'])assert(css.includes(key),key);
 assert(css.includes('@media(prefers-reduced-motion:reduce)'));
 assert(css.includes('@media(max-width:640px)'));
@@ -19,5 +19,5 @@ assert(profiles.includes('aria-current="true"'));
 assert.equal((app.match(/autofocus>Batal/g)||[]).length,2);
 assert(router.includes("screen.querySelector('[autofocus]')"));
 assert(router.includes('(preferred||screen).focus'));
-const box={window:{}};vm.createContext(box);vm.runInContext(read('js/progress.js'),box);assert.equal(box.window.MakmalProgress.APP_VERSION,'2.5.2');
-console.log('PASS v2.5.2 visual-target alignment, design tokens, responsive mission polish, explicit states, safe dialog focus and release markers.');
+const box={window:{}};vm.createContext(box);vm.runInContext(read('js/progress.js'),box);assert.equal(box.window.MakmalProgress.APP_VERSION,'2.5.3');
+console.log('PASS v2.5.3 visual-target alignment, design tokens, responsive mission polish, explicit states, safe dialog focus and release markers.');

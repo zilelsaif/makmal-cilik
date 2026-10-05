@@ -2,7 +2,17 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.5.2 by Zil-el-Saif** — Golden Mission Visual Refinement with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.5.3 by Zil-el-Saif** — Title Screen Visual Target Alignment with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.5.3 — Title Screen Visual Target Alignment
+
+The front page now translates the official visual target into a brighter, deeper science-laboratory welcome scene. PICO is the primary visual mascot, the Makmal Cilik branding and exact **Eksperimen. Fikir. Temui.** tagline remain real HTML, and the tactile **MASUK MAKMAL** action stays keyboard accessible. The previous separate PICO card has been replaced by one integrated hero and a compact welcome panel.
+
+Two locally shipped, optimized WebP illustrations provide intentional desktop and mobile compositions through responsive `<picture>` delivery. The title uses CSS atmosphere and layout around the artwork, keeps sound and fullscreen controls secondary, and preserves reduced-motion, focus and contrast treatment. The official visual target remains the North Star; its gameplay rail, XP, stars and reward systems are not copied.
+
+This visual-only patch adds no game systems, curriculum or missions. All **6 years, 58 units and 290 playable missions**, profile data, Buku Makmal, Parent / Guardian tools, voluntary support and local-first storage remain unchanged. The support poster and QR remain unchanged.
+
+Cloudflare web remains the primary deployment with Node 22, `npm ci`, `npm run verify:web`, `npm run build:web` and output directory `www`. Runtime cache markers and title-image URLs use `v=2.5.3`. APK/AAB work remains deferred.
 
 ## v2.5.2 — Golden Mission Visual Refinement
 

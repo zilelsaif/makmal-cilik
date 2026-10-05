@@ -69,8 +69,8 @@ No video, GIF, Canvas animation, external font, CDN, tracker or extra dependency
 ## Bundle Delta
 
 - Before (v2.5.2): 1,990,812 bytes, 116 files.
-- After (v2.5.3): 2,155,954 bytes, 118 files.
-- Delta: +165,142 bytes and +2 files (+8.29%).
+- After final refinement (v2.5.3): 2,156,514 bytes, 118 files.
+- Delta: +165,702 bytes and +2 files (+8.32%).
 
 ## 290 Mission Regression
 
@@ -91,6 +91,8 @@ The first 390×844 pass allowed the flex-filled grid to stretch its rows, creati
 ## Bugs Fixed
 
 The mobile hero now uses intrinsic-height grid content centered within the available title region. This keeps the three sections grouped while preserving full-viewport balance and CTA reachability.
+
+The final pre-commit pass also corrected the pale fullscreen control by applying an explicit dark foreground to both utility controls, with distinct hover and pressed states. The title now uses unambiguous blue for `Makmal` and yellow for `Cilik`, with separate restrained depth colours. The faint lower-left science glyphs were removed because they did not add meaningful hierarchy.
 
 ## Known Limitations
 

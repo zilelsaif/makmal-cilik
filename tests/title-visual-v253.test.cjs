@@ -13,6 +13,7 @@ assert(app.includes('MASUK MAKMAL'));
 assert.equal((app.match(/title-picture/g)||[]).length,1,'one title hero only');
 for(const file of [desktop,mobile]){assert(fs.existsSync(file),file);const size=fs.statSync(file).size;assert(size>30000,`${file} unexpectedly small`);assert(size<220000,`${file} should be optimized`);}
 for(const token of ['.title-art','.title-picture','.title-welcome','.title-cta','object-fit:cover','@media(max-height:550px)'])assert(css.includes(token),token);
+for(const token of ['.title-copy h1 .title-makmal{color:#0874da','.title-copy h1 .title-cilik{color:#ffd539','body:has(.title-screen) .utility:hover','.title-screen::after{content:none}'])assert(css.includes(token),token);
 assert(index.includes('<meta name="app-version" content="2.5.3">'));
 assert(!/title-screen[^\n]*(XP|Bintang|Ganjaran)/i.test(app));
 console.log('PASS v2.5.3 responsive title hero, local WebP delivery, HTML branding, accessible CTA and release markers.');

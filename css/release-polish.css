@@ -103,12 +103,12 @@ button:disabled,[aria-disabled=true]{cursor:not-allowed}
   box-shadow:inset 0 0 0 5px #ffffffb8,0 8px 0 #80bfe5,0 24px 50px #174c761c;
 }
 .title-screen::before{content:"";position:absolute;inset:-35% auto auto -12%;width:52%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#fff5bf 0 18%,#fff3a442 44%,transparent 70%);pointer-events:none}
-.title-screen::after{content:"⚗  ·  ✦  ·  🌱";position:absolute;left:clamp(24px,4vw,54px);bottom:18px;color:#2575ab2c;font-size:1.15rem;letter-spacing:.45em;pointer-events:none}
+.title-screen::after{content:none}
 .title-copy{grid-area:copy;position:relative;z-index:2;align-self:end;max-width:520px}
 .title-copy .eyebrow{display:inline-flex;padding:7px 12px;border:1px solid #8cc9ec;border-radius:999px;background:#ffffffc7;color:#205b88;box-shadow:0 2px 0 #b8d9ed;font-weight:850}
-.title-copy h1{margin:.35rem 0 .45rem;font-size:clamp(4.15rem,6.3vw,6.6rem);line-height:.82;letter-spacing:-.065em;filter:drop-shadow(0 5px 0 #a9d5f0)}
-.title-copy h1 span{display:inline}.title-makmal{color:#0873d5;text-shadow:0 2px 0 #fff,2px 0 0 #0b3472,-2px 0 0 #0b3472,0 -2px 0 #0b3472}
-.title-copy h1 .title-cilik{color:#ffd23d;text-shadow:0 2px 0 #fff,2px 0 0 #b56e00,-2px 0 0 #b56e00,0 -2px 0 #b56e00}
+.title-copy h1{margin:.35rem 0 .45rem;font-size:clamp(4.15rem,6.3vw,6.6rem);line-height:.82;letter-spacing:-.065em;filter:none}
+.title-copy h1 span{display:inline}.title-copy h1 .title-makmal{color:#0874da;text-shadow:0 2px 0 #fff,2px 0 0 #073c87,-2px 0 0 #073c87,0 -2px 0 #073c87,0 5px 0 #9dcced}
+.title-copy h1 .title-cilik{color:#ffd539;text-shadow:0 2px 0 #fff,2px 0 0 #9a6100,-2px 0 0 #9a6100,0 -2px 0 #9a6100,0 5px 0 #e8ad1f}
 .title-copy .tagline{margin:0;color:#163b73;font-size:clamp(1.05rem,1.65vw,1.42rem);font-weight:900;letter-spacing:.035em}
 .title-art{grid-area:art;position:relative;z-index:1;min-width:0;align-self:stretch;display:grid;place-items:center}
 .title-picture{display:block;width:100%;aspect-ratio:1599/900;overflow:hidden;border:5px solid #fff;border-radius:32px;background:#dff4ff;box-shadow:0 0 0 3px #69bdf0,0 9px 0 #489acb,0 22px 38px #164c7b2b}
@@ -119,7 +119,12 @@ button:disabled,[aria-disabled=true]{cursor:not-allowed}
 .title-actions .title-cta{min-width:min(100%,290px);font-size:1.08rem;justify-content:space-between;background:linear-gradient(#1ca4f4,#0769cc);border-color:#a7e6ff;box-shadow:inset 0 2px 0 #ffffffa8,0 7px 0 #084a94,0 17px 28px #0759a62e}
 .title-actions .title-cta:active{transform:translateY(4px);box-shadow:inset 0 2px 0 #ffffffa8,0 3px 0 #084a94,0 8px 16px #0759a624}
 .title-actions .curriculum{margin:16px 0 0;color:#395b7d;font-size:.82rem;font-weight:800;letter-spacing:.04em}
-body:has(.title-screen) .utility{padding:8px 11px;min-height:42px;font-size:.82rem;background:#ffffffd9}
+body:has(.title-screen) .utility{padding:8px 11px;min-height:42px;font-size:.82rem;color:#123b68;background:linear-gradient(#fff,#e5f3fc);border:2px solid #73b7e3;box-shadow:inset 0 1px 0 #fff,0 3px 0 #3d79a7}
+body:has(.title-screen) .utility[aria-pressed=true]{color:#0b3472;background:linear-gradient(#e9f7ff,#cceaff);border-color:#4c9bd0}
+body:has(.title-screen) .utility[aria-pressed=false]{color:#294a70;background:linear-gradient(#fff,#e5eff7);border-color:#83abc8}
+body:has(.title-screen) .utility:hover{color:#092e58;background:linear-gradient(#fff,#d7efff);border-color:#3e90c8}
+body:has(.title-screen) .utility:active{transform:translateY(2px);box-shadow:inset 0 1px 0 #fff,0 1px 0 #3d79a7}
+body:has(.title-screen) .utility>span[aria-hidden=true]{color:currentColor;font-weight:900}
 
 @media(max-width:900px){
   .title-screen{grid-template-columns:minmax(250px,.8fr) minmax(380px,1.2fr);padding:28px;gap:10px 26px}.title-copy h1{font-size:clamp(3.6rem,7.7vw,4.8rem)}

@@ -20,4 +20,4 @@ const experiment=read('js/engine/experiment.js'),css=read('css/circuit.css');
 for(const text of ['golden-stage','golden-workspace','golden-assistant','root.dataset.mission = missionId'])assert(experiment.includes(text),text);
 for(const text of ['data-mission="electricity-2"','golden-bulb-pulse','golden-rays','golden-success','@media(max-width:640px)','@media(max-height:550px)','@media(prefers-reduced-motion:reduce)'])assert(css.includes(text),text);
 for(const forbidden of ['XP Saintis','Bintang Diperoleh','star-economy','reward-economy'])assert(!css.includes(forbidden),forbidden);
-console.log('PASS v2.5.3 Golden Mission OFF/ON states, PICO layout, immediate science feedback, responsive treatment and reduced motion.');
+console.log('PASS v2.6.0 Golden Mission OFF/ON states, PICO layout, immediate science feedback, responsive treatment and reduced motion.');

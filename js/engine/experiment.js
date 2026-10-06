@@ -65,10 +65,11 @@ window.MakmalExperiment = (() => {
     const progress = year1 ? window.MakmalProgress.forYear(1) : year6 ? window.MakmalProgress.forYear(6) : year5 ? window.MakmalProgress.forYear(5) : year4 ? window.MakmalProgress.forYear(4) : year3 ? window.MakmalProgress.forYear(3) : window.MakmalProgress;
     const yearComplete=()=>year1||year6||year5||year4||year3?progress.isYearComplete():progress.isYear2Complete();
     const controller = new AbortController();
-    let disposed = false, renderedStep = -1, feedback = '', hintSelector = null;
+    let disposed = false, renderedStep = -1, feedback = '', hintSelector = null, replayDispose = null;
     const ux = window.MakmalExperience;
     const presentation = ux.content(missionId);
     const golden = missionId === 'electricity-2';
+    const dynamic = window.MakmalReplayRegistry?.isDynamic(missionId) === true;
     let replayIntro = progress.isMissionComplete(progressKey, storageUnit);
     const image = (component, named = true) => `<img src="${component.image}" alt="${named ? component.name : component.visual}" data-fallback="${named ? component.name : component.visual}" width="160" height="160" draggable="false">`;
     function start() { window.MakmalRewards.stop(); replayIntro = false; session.reset(); renderedStep = -1; feedback = ''; hintSelector = null; progress.startMissionAttempt(progressKey, storageUnit); window.MakmalRewards.play('click'); draw(); }
@@ -76,7 +77,7 @@ window.MakmalExperiment = (() => {
       if (disposed) return;
       const s = session.state;
       if (replayIntro) {
-        root.innerHTML = `<section class="experiment-replay"><span class="badge">✓ Selesai</span><h1>${definition.title}</h1><p class="mission-objective">${presentation.objective}</p>${window.MakmalPico.dialogue('Mahu cuba sekali lagi? Penemuan kamu tetap disimpan.', 'happy')}<button class="primary" data-exp="start">Main Semula ↻</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></section>`;
+        root.innerHTML = `<section class="experiment-replay">${dynamic?'<span class="badge dynamic-badge">VARIAN DINAMIK</span>':'<span class="badge">✓ Selesai</span>'}<h1>${definition.title}</h1><p class="mission-objective">${presentation.objective}</p>${window.MakmalPico.dialogue(dynamic?'Misi asal selesai. Cubaan seterusnya akan menggunakan keadaan baharu!':'Mahu cuba sekali lagi? Penemuan kamu tetap disimpan.', 'happy')}<button class="primary" data-exp="${dynamic?'dynamic':'start'}">${dynamic?'Cuba Varian Baharu':'Main Semula ↻'}</button><button class="nav-button" data-exp="exit">Kembali ke Senarai Misi</button></section>`;
         return;
       }
       const current = definition.components?.[s.observed];
@@ -171,6 +172,11 @@ window.MakmalExperiment = (() => {
       if (!button || button.disabled || event.detail > 1) return;
       const action = button.dataset.exp;
       if (action === 'exit') { onExit(); window.MakmalRewards.play('click'); return; }
+      if(action==='dynamic'){
+        controller.abort();detach();window.MakmalRewards.stop();
+        replayDispose=window.MakmalReplay.mount(root,{missionId,onExit});
+        return;
+      }
       if (action === 'yearComplete') { window.MakmalRouter.navigate(year1?'year1Complete':year6?'year6Complete':year5?'year5Complete':year4?'year4Complete':year3?'year3Complete':'year2Complete'); window.MakmalRewards.play('click'); return; }
       if (action === 'year2') { window.MakmalRouter.navigate(year1?'year1':year6?'year6':year5?'year5':year4?'year4':year3?'year3':'year2'); window.MakmalRewards.play('click'); return; }
       if (action === 'start' || action === 'restart') { start(); root.querySelector('#activity-heading')?.focus(); return; }
@@ -179,7 +185,7 @@ window.MakmalExperiment = (() => {
     const detach = window.MakmalInteraction.attach(root, { select: id => dispatch('select', id), match: (id, target) => dispatch('match', id, target), terminal: id => dispatch('terminal', id) });
     if (!replayIntro) progress.startMissionAttempt(progressKey, storageUnit);
     draw();
-    return () => { disposed = true; controller.abort(); detach(); window.MakmalRewards.stop(); };
+    return () => { disposed = true; controller.abort(); detach(); replayDispose?.(); window.MakmalRewards.stop(); };
   }
   return { createSession, mount };
 })();

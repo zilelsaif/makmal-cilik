@@ -1,0 +1,14 @@
+const fs=require('node:fs'),vm=require('node:vm');
+const box={window:{},localStorage:{getItem:()=>null,setItem:()=>{}},Intl,Date,Math,console};box.window.window=box.window;vm.createContext(box);
+const run=file=>vm.runInContext(fs.readFileSync(file,'utf8'),box,{filename:file});
+run('js/progress.js');
+for(const file of ['js/content/experiments/new-units.js','js/content/year2.js','js/content/experiments/electricity-mission1.js','js/content/experiments/electricity-mission2.js','js/content/experiments/electricity-missions3-5.js','js/content/experiments/light-dark.js','js/content/experiments/mixtures.js','js/content/experiments/plants.js','js/content/year3/index.js'])run(file);
+for(const file of ['science-skills','lab-rules','humans','animals','plants','measurement','density','acid-alkali','solar-system','machines'])run(`js/content/year3/${file}.js`);
+for(const year of [4,5,6,1]){run(`js/content/year${year}/index.js`);run(`js/content/year${year}/content.js`);}run('js/content/replayability.js');
+const registry=box.window.MakmalReplayRegistry,rows=registry.catalog(),counts=registry.summary();if(rows.length!==290)throw Error(`Expected 290 missions, got ${rows.length}`);
+const reason={discovery:'Pengalaman penemuan berstruktur; konsep teras kekal jelas apabila dimainkan semula.',variable:'Input, contoh atau susunan boleh berubah sambil mengekalkan konsep saintifik.',sandbox:'Konsep menyokong manipulasi dan penerokaan berulang bagi beberapa keadaan sah.'};
+const out=['# Replayability Audit — Makmal Cilik v2.6.0','','Audit produksi bagi semua 290 misi kanonik. Klasifikasi tidak mengubah pengalaman pembelajaran pertama. Hanya 19 misi bertanda **Ya** menggunakan penyedia varian dinamik selepas misi asal selesai.','',`Ringkasan: **${counts.discovery} Discovery · ${counts.variable} Variable Replay · ${counts.sandbox} Sandbox · 19 penyedia dinamik**.`,'','| Tahun | Unit | ID | Misi | Klasifikasi | Dinamik | Rasional |','|---:|---|---|---|---|:---:|---|'];
+for(const x of rows)out.push(`| ${x.year} | ${x.unitTitle.replaceAll('|','/')} | \`${x.id}\` | ${x.title.replaceAll('|','/')} | ${x.replayType==='discovery'?'Discovery':x.replayType==='variable'?'Variable Replay':'Sandbox'} | ${x.dynamic?'Ya':'Tidak'} | ${reason[x.replayType]} |`);
+out.push('','## Kawalan skop','','- Pengalaman pembelajaran pertama bagi semua misi kekal kanonik dan tidak rawak.','- Varian dinamik hanya dibuka selepas misi asal yang sepadan selesai.','- Makmal Bebas membaca status misi profil aktif dan tidak menggabungkan kemajuan antara profil.','- Replay tidak mengubah `completedAt`, status selesai, urutan kurikulum atau jumlah 290 misi.');
+fs.writeFileSync('tests/REPLAYABILITY-AUDIT-v2.6.0.md',out.join('\n')+'\n');
+console.log(`Wrote ${rows.length} rows:`,counts);

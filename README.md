@@ -2,7 +2,17 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.5.3 by Zil-el-Saif** — Title Screen Visual Target Alignment with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.6.0 by Zil-el-Saif** — Replayability & Dynamic Experiments with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.6.0 — Replayability & Dynamic Experiments
+
+The new **Makmal Bebas** hub adds controlled replay variants for 19 selected missions across Years 1–6. Each card shows its year and unit, dynamic type, lock state and profile-specific replay count. A dynamic mission unlocks only after that profile completes its canonical curriculum mission. The first learning experience therefore remains unchanged; completed missions offer **Cuba Varian Baharu** while ordinary missions retain the established replay flow.
+
+Dynamic providers use deterministic seeded generation, a versioned provider contract, immutable run data, stable variant signatures and immediate duplicate prevention. Every generated run still follows **Ramal → Cuba → Perhati → Fikir → Temui**. The system varies scientifically relevant inputs, examples, measurements or trial arrangements while preserving the original concept and accepted conclusion. Replay runs and successful runs are stored per profile in bounded metadata and never replace canonical completion, attempts or `completedAt` data.
+
+All 290 missions are classified in the production replay registry as Discovery, Variable Replay or Sandbox. The complete review is recorded in `tests/REPLAYABILITY-AUDIT-v2.6.0.md`; only the 19 approved missions have dynamic providers in this release. No curriculum mission, bitmap asset, dependency, Android configuration, title hero or support QR was added or changed.
+
+Automated QA covers 1,900 deterministic seed cases, all 290 classifications, provider output validity, duplicate avoidance, profile isolation, legacy migration and the existing 290-mission regression suite. Browser QA covers the hub and a live replay at 1366×768, 1920×1080, 390×844, 360×640 and 800×450. Cloudflare remains web-first with Node 22, `npm ci`, `npm run verify:web`, `npm run build:web` and output directory `www`. Runtime cache markers use `v=2.6.0`.
 
 ## v2.5.3 — Title Screen Visual Target Alignment
 

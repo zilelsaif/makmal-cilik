@@ -2,3 +2,4 @@
 @media(max-width:640px){.free-lab-hero{grid-template-columns:1fr;padding:1rem}.free-lab-hero .pico-dialogue{margin:0}.free-lab-grid{grid-template-columns:1fr}.free-lab-card{min-height:220px}.dynamic-trials{grid-template-columns:repeat(2,minmax(0,1fr))}.dynamic-trial{min-height:132px;padding:.7rem}.dynamic-trial>span{font-size:2rem}}
 @media(max-height:520px) and (orientation:landscape){.free-lab-hero{grid-template-columns:1fr 1fr;padding:.8rem}.free-lab-card{min-height:210px}.dynamic-trial{min-height:110px}.free-lab-screen .navigation{position:sticky;top:0;z-index:8}}
 @media(prefers-reduced-motion:reduce){.dynamic-trial,.free-lab-card{transition:none!important}}
+.dynamic-result{padding:.85rem 1rem;border:2px solid #8fd6a9;border-radius:16px;background:#effff4;color:#174f2c}.dynamic-title .mission-objective strong{color:#073887}

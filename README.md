@@ -2,7 +2,17 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.6.0 by Zil-el-Saif** — Replayability & Dynamic Experiments with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.6.1 by Zil-el-Saif** — Replay Quality Audit & Gameplay Refinement with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.6.1 — Replay Quality Audit & Gameplay Refinement
+
+This patch audits the complete path from deterministic seed to provider, visible trials, player actions, observations, evaluation, feedback, Temui and profile-specific replay statistics for all 19 dynamic missions. The audit distinguishes signature diversity from actual learner-visible, decision and outcome diversity. Automated scores are evidence-based estimates; human enjoyment remains explicitly untested.
+
+Dynamic provider contract v2 binds each Fikir question to one observed trial from the current run. Correct answers are stored by explicit index after deterministic answer ordering, so rendering no longer assumes that the first option is correct. The completed screen separates the current observed result from the general scientific discovery. Hints now direct the learner back to evidence without revealing the answer. Makmal Bebas describes the activities as controlled variants; internal Sandbox classifications that still use the shared controlled runner no longer promise unrestricted sandbox freedom.
+
+The first curriculum run, canonical discoveries and all **290 missions** remain unchanged. Replay metadata stays profile-specific, bounded and separate from curriculum completion. Title hero assets, the official visual target, support poster/QR, Capacitor dependencies and Android metadata remain unchanged. No external dependency or API was added.
+
+Release evidence is recorded in `tests/REPLAY-QUALITY-AUDIT-v2.6.1.md`, `tests/REPLAY-MANUAL-PLAYTEST-v2.6.1.md` and `tests/QA-v2.6.1.md`. Cloudflare remains web-first with Node 22, `npm ci`, `npm test`, `npm run verify:web`, `npm run build:web` and output directory `www`. Runtime cache markers use `v=2.6.1`.
 
 ## v2.6.0 — Replayability & Dynamic Experiments
 

@@ -21,7 +21,7 @@ window.MakmalReplayRegistry=(()=>{
   'y6-speed-5':{year:6,unitId:'speed',unitTitle:'Kelajuan',number:5,title:'Perlumbaan Saintifik',replayType:'variable'},
   'y6-machines-5':{year:6,unitId:'machines',unitTitle:'Mesin',number:5,title:'Cipta Mesin Berguna',replayType:'sandbox'}
  };
- Object.values(DYNAMIC).forEach(meta=>{meta.dynamic=true;meta.providerKey=meta.title.toLowerCase().replace(/[^a-z0-9]+/g,'-');meta.providerVersion=1;meta.progressKey='mission'+meta.number;meta.storageUnit=meta.year===2?({'light-dark':'lightDark'}[meta.unitId]||meta.unitId):meta.unitId;});
+ Object.values(DYNAMIC).forEach(meta=>{meta.dynamic=true;meta.providerKey=meta.title.toLowerCase().replace(/[^a-z0-9]+/g,'-');meta.providerVersion=2;meta.progressKey='mission'+meta.number;meta.storageUnit=meta.year===2?({'light-dark':'lightDark'}[meta.unitId]||meta.unitId):meta.unitId;});
  const sandboxModes=new Set(['design','simulate','orbit']);
  const variableModes=new Set(['classify','sequence','compare','investigate','measurement','liquid','diagnose','sort','shadow','finale','test']);
  function classify(id,def={}){if(DYNAMIC[id])return DYNAMIC[id].replayType;if(sandboxModes.has(def.mode)||/circuit|machine|bayang|shadow|bina|reka/i.test(`${id} ${def.title||''}`))return 'sandbox';if(variableModes.has(def.mode)||Array.isArray(def.actions)||Array.isArray(def.samples))return 'variable';return 'discovery';}

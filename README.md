@@ -2,7 +2,19 @@
 
 **Eksperimen. Fikir. Temui.**
 
-**v2.6.1 by Zil-el-Saif** — Replay Quality Audit & Gameplay Refinement with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+**v2.7.0 by Zil-el-Saif** — Makmal Bebas 2.0 with local player profiles, Buku Makmal and a Parent / Guardian Zone: **6 years, 58 playable units and 290 playable missions**.
+
+## v2.7.0 — Makmal Bebas 2.0
+
+Makmal Bebas now includes four genuine interactive sandboxes linked to completed curriculum missions: **Makmal Litar**, **Makmal Bayang**, **Makmal Daya** and **Makmal Mesin**. Each provides an open-ended **Eksperimen Bebas** mode and a deterministic **Cabaran PICO** mode. Player controls change the underlying circuit graph, point-light shadow geometry, force/friction model, or ideal lever/inclined-plane model; challenge completion is evaluated from the resulting simulation state rather than a multiple-choice answer.
+
+The last two trials can be compared, predictions are optional and never penalized, and lightweight experiment/challenge totals remain local and profile-specific. The original **19 dynamic replay providers**, all **290 curriculum missions**, Buku Makmal, master completion, Parent Zone, voluntary Support and original completion timestamps remain unchanged. Sandbox activity does not create curriculum records or affect the official 58-unit / 290-mission totals.
+
+The release remains web-first for Cloudflare Pages with Node 22, `npm ci`, `npm test`, `npm run verify:web`, `npm run build:web` and output directory `www`. Runtime markers use `v=2.7.0`; APK/AAB work remains deferred.
+
+### ZilTeroka ecosystem integration
+
+Makmal Cilik remains its own science game while identifying ZilTeroka as the wider free educational-game family. A once-per-tab ZilTeroka introduction, unobtrusive Title/Main Menu entries and one accessible **Kenali ZilTeroka** dialog present five related games, verified playable links and the official portal QR. All branding and thumbnails are local assets; no profile, progress or learning data is transmitted. This Phase 1 integration does not change the v2.7.0 curriculum, simulations, developer credit or version.
 
 ## v2.6.1 — Replay Quality Audit & Gameplay Refinement
 

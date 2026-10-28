@@ -28,3 +28,20 @@ Regenerate with `python scripts/generate-android-branding.py` using Pillow and t
 | `android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png` | 11,592 |
 | `android/app/src/main/res/values/ic_launcher_background.xml` | 75 |
 | **Total listed assets** | **55,731** |
+
+## ZilTeroka ecosystem integration — v2.7.0 Phase 1
+
+Official ZilTeroka logo, icon and portal QR were copied unchanged from the read-only Kedai Matematik repository. Game thumbnails were copied unchanged from the read-only official ZilTeroka portal repository. The assets are used only for the session intro and informational game-family dialog. The support-payment artwork and QR are unrelated and remain untouched.
+
+| Asset | Source | Bytes |
+| --- | --- | ---: |
+| `zilteroka/zilteroka-logo.webp` | Kedai Matematik `assets/branding/` | 59,912 |
+| `zilteroka/zilteroka-icon.webp` | Kedai Matematik `assets/branding/` | 4,744 |
+| `zilteroka/zilteroka-qr.webp` | Kedai Matematik `assets/branding/` | 708 |
+| `zilteroka/games/kedai-matematik.webp` | ZilTeroka `assets/games/`; optimized 1600×900 → 720×405 WebP | 64,106 |
+| `zilteroka/games/detektif-bahasa.webp` | ZilTeroka `assets/games/`; optimized 1600×900 → 720×405 WebP | 66,118 |
+| `zilteroka/games/mata-helang.webp` | ZilTeroka `assets/games/`; optimized 1600×900 → 720×405 WebP | 89,886 |
+| `zilteroka/games/kubikata.webp` | ZilTeroka `assets/games/`; optimized 1600×900 → 720×405 WebP | 88,042 |
+| `zilteroka/games/sirah-quest.webp` | ZilTeroka `assets/games/`; optimized 1600×900 → 720×405 WebP | 105,242 |
+
+The five modal-only thumbnails were resized to their practical high-density display requirement and re-encoded at WebP quality 82. Their combined repository size fell from 1,172,666 to 413,394 bytes (−759,272 bytes). They remain lazy-loaded with explicit aspect ratio dimensions. The logo, icon and both QR assets were not re-encoded.

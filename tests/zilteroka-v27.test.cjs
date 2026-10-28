@@ -1,0 +1,18 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
+const root=path.resolve(__dirname,'..'),read=p=>fs.readFileSync(path.join(root,p),'utf8'),js=read('js/engine/zilteroka.js'),app=read('js/app.js'),html=read('index.html'),css=read('css/zilteroka.css');
+assert.equal(require('../package.json').version,'2.7.0');
+assert(html.includes('js/engine/zilteroka.js?v=2.7.0'));assert(html.includes('css/zilteroka.css?v=2.7.0'));assert(html.includes('rel="preload"')&&html.includes('zilteroka-logo.webp'));
+for(const title of ['Kedai Matematik','Detektif Bahasa','Mata Helang: Cari Kata','KubiKata','Sirah Quest'])assert(js.includes(`title:'${title}'`));
+assert.equal((js.match(/title:'/g)||[]).length,5);assert.equal((js.match(/url:'https:\/\//g)||[]).length,3);
+for(const url of ['https://zilteroka.pages.dev/','https://kedai-matematik.pages.dev/','https://detektif-bahasa.pages.dev/','https://mata-helang-cari-kata.pages.dev/'])assert(js.includes(url));
+assert(!/KubiKata'[^}]*url:/.test(js));assert(!/Sirah Quest'[^}]*url:/.test(js));
+assert(js.includes("target=\"_blank\" rel=\"noopener noreferrer\""));assert(js.includes("sessionStorage.getItem(INTRO_KEY)"));assert(js.includes('setTimeout(dismissIntro,3200)'));assert(js.includes("prefers-reduced-motion: reduce"));
+assert(js.includes("e.key==='Escape'"));assert(js.includes("e.key==='Tab'"));assert(js.includes("returnFocus"));assert(js.includes('aria-modal="true"'));assert(js.includes("setAttribute('aria-modal','true')"));
+assert(app.includes('Sebahagian daripada ZilTeroka'));assert(app.includes('KENALI ZILTEROKA'));assert.equal((app.match(/data-zilteroka-open/g)||[]).length,3);
+assert(css.includes('.zilteroka-gallery'));assert(css.includes('grid-template-columns:repeat(3'));assert(css.includes('@media(max-width:440px)'));assert(css.includes('.zilteroka-modal-open{overflow:hidden}'));
+const assets=['zilteroka-logo.webp','zilteroka-icon.webp','zilteroka-qr.webp','games/kedai-matematik.webp','games/detektif-bahasa.webp','games/mata-helang.webp','games/kubikata.webp','games/sirah-quest.webp'];for(const asset of assets)assert(fs.statSync(path.join(root,'assets/branding/zilteroka',asset)).size>0,asset);
+const hash=p=>crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');
+assert.equal(hash(path.join(root,'assets/branding/zilteroka/zilteroka-qr.webp')),hash('C:/Users/HP/Documents/GitHub/kedai-matematik/assets/branding/zilteroka-qr.webp'));
+assert(!/fetch\(|XMLHttpRequest|WebSocket|sendBeacon/.test(js));
+console.log('PASS ZilTeroka intro, shared accessible dialog, five cards, verified-link policy, local assets and unchanged official QR.');
